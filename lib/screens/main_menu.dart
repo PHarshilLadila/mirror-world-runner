@@ -1,6 +1,8 @@
+// ignore_for_file: deprecated_member_use, library_private_types_in_public_api
+
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
-import 'package:mirror_world_runner/screens/seeeting_screen.dart';
+import 'package:mirror_world_runner/screens/setting_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:mirror_world_runner/providers/game_state.dart';
 import 'package:mirror_world_runner/screens/game_screen.dart';
@@ -370,8 +372,6 @@ class _MainMenuScreenState extends State<MainMenuScreen>
   }
 }
 
-// ------------------ Other classes unchanged ------------------
-
 class AnimatedButton extends StatefulWidget {
   final Widget child;
   final VoidCallback onTap;
@@ -454,12 +454,12 @@ class Particle {
   }
 
   void update(double dt) {
-    y += speed * dt; // move with delta time
+    y += speed * dt;
     if (y > 1000) {
       reset();
       y = 0;
     }
-    x += math.sin(y * 0.01) * 0.5; // smooth drift
+    x += math.sin(y * 0.01) * 0.5;
   }
 }
 

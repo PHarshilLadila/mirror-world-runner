@@ -5,7 +5,7 @@ import 'dart:math' as math;
 import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:mirror_world_runner/screens/seeeting_screen.dart';
+import 'package:mirror_world_runner/screens/setting_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:mirror_world_runner/providers/game_state.dart';

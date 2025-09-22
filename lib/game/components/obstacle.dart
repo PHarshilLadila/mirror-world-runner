@@ -1,34 +1,3 @@
-// import 'package:flame/components.dart';
-
-// class Obstacle extends SpriteComponent with HasGameRef {
-//   final bool isForMirroredWorld;
-//   final double speed;
-
-//   Obstacle({
-//     required Vector2 position,
-//     required Vector2 size,
-//     required this.isForMirroredWorld,
-//     required this.speed,
-//   }) : super(position: position, size: size);
-
-//   @override
-//   Future<void> onLoad() async {
-//     sprite = await gameRef.loadSprite('obstacle.png');
-//   }
-
-//   @override
-//   void update(double dt) {
-//     super.update(dt);
-
-//     // Move obstacle from right → left
-//     position.x -= speed * dt;
-
-//     // Remove if it goes off screen
-//     if (position.x < -size.x) {
-//       removeFromParent();
-//     }
-//   }
-// }
 import 'package:flame/components.dart';
 import 'package:flutter/material.dart';
 
