@@ -1,4 +1,4 @@
-# Mirror World Runner
+# Mirror World Runner (Flutter + Flame Engine)
 
 **A fast-paced endless runner built with Flutter & Flame**
 
