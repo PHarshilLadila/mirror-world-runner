@@ -109,19 +109,6 @@ The app will build and install to the connected device/emulator.
 
 ---
 
-## Contributing
-
-Contributions, bug reports, and feature requests are welcome.
-
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/my-feature`)
-3. Make your changes and add tests where appropriate
-4. Open a pull request with a clear description of changes
-
-Please keep commits focused and include screenshots/GIFs for UI changes.
-
----
-
 ## License
 
 Choose a license for your project (e.g., MIT, Apache 2.0). If you don't want an open-source license yet, state “All rights reserved.”
