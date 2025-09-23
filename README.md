@@ -1,6 +1,6 @@
 # mirror_world_runner
 
-A new Flutter project.
+A new Flutter project with Flame Engine.
 
 ## Getting Started
 
