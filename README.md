@@ -114,14 +114,6 @@ The app will build and install to the connected device/emulator.
 
 ---
 
-## Performance Tips
-
-* Use sprite atlases and compressed audio to reduce memory and load times.
-* Limit per-frame object allocations; reuse components where possible.
-* Profile in debug and release modes (`flutter run --profile`, `flutter build apk --release`).
-
----
-
 ## License
 
 Choose a license for your project (e.g., MIT, Apache 2.0). If you don't want an open-source license yet, state “All rights reserved.”
