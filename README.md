@@ -31,6 +31,8 @@ Play the web build here:
 
 (Recommended: desktop for arrow-key control, mobile/tablet for touch/drag controls.)
 
+"https://github.com/PHarshilLadila/mirror-world-runner/blob/main/assets/images/demo/setting_screen.png"
+
 ---
 
 ## Gameplay / Controls
