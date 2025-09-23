@@ -244,21 +244,6 @@ class _GameScreenState extends State<GameScreen> {
                       ),
                       onPressed: _showSettings,
                     ),
-                    // IconButton(
-                    //   icon: const Icon(
-                    //     Icons.pause,
-                    //     color: Colors.white,
-                    //     size: 30,
-                    //   ),
-                    //   onPressed: () {
-                    //     gameState.togglePause();
-                    //     showDialog(
-                    //       context: context,
-                    //       barrierDismissible: false,
-                    //       builder: (context) => const PauseMenu(),
-                    //     );
-                    //   },
-                    // ),
                   ],
                 ),
             ],

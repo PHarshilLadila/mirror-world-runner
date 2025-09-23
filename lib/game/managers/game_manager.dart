@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:mirror_world_runner/game/components/obstacle.dart';
 import 'package:mirror_world_runner/game/components/powerup.dart';
 import 'package:mirror_world_runner/game/game_world.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class GameManager extends Component {
   final GameWorld world;
@@ -14,6 +15,8 @@ class GameManager extends Component {
   double powerUpSpawnTimer = 0;
   double obstacleSpawnInterval = 2.0;
   double powerUpSpawnInterval = 10.0;
+  double baseObstacleSpeed = 200.0;
+  String currentDifficulty = "medium";
   final Random random = Random();
 
   GameManager({
@@ -22,6 +25,43 @@ class GameManager extends Component {
     required this.onPlayerHit,
     required this.onPowerUpCollected,
   });
+
+  @override
+  void onLoad() {
+    super.onLoad();
+    _loadDifficultySettings();
+  }
+
+  Future<void> _loadDifficultySettings() async {
+    final prefs = await SharedPreferences.getInstance();
+    currentDifficulty = prefs.getString('difficulty') ?? "medium";
+    _applyDifficultySettings();
+  }
+
+  void setDifficulty(String difficulty) {
+    currentDifficulty = difficulty;
+    _applyDifficultySettings();
+  }
+
+  void _applyDifficultySettings() {
+    switch (currentDifficulty) {
+      case "easy":
+        obstacleSpawnInterval = 4.0;
+        baseObstacleSpeed = 100.0;
+        break;
+      case "medium":
+        obstacleSpawnInterval = 3.0;
+        baseObstacleSpeed = 140.0;
+        break;
+      case "hard":
+        obstacleSpawnInterval = 2;
+        baseObstacleSpeed = 200.0;
+        break;
+      default:
+        obstacleSpawnInterval = 3.0;
+        baseObstacleSpeed = 140.0;
+    }
+  }
 
   @override
   void update(double dt) {
@@ -33,7 +73,8 @@ class GameManager extends Component {
     if (obstacleSpawnTimer >= obstacleSpawnInterval) {
       spawnObstacles();
       obstacleSpawnTimer = 0;
-      obstacleSpawnInterval = max(0.5, obstacleSpawnInterval - 0.05);
+
+      _increaseDifficultyOverTime();
     }
 
     if (powerUpSpawnTimer >= powerUpSpawnInterval) {
@@ -42,22 +83,61 @@ class GameManager extends Component {
     }
   }
 
-  void spawnObstacles() {
-    final normalObstacle = Obstacle(
-      position: Vector2(gameSize.x, _randomYPosition()),
-      size: Vector2(40, 40),
-      isForMirroredWorld: false,
-      speed: 200,
-    );
-    world.add(normalObstacle);
+  void _increaseDifficultyOverTime() {
+    double reductionAmount = 0.0;
+    double speedIncrease = 0.0;
 
-    final mirroredObstacle = Obstacle(
-      position: Vector2(gameSize.x, _randomYPosition()),
-      size: Vector2(40, 40),
-      isForMirroredWorld: true,
-      speed: 200,
-    );
-    world.add(mirroredObstacle);
+    switch (currentDifficulty) {
+      case "easy":
+        reductionAmount = 0.02;
+        speedIncrease = 1;
+        break;
+      case "medium":
+        reductionAmount = 0.03;
+        speedIncrease = 1.5;
+        break;
+      case "hard":
+        reductionAmount = 0.06;
+        speedIncrease = 2.0;
+        break;
+    }
+
+    obstacleSpawnInterval = max(0.8, obstacleSpawnInterval - reductionAmount);
+    baseObstacleSpeed = min(350.0, baseObstacleSpeed + speedIncrease);
+  }
+
+  void spawnObstacles() {
+    int numberOfObstacles = 1;
+
+    switch (currentDifficulty) {
+      case "easy":
+        numberOfObstacles = 1;
+        break;
+      case "medium":
+        numberOfObstacles = random.nextDouble() > 0.7 ? 1 : 1;
+        break;
+      case "hard":
+        numberOfObstacles = random.nextDouble() > 0.5 ? 2 : 1;
+        break;
+    }
+
+    for (int i = 0; i < numberOfObstacles; i++) {
+      final normalObstacle = Obstacle(
+        position: Vector2(gameSize.x, _randomYPosition()),
+        size: Vector2(40, 40),
+        isForMirroredWorld: false,
+        speed: baseObstacleSpeed,
+      );
+      world.add(normalObstacle);
+
+      final mirroredObstacle = Obstacle(
+        position: Vector2(gameSize.x, _randomYPosition()),
+        size: Vector2(40, 40),
+        isForMirroredWorld: true,
+        speed: baseObstacleSpeed,
+      );
+      world.add(mirroredObstacle);
+    }
   }
 
   void spawnPowerUp() {
