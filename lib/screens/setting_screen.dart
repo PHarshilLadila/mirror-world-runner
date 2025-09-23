@@ -393,33 +393,26 @@ class _SettingScreenState extends State<SettingScreen>
         SizedBox(height: 8),
 
         Container(
+          width: double.infinity,
           margin: EdgeInsets.only(top: 10),
           padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           decoration: BoxDecoration(
             color: getDifficultyColor(difficulty).withOpacity(0.2),
-            borderRadius: BorderRadius.circular(20),
+            borderRadius: BorderRadius.circular(12),
             border: Border.all(
               color: getDifficultyColor(difficulty).withOpacity(0.5),
               width: 1,
             ),
           ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(
-                Icons.info_outline,
+          child: Center(
+            child: Text(
+              "Current: ${getDifficultyText(difficulty)}",
+              style: TextStyle(
                 color: getDifficultyColor(difficulty),
-                size: 20,
+                fontWeight: FontWeight.bold,
+                fontSize: 16,
               ),
-              SizedBox(width: 8),
-              Text(
-                "Current: ${getDifficultyText(difficulty)}",
-                style: TextStyle(
-                  color: getDifficultyColor(difficulty),
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ],
+            ),
           ),
         ),
       ],
@@ -443,7 +436,7 @@ class _SettingScreenState extends State<SettingScreen>
                   )
                   : null,
           color: isSelected ? null : Colors.grey.shade800.withOpacity(0.5),
-          borderRadius: BorderRadius.circular(15),
+          borderRadius: BorderRadius.circular(12),
           border: Border.all(
             color: isSelected ? color : Colors.grey.shade600,
             width: isSelected ? 2 : 1,
@@ -475,7 +468,7 @@ class _SettingScreenState extends State<SettingScreen>
         width: double.infinity,
         decoration: BoxDecoration(
           gradient: gradient,
-          borderRadius: BorderRadius.circular(30),
+          borderRadius: BorderRadius.circular(12),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withOpacity(0.4),
@@ -490,7 +483,7 @@ class _SettingScreenState extends State<SettingScreen>
           child: Text(
             label,
             style: const TextStyle(
-              fontSize: 18,
+              fontSize: 16,
               fontWeight: FontWeight.bold,
               color: Colors.white,
               shadows: [
@@ -609,7 +602,7 @@ class _SettingScreenState extends State<SettingScreen>
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
           ),
-          borderRadius: BorderRadius.circular(22),
+          borderRadius: BorderRadius.circular(12),
         ),
         child: Padding(
           padding: const EdgeInsets.all(8.0),
@@ -622,7 +615,7 @@ class _SettingScreenState extends State<SettingScreen>
               Text(
                 text,
                 style: const TextStyle(
-                  fontSize: 18,
+                  fontSize: 14,
                   fontWeight: FontWeight.bold,
                   color: Colors.white,
                   shadows: [

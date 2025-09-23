@@ -11,11 +11,12 @@ class Player extends SpriteComponent with HasGameRef {
     required this.gameSize,
     required Vector2 position,
     required Vector2 size,
-  }) : super(position: position, size: size);
+  }) : super(position: position, size: size * 1);
 
   @override
   Future<void> onLoad() async {
     sprite = await gameRef.loadSprite('player.png');
+    size = size * 1;
   }
 
   void moveUp() {

@@ -24,7 +24,7 @@ class _MainMenuScreenState extends State<MainMenuScreen>
 
   Duration _lastElapsed = Duration.zero;
 
-  final numberOfParticle = kIsWeb ? 80 : 60;
+  final numberOfParticle = kIsWeb ? 60 : 50;
 
   @override
   void initState() {
@@ -158,7 +158,7 @@ class _MainMenuScreenState extends State<MainMenuScreen>
                     ),
                   ),
 
-                  const SizedBox(height: 40),
+                  const SizedBox(height: 70),
 
                   _buildHolographicButton(
                     context,
@@ -254,7 +254,7 @@ class _MainMenuScreenState extends State<MainMenuScreen>
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),
-          borderRadius: BorderRadius.circular(25),
+          borderRadius: BorderRadius.circular(12),
           boxShadow: [
             BoxShadow(
               color: colors[0].withOpacity(0.6),
@@ -300,7 +300,11 @@ class _MainMenuScreenState extends State<MainMenuScreen>
       child: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
-            colors: [Colors.deepPurple.shade800, Colors.indigo.shade900],
+            colors: [
+              Colors.black.withOpacity(0.85),
+              Colors.indigo.shade900,
+              Colors.purple.shade900,
+            ],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),
@@ -329,18 +333,18 @@ class _MainMenuScreenState extends State<MainMenuScreen>
             ),
             const SizedBox(height: 30),
             const Text(
-              '🌟 Control both characters simultaneously\n\n'
-              '🎯 Avoid obstacles in mirrored worlds\n\n'
-              '⚡ Collect power-ups for special abilities\n\n'
-              '👆 Drag anywhere to move both players\n\n'
-              '🎮 Use arrow keys for precise control\n\n'
+              '🌟 Control both characters simultaneously.\n\n'
+              '🎯 Avoid obstacles in mirrored worlds.\n\n'
+              '⚡ Collect power-ups for special abilities.\n\n'
+              '👆 Drag anywhere to move both players.\n\n'
+              '🎮 Use arrow keys for precise control.\n\n'
               '❤️ Survive as long as possible!',
               style: TextStyle(
                 color: Colors.white70,
                 fontSize: 16,
                 height: 1.5,
               ),
-              textAlign: TextAlign.center,
+              textAlign: TextAlign.start,
             ),
             const SizedBox(height: 25),
             AnimatedButton(
@@ -431,39 +435,6 @@ class _AnimatedButtonState extends State<AnimatedButton>
   }
 }
 
-// class Particle {
-//   double x = 0;
-//   double y = 0;
-//   double size = 0;
-//   double speed = 0;
-//   Color color = Colors.white;
-//   double opacity = 0;
-
-//   Particle() {
-//     reset();
-//   }
-
-//   void reset() {
-//     x = Random.nextDouble() * (kIsWeb ? double.infinity : 400);
-//     y = Random.nextDouble() * 1000;
-//     size = Random.nextDouble() * 3 + 1;
-//     speed = Random.nextDouble() * 50 + 20;
-//     opacity = Random.nextDouble() * 0.5 + 0.1;
-//     color = Colors.accents[Random.nextInt(Colors.accents.length)].withOpacity(
-//       opacity,
-//     );
-//   }
-
-//   void update(double dt) {
-//     y += speed * dt;
-//     if (y > 1000) {
-//       reset();
-//       y = 0;
-//     }
-//     x += math.sin(y * 0.01) * 0.5;
-//   }
-// }
-
 class Particle {
   double x = 0;
   double y = 0;
@@ -478,42 +449,32 @@ class Particle {
 
   void reset() {
     if (kIsWeb) {
-      // For web: Get the screen width using the window properties.
       x = Random.nextDouble() * 1800;
     } else {
-      // For non-web platforms, use a fixed value (e.g., 400).
       x = Random.nextDouble() * 400;
     }
 
-    // Random y between 0 and 1000
     y = Random.nextDouble() * 1000;
 
-    // Random size between 1 and 4
     size = Random.nextDouble() * 3 + 1;
 
-    // Random speed between 20 and 70
     speed = Random.nextDouble() * 50 + 20;
 
-    // Random opacity between 0.1 and 0.6
     opacity = Random.nextDouble() * 0.5 + 0.1;
 
-    // Random color from the accent colors
     color = Colors.accents[Random.nextInt(Colors.accents.length)].withOpacity(
       opacity,
     );
   }
 
   void update(double dt) {
-    // Move the particle down based on its speed.
     y += speed * dt;
 
-    // If the particle goes off the screen, reset it.
     if (y > 1000) {
       reset();
       y = 0;
     }
 
-    // Move the particle horizontally in a sinusoidal motion based on its y position.
     x += math.sin(y * 0.01) * 0.5;
   }
 }

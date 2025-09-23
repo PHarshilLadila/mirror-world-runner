@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+
 <head>
   <!--
     If you are serving your web app in a path other than the root, change the
@@ -27,12 +28,28 @@
   <link rel="apple-touch-icon" href="icons/Icon-192.png">
 
   <!-- Favicon -->
-  <link rel="icon" type="image/png" href="favicon.png"/>
+  <link rel="icon" type="image/png" href="favicon.png" />
 
   <title>mirror_world_runner</title>
   <link rel="manifest" href="manifest.json">
+  <style>
+    body {
+      cursor: url('assets/cursors/my_arrow.png') 0 0, auto;
+    }
+
+    /* Apply to all buttons */
+    button,
+    [role="button"],
+    .custom-cursor {
+      cursor: url('assets/cursors/my_arrow.png') 0 0, auto !important;
+    }
+  </style>
+
+
 </head>
+
 <body>
   <script src="flutter_bootstrap.js" async></script>
 </body>
+
 </html>
