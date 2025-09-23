@@ -32,16 +32,16 @@ Play the web build here:
 (Recommended: desktop for arrow-key control, mobile/tablet for touch/drag controls.)
 
 Main Screen  
-[![Main Screen Demo](https://github.com/PHarshilLadila/mirror-world-runner/blob/main/assets/images/demo/main_screen.png?raw=true)](https://github.com/PHarshilLadila/mirror-world-runner/blob/main/assets/images/demo/main_screen.png?raw=true)
+[![Main Screen Demo](https://raw.githubusercontent.com/PHarshilLadila/mirror-world-runner/main/assets/images/demo/main_screen.png)](https://raw.githubusercontent.com/PHarshilLadila/mirror-world-runner/main/assets/images/demo/main_screen.png)
 
 Game Screen  
-[![Game Screen Demo](https://github.com/PHarshilLadila/mirror-world-runner/blob/main/assets/images/demo/game_screen.png?raw=true)](https://github.com/PHarshilLadila/mirror-world-runner/blob/main/assets/images/demo/game_screen.png?raw=true)
+[![Game Screen Demo](https://raw.githubusercontent.com/PHarshilLadila/mirror-world-runner/main/assets/images/demo/game_screen.png)](https://raw.githubusercontent.com/PHarshilLadila/mirror-world-runner/main/assets/images/demo/game_screen.png)
 
-Setting Screen  
-[![Settings Screen Demo](https://github.com/PHarshilLadila/mirror-world-runner/blob/main/assets/images/demo/setting_screen.png?raw=true)](https://github.com/PHarshilLadila/mirror-world-runner/blob/main/assets/images/demo/setting_screen.png?raw=true)
+Settings Screen  
+[![Settings Screen Demo](https://raw.githubusercontent.com/PHarshilLadila/mirror-world-runner/main/assets/images/demo/setting_screen.png)](https://raw.githubusercontent.com/PHarshilLadila/mirror-world-runner/main/assets/images/demo/setting_screen.png)
 
 Information Screen  
-[![Information Screen Demo](https://github.com/PHarshilLadila/mirror-world-runner/blob/main/assets/images/demo/information.png?raw=true)](https://github.com/PHarshilLadila/mirror-world-runner/blob/main/assets/images/demo/information.png?raw=true)
+[![Information Screen Demo](https://raw.githubusercontent.com/PHarshilLadila/mirror-world-runner/main/assets/images/demo/information.png)](https://raw.githubusercontent.com/PHarshilLadila/mirror-world-runner/main/assets/images/demo/information.png)
 
 ---
 
