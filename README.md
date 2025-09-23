@@ -2,7 +2,7 @@
 
 **A fast-paced endless runner built with Flutter & Flame**
 
-Live demo: [https://mirror-world-runner-g8nw2osfu.vercel.app/](https://mirror-world-runner-g8nw2osfu.vercel.app/)
+Live demo: [https://mirror-world-runner-g8nw2osfu.vercel.app/](https://mirror-world-runner.vercel.app/)
 
 ---
 
@@ -27,7 +27,7 @@ This project is implemented using **Flutter** and the **Flame game engine**, and
 
 Play the web build here:
 
-**[https://mirror-world-runner-g8nw2osfu.vercel.app/](https://mirror-world-runner-g8nw2osfu.vercel.app/)**
+**[https://mirror-world-runner-g8nw2osfu.vercel.app/](https://mirror-world-runner.vercel.app/)**
 
 (Recommended: desktop for arrow-key control, mobile/tablet for touch/drag controls.)
 
