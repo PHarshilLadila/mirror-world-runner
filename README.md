@@ -109,7 +109,8 @@ The app will build and install to the connected device/emulator.
 * `flame` — game engine
 * `flutter` — UI framework
 * `shared_preferences` — save high scores and settings
-* `audioplayers` or `flame_audio` — sound effects & music
+* `flame_audio` — sound effects & music
+* `provider` — state management
 
 ---
 
