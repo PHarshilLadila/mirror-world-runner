@@ -1,10 +1,13 @@
 // ignore_for_file: deprecated_member_use
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:provider/provider.dart';
 import 'package:mirror_world_runner/providers/game_state.dart';
 import 'package:mirror_world_runner/screens/main_menu.dart';
 import 'package:mirror_world_runner/screens/game_screen.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class GameOverScreen extends StatefulWidget {
   const GameOverScreen({super.key});
@@ -14,175 +17,341 @@ class GameOverScreen extends StatefulWidget {
 }
 
 class _GameOverScreenState extends State<GameOverScreen>
-    with SingleTickerProviderStateMixin {
+    with TickerProviderStateMixin {
+  int timeTaken = 0;
+  late AnimationController _controller;
+  late Animation<double> _scaleAnimation;
+  late Animation<double> _fadeAnimation;
+  late Animation<Offset> _slideAnimation;
+  final List<Particle> _particles = [];
+  late Ticker _ticker;
+  final numberOfParticle = kIsWeb ? 60 : 50;
+  Duration _lastElapsed = Duration.zero;
+  final ValueNotifier<int> _particleNotifier = ValueNotifier<int>(0);
+
+  void getTotalTakenTime() async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    final data = preferences.getInt("lastGameTimeSeconds");
+    setState(() {
+      timeTaken = data ?? 0;
+    });
+  }
+
+  @override
+  void initState() {
+    getTotalTakenTime();
+    _controller = AnimationController(
+      duration: const Duration(milliseconds: 1000),
+      vsync: this,
+    );
+
+    _scaleAnimation = Tween<double>(
+      begin: 0.5,
+      end: 1.0,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.elasticOut));
+
+    _fadeAnimation = Tween<double>(
+      begin: 0.0,
+      end: 1.0,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
+
+    _slideAnimation = Tween<Offset>(
+      begin: const Offset(0, 0.5),
+      end: Offset.zero,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOutBack));
+
+    _controller.forward();
+    super.initState();
+
+    for (int i = 0; i < numberOfParticle; i++) {
+      _particles.add(Particle());
+    }
+
+    _ticker = createTicker((elapsed) {
+      final dt = (elapsed - _lastElapsed).inMicroseconds / 1e6;
+      _lastElapsed = elapsed;
+
+      for (var p in _particles) {
+        p.update(dt);
+      }
+
+      _particleNotifier.value++;
+    });
+    _ticker.start();
+  }
+
+  @override
+  void dispose() {
+    _ticker.dispose();
+
+    _controller.dispose();
+    super.dispose();
+  }
+
+  String takenTimeFormate(int seconds) {
+    final minutes = (seconds ~/ 60).toString().padLeft(2, '0');
+    final remainingSeconds = (seconds % 60).toString().padLeft(2, '0');
+    return '$minutes:$remainingSeconds';
+  }
+
   @override
   Widget build(BuildContext context) {
     final gameState = Provider.of<GameState>(context);
 
     return Scaffold(
       backgroundColor: Colors.transparent,
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
+      body: Stack(
         children: [
-          Center(
-            child: Dialog(
-              backgroundColor: Colors.transparent,
-              child: Container(
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [
-                      Colors.deepPurple.shade800.withOpacity(0.9),
-                      Colors.black87.withOpacity(0.9),
-                    ],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  ),
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                padding: const EdgeInsets.all(25),
-                width: 350,
-                height: 600,
-                child: Stack(
-                  children: [
-                    CustomPaint(
-                      painter: DialogBorderPainter(),
-                      size: Size(350, 600),
-                    ),
-
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Stack(
-                          alignment: Alignment.center,
+          Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [
+                  Colors.purple.shade900,
+                  Colors.indigo.shade900,
+                  Colors.black87,
+                ],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                stops: const [0.0, 0.5, 1.0],
+              ),
+            ),
+            child: Stack(
+              children: [
+                Center(
+                  child: ScaleTransition(
+                    scale: _scaleAnimation,
+                    child: FadeTransition(
+                      opacity: _fadeAnimation,
+                      child: Container(
+                        width: 380,
+                        height: 650,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Stack(
                           children: [
-                            Text(
-                              'Game Over',
-                              style: TextStyle(
-                                fontSize: 48,
-                                fontWeight: FontWeight.bold,
-                                foreground:
-                                    Paint()
-                                      ..style = PaintingStyle.stroke
-                                      ..strokeWidth = 4
-                                      ..color = Colors.purple.withOpacity(0.7),
+                            Container(
+                              margin: const EdgeInsets.all(2),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(12),
+                                border: Border.all(
+                                  color: Colors.white.withOpacity(0.3),
+                                  width: 1,
+                                ),
+                                gradient: LinearGradient(
+                                  colors: [
+                                    Colors.purple.shade800.withOpacity(0.9),
+                                    Colors.deepPurple.shade900.withOpacity(0.8),
+                                    Colors.black.withOpacity(0.9),
+                                  ],
+                                  begin: Alignment.topLeft,
+                                  end: Alignment.bottomRight,
+                                ),
                               ),
-                              textAlign: TextAlign.center,
                             ),
 
-                            // Inner text with gradient
-                            ShaderMask(
-                              shaderCallback:
-                                  (bounds) => const LinearGradient(
-                                    colors: [
-                                      Colors.red,
-                                      Colors.orange,
-                                      Colors.yellow,
-                                    ],
-                                    begin: Alignment.topLeft,
-                                    end: Alignment.bottomRight,
-                                  ).createShader(bounds),
-                              child: const Text(
-                                'Game Over',
-                                style: TextStyle(
-                                  fontSize: 48,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.white,
-                                ),
-                                textAlign: TextAlign.center,
+                            Padding(
+                              padding: const EdgeInsets.all(30),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  SlideTransition(
+                                    position: _slideAnimation,
+                                    child: Stack(
+                                      alignment: Alignment.center,
+                                      children: [
+                                        Text(
+                                          'GAME OVER',
+                                          style: TextStyle(
+                                            fontSize: 42,
+                                            fontWeight: FontWeight.w900,
+                                            foreground:
+                                                Paint()
+                                                  ..style = PaintingStyle.stroke
+                                                  ..strokeWidth = 8
+                                                  ..color = Colors.purpleAccent
+                                                      .withOpacity(0.5),
+                                            shadows: [
+                                              Shadow(
+                                                color: Colors.purpleAccent
+                                                    .withOpacity(0.5),
+                                                blurRadius: 30,
+                                              ),
+                                            ],
+                                          ),
+                                          textAlign: TextAlign.center,
+                                        ),
+
+                                        ShaderMask(
+                                          shaderCallback:
+                                              (bounds) => const LinearGradient(
+                                                colors: [
+                                                  Colors.red,
+                                                  Colors.orange,
+                                                  Colors.yellow,
+                                                  Colors.green,
+                                                  Colors.blue,
+                                                  Colors.purple,
+                                                ],
+                                                stops: [
+                                                  0.0,
+                                                  0.2,
+                                                  0.4,
+                                                  0.6,
+                                                  0.8,
+                                                  1.0,
+                                                ],
+                                                begin: Alignment.topLeft,
+                                                end: Alignment.bottomRight,
+                                              ).createShader(bounds),
+                                          child: const Text(
+                                            'GAME OVER',
+                                            style: TextStyle(
+                                              fontSize: 42,
+                                              fontWeight: FontWeight.w900,
+                                              color: Colors.white,
+                                              letterSpacing: 2,
+                                            ),
+                                            textAlign: TextAlign.center,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+
+                                  const SizedBox(height: 40),
+
+                                  SlideTransition(
+                                    position: _slideAnimation,
+                                    child: Container(
+                                      width: double.infinity,
+                                      padding: const EdgeInsets.all(25),
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(12),
+                                        gradient: LinearGradient(
+                                          colors: [
+                                            Colors.black12,
+                                            Colors.black12,
+                                          ],
+                                          begin: Alignment.topLeft,
+                                          end: Alignment.bottomRight,
+                                        ),
+
+                                        border: Border.all(
+                                          color: Colors.white.withOpacity(0.2),
+                                          width: 0.5,
+                                        ),
+                                      ),
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.start,
+                                        children: [
+                                          _buildStatItem(
+                                            Icons.emoji_events,
+                                            'SCORE',
+                                            gameState.score.toString(),
+                                            Colors.yellowAccent,
+                                          ),
+                                          const SizedBox(height: 8),
+                                          Divider(color: Colors.white38),
+                                          const SizedBox(height: 8),
+
+                                          _buildStatItem(
+                                            Icons.star,
+                                            'HIGH SCORE',
+                                            gameState.highScore.toString(),
+                                            Colors.orangeAccent,
+                                          ),
+                                          const SizedBox(height: 8),
+                                          Divider(color: Colors.white38),
+                                          const SizedBox(height: 8),
+
+                                          _buildStatItem(
+                                            Icons.timer,
+                                            'TIME TAKEN',
+                                            takenTimeFormate(timeTaken),
+                                            Colors.greenAccent,
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+
+                                  const SizedBox(height: 50),
+
+                                  SlideTransition(
+                                    position: _slideAnimation,
+                                    child: Column(
+                                      children: [
+                                        buildAnimatedButton(
+                                          label: "PLAY AGAIN",
+                                          colors: [
+                                            Colors.purpleAccent,
+                                            Colors.deepPurple,
+                                          ],
+                                          icon: Icons.replay,
+                                          onPressed: () {
+                                            gameState.resetGame();
+                                            Navigator.pushAndRemoveUntil(
+                                              context,
+                                              MaterialPageRoute(
+                                                builder:
+                                                    (context) =>
+                                                        const GameScreen(),
+                                              ),
+                                              (route) => false,
+                                            );
+                                          },
+                                        ),
+
+                                        const SizedBox(height: 20),
+
+                                        buildAnimatedButton(
+                                          label: "MAIN MENU",
+                                          colors: [
+                                            Colors.blueAccent,
+                                            Colors.blue.shade800,
+                                          ],
+                                          icon: Icons.home,
+                                          onPressed: () {
+                                            Navigator.pushAndRemoveUntil(
+                                              context,
+                                              MaterialPageRoute(
+                                                builder:
+                                                    (context) =>
+                                                        const MainMenuScreen(),
+                                              ),
+                                              (route) => false,
+                                            );
+                                          },
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
                           ],
                         ),
-                        const SizedBox(height: 25),
-
-                        ClipPath(
-                          clipper: ScoreContainerClipper(),
-                          child: Container(
-                            decoration: BoxDecoration(
-                              gradient: LinearGradient(
-                                colors: [
-                                  Colors.blue.shade900,
-                                  Colors.purple.shade700,
-                                ],
-                                begin: Alignment.topLeft,
-                                end: Alignment.bottomRight,
-                              ),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.blueAccent.withOpacity(0.5),
-                                  blurRadius: 10,
-                                  spreadRadius: 2,
-                                  offset: Offset(0, 3),
-                                ),
-                              ],
-                            ),
-                            padding: const EdgeInsets.symmetric(
-                              vertical: 20,
-                              horizontal: 30,
-                            ),
-                            child: Column(
-                              children: [
-                                Text(
-                                  'Score: ${gameState.score}',
-                                  style: const TextStyle(
-                                    fontSize: 28,
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                  textAlign: TextAlign.center,
-                                ),
-                                const SizedBox(height: 10),
-                                Text(
-                                  'High Score: ${gameState.highScore}',
-                                  style: const TextStyle(
-                                    fontSize: 20,
-                                    color: Colors.yellowAccent,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                  textAlign: TextAlign.center,
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                        const SizedBox(height: 40),
-
-                        GradientButton(
-                          label: "Play Again",
-                          colors: [Colors.purpleAccent, Colors.deepPurple],
-                          onPressed: () {
-                            gameState.resetGame();
-                            Navigator.pushAndRemoveUntil(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => const GameScreen(),
-                              ),
-                              (route) => false,
-                            );
-                          },
-                        ),
-
-                        const SizedBox(height: 20),
-
-                        // Main Menu Button
-                        GradientButton(
-                          label: "Main Menu",
-                          colors: [Colors.blueAccent, Colors.blue],
-                          onPressed: () {
-                            Navigator.pushAndRemoveUntil(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => const MainMenuScreen(),
-                              ),
-                              (route) => false,
-                            );
-                          },
-                        ),
-                      ],
+                      ),
                     ),
-                  ],
+                  ),
                 ),
+              ],
+            ),
+          ),
+          IgnorePointer(
+            child: RepaintBoundary(
+              child: ValueListenableBuilder<int>(
+                valueListenable: _particleNotifier,
+                builder: (context, _, __) {
+                  return CustomPaint(
+                    painter: ParticlePainter(_particles),
+                    size: Size.infinite,
+                  );
+                },
               ),
             ),
           ),
@@ -190,63 +359,98 @@ class _GameOverScreenState extends State<GameOverScreen>
       ),
     );
   }
-}
 
-class GradientButton extends StatelessWidget {
-  final String label;
-  final List<Color> colors;
-  final VoidCallback onPressed;
-  final IconData? icon;
-
-  const GradientButton({
-    super.key,
-    required this.label,
-    required this.colors,
-    required this.onPressed,
-    this.icon,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return AnimatedButton(
-      onTap: () {},
-      child: Container(
-        margin: EdgeInsets.symmetric(horizontal: 12),
-        width: double.infinity,
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: colors,
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-          ),
-          borderRadius: BorderRadius.circular(30),
-        ),
-        child: ElevatedButton(
-          onPressed: onPressed,
-          style: ElevatedButton.styleFrom(
-            padding: const EdgeInsets.symmetric(vertical: 4),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(30),
+  Widget _buildStatItem(
+    IconData icon,
+    String title,
+    String value,
+    Color color,
+  ) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Icon(icon, color: color, size: 24),
+        const SizedBox(width: 12),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              title,
+              style: TextStyle(
+                fontSize: 14,
+                color: Colors.white.withOpacity(0.8),
+                fontWeight: FontWeight.w600,
+                letterSpacing: 1,
+              ),
             ),
-            backgroundColor: Colors.transparent,
-            shadowColor: Colors.transparent,
-            elevation: 0,
-          ),
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  label,
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                  ),
-                  textAlign: TextAlign.center,
+            Text(
+              value,
+              style: TextStyle(
+                fontSize: 20,
+                color: color,
+                fontWeight: FontWeight.bold,
+                shadows: [
+                  Shadow(color: color.withOpacity(0.5), blurRadius: 10),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget buildAnimatedButton({
+    required String label,
+    required List<Color> colors,
+    required VoidCallback onPressed,
+    required IconData icon,
+  }) {
+    return MouseRegion(
+      cursor: SystemMouseCursors.click,
+      child: TweenAnimationBuilder<double>(
+        duration: const Duration(milliseconds: 200),
+        tween: Tween(begin: 1.0, end: 1.0),
+        builder: (context, scale, child) {
+          return Transform.scale(scale: scale, child: child);
+        },
+        child: GestureDetector(
+          onTapDown: (_) {},
+          onTap: onPressed,
+          child: Container(
+            width: double.infinity,
+            height: 45,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(12),
+              gradient: LinearGradient(
+                colors: colors,
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: colors.first.withOpacity(0.4),
+                  blurRadius: 15,
+                  spreadRadius: 2,
+                  offset: const Offset(0, 5),
                 ),
               ],
+              border: Border.all(
+                color: Colors.white.withOpacity(0.2),
+                width: 1,
+              ),
+            ),
+            child: Center(
+              child: Text(
+                label,
+                style: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                  letterSpacing: 1.2,
+                ),
+              ),
             ),
           ),
         ),
@@ -255,67 +459,33 @@ class GradientButton extends StatelessWidget {
   }
 }
 
-class DialogBorderPainter extends CustomPainter {
-  @override
-  void paint(Canvas canvas, Size size) {
-    final paint =
-        Paint()
-          ..color = Colors.purpleAccent
-          ..style = PaintingStyle.stroke
-          ..strokeWidth = 2.0
-          ..shader = LinearGradient(
-            colors: [Colors.purpleAccent, Colors.blueAccent],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-          ).createShader(Rect.fromLTWH(0, 0, size.width, size.height));
+class AnimatedButton extends StatefulWidget {
+  final VoidCallback onTap;
+  final Widget child;
 
-    final path =
-        Path()
-          ..moveTo(20, 0)
-          ..lineTo(size.width - 20, 0)
-          ..quadraticBezierTo(size.width, 0, size.width, 20)
-          ..lineTo(size.width, size.height - 20)
-          ..quadraticBezierTo(
-            size.width,
-            size.height,
-            size.width - 20,
-            size.height,
-          )
-          ..lineTo(20, size.height)
-          ..quadraticBezierTo(0, size.height, 0, size.height - 20)
-          ..lineTo(0, 20)
-          ..quadraticBezierTo(0, 0, 20, 0)
-          ..close();
-
-    canvas.drawPath(path, paint);
-  }
+  const AnimatedButton({super.key, required this.onTap, required this.child});
 
   @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
+  State<AnimatedButton> createState() => _AnimatedButtonState();
 }
 
-class ScoreContainerClipper extends CustomClipper<Path> {
-  @override
-  Path getClip(Size size) {
-    final path = Path();
-    path.moveTo(20, 0);
-    path.lineTo(size.width - 20, 0);
-    path.quadraticBezierTo(size.width, 0, size.width, 20);
-    path.lineTo(size.width, size.height - 20);
-    path.quadraticBezierTo(
-      size.width,
-      size.height,
-      size.width - 20,
-      size.height,
-    );
-    path.lineTo(20, size.height);
-    path.quadraticBezierTo(0, size.height, 0, size.height - 20);
-    path.lineTo(0, 20);
-    path.quadraticBezierTo(0, 0, 20, 0);
-    path.close();
-    return path;
-  }
+class _AnimatedButtonState extends State<AnimatedButton> {
+  bool _isPressed = false;
 
   @override
-  bool shouldReclip(covariant CustomClipper<Path> oldClipper) => false;
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTapDown: (_) => setState(() => _isPressed = true),
+      onTapUp: (_) => setState(() => _isPressed = false),
+      onTapCancel: () => setState(() => _isPressed = false),
+      onTap: widget.onTap,
+      child: Transform.scale(
+        scale: _isPressed ? 0.95 : 1.0,
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 100),
+          child: widget.child,
+        ),
+      ),
+    );
+  }
 }

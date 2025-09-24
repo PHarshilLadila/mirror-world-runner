@@ -54,8 +54,8 @@ class GameManager extends Component {
         baseObstacleSpeed = 140.0;
         break;
       case "hard":
-        obstacleSpawnInterval = 2;
-        baseObstacleSpeed = 200.0;
+        obstacleSpawnInterval = 3.5;
+        baseObstacleSpeed = 160.0;
         break;
       default:
         obstacleSpawnInterval = 3.0;
@@ -141,10 +141,13 @@ class GameManager extends Component {
   }
 
   void spawnPowerUp() {
+    final types = PowerUpType.values;
+    final chosen = types[random.nextInt(types.length)];
+
     final powerUp = PowerUp(
       position: Vector2(gameSize.x, _randomYPosition()),
       size: Vector2(30, 30),
-      type: PowerUpType.values[random.nextInt(PowerUpType.values.length)],
+      type: chosen,
       speed: 150,
     );
     world.add(powerUp);

@@ -109,10 +109,12 @@ class _MainMenuScreenState extends State<MainMenuScreen>
                   Align(
                     alignment: Alignment.center,
                     child: Text(
-                      'MIRROR-WORLD',
+                      'MIRROR WORLD',
+                      textAlign: TextAlign.center,
                       style: TextStyle(
                         fontSize: 38,
                         fontWeight: FontWeight.w900,
+
                         foreground:
                             Paint()
                               ..shader = const LinearGradient(
@@ -163,12 +165,9 @@ class _MainMenuScreenState extends State<MainMenuScreen>
                   _buildHolographicButton(
                     context,
                     label: 'START GAME',
-                    colors: const [
-                      Colors.blueAccent,
-                      Colors.lightBlueAccent,
-                      Colors.cyan,
-                    ],
+                    colors: const [Colors.blue, Colors.cyanAccent],
                     onTap: () {
+                      debugPrint("START GAME");
                       Provider.of<GameState>(
                         context,
                         listen: false,
@@ -187,8 +186,9 @@ class _MainMenuScreenState extends State<MainMenuScreen>
                   _buildHolographicButton(
                     context,
                     label: 'HOW TO PLAY',
-                    colors: const [Colors.greenAccent, Colors.tealAccent],
+                    colors: const [Colors.green, Colors.lightGreenAccent],
                     onTap: () {
+                      debugPrint("HOW TO PLAY");
                       showDialog(
                         context: context,
                         builder: (context) => _buildHowToPlayDialog(),
@@ -201,12 +201,9 @@ class _MainMenuScreenState extends State<MainMenuScreen>
                   _buildHolographicButton(
                     context,
                     label: 'SETTINGS',
-                    colors: const [
-                      Colors.purpleAccent,
-                      Colors.pinkAccent,
-                      Colors.redAccent,
-                    ],
+                    colors: const [Colors.purple, Colors.pinkAccent],
                     onTap: () {
+                      debugPrint("SETTINGS");
                       Navigator.push(
                         context,
                         MaterialPageRoute(
@@ -301,7 +298,7 @@ class _MainMenuScreenState extends State<MainMenuScreen>
         decoration: BoxDecoration(
           gradient: LinearGradient(
             colors: [
-              Colors.black.withOpacity(0.85),
+              Colors.black.withOpacity(0.45),
               Colors.indigo.shade900,
               Colors.purple.shade900,
             ],
@@ -356,14 +353,14 @@ class _MainMenuScreenState extends State<MainMenuScreen>
                 ),
                 decoration: BoxDecoration(
                   gradient: const LinearGradient(
-                    colors: [Colors.greenAccent, Colors.tealAccent],
+                    colors: [Colors.green, Colors.lightGreenAccent],
                   ),
-                  borderRadius: BorderRadius.circular(20),
+                  borderRadius: BorderRadius.circular(12),
                 ),
                 child: const Text(
                   'GOT IT!',
                   style: TextStyle(
-                    color: Colors.black87,
+                    color: Colors.white,
                     fontWeight: FontWeight.bold,
                     fontSize: 16,
                   ),

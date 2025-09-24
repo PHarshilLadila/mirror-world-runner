@@ -1,17 +1,19 @@
 // ignore_for_file: deprecated_member_use
 
+import 'dart:async';
 import 'dart:math' as math;
 
 import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:mirror_world_runner/screens/setting_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:mirror_world_runner/providers/game_state.dart';
+
 import 'package:mirror_world_runner/game/mirror_world_game.dart';
-import 'package:mirror_world_runner/screens/pause_menu.dart';
+import 'package:mirror_world_runner/providers/game_state.dart';
 import 'package:mirror_world_runner/screens/game_over.dart';
+import 'package:mirror_world_runner/screens/pause_menu.dart';
+import 'package:mirror_world_runner/screens/setting_screen.dart';
 
 class GameScreen extends StatefulWidget {
   const GameScreen({super.key});
@@ -29,6 +31,9 @@ class _GameScreenState extends State<GameScreen> {
 
   Offset? _dragStartPosition;
   bool _isDragging = false;
+
+  Timer? _timer;
+  int _elapsedSeconds = 0;
 
   @override
   void initState() {
@@ -49,6 +54,26 @@ class _GameScreenState extends State<GameScreen> {
 
       final gameState = Provider.of<GameState>(context, listen: false);
       game = MirrorWorldGame(gameState: gameState, initialSpeed: _moveSpeed);
+
+      _startTimer(gameState);
+    });
+  }
+
+  void _startTimer(GameState gameState) {
+    _elapsedSeconds = 0;
+
+    _timer = Timer.periodic(const Duration(seconds: 1), (timer) async {
+      if (!gameState.isPaused && !gameState.isGameOver) {
+        setState(() {
+          _elapsedSeconds++;
+        });
+      }
+
+      if (gameState.isGameOver) {
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setInt('lastGameTimeSeconds', _elapsedSeconds);
+        timer.cancel();
+      }
     });
   }
 
@@ -75,6 +100,7 @@ class _GameScreenState extends State<GameScreen> {
   @override
   void dispose() {
     focusNode.dispose();
+    _timer?.cancel();
     super.dispose();
   }
 
@@ -194,7 +220,7 @@ class _GameScreenState extends State<GameScreen> {
               child: Stack(
                 children: [
                   GameWidget(game: game!),
-                  _buildHUD(context),
+                  _buildHUD(context, gameState),
                   _buildControlButtons(),
                 ],
               ),
@@ -205,15 +231,17 @@ class _GameScreenState extends State<GameScreen> {
     );
   }
 
-  Widget _buildHUD(BuildContext context) {
-    return Consumer<GameState>(
-      builder: (context, gameState, child) {
-        return Positioned(
-          top: 40,
-          left: 20,
-          right: 20,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  Widget _buildHUD(BuildContext context, GameState gameState) {
+    return Positioned(
+      top: 40,
+      left: 20,
+      right: 20,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
                 'Score: ${gameState.score}',
@@ -223,33 +251,42 @@ class _GameScreenState extends State<GameScreen> {
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              Row(
-                children: List.generate(
-                  5,
-                  (index) => Icon(
-                    Icons.favorite,
-                    color: index < gameState.lives ? Colors.red : Colors.grey,
-                    size: 26,
-                  ),
+              SizedBox(height: 8),
+              Text(
+                'Time: ${takenTimeFormate(_elapsedSeconds)}',
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
                 ),
               ),
-              if (!gameState.isGameOver)
-                Row(
-                  children: [
-                    IconButton(
-                      icon: const Icon(
-                        Icons.settings,
-                        color: Colors.white,
-                        size: 30,
-                      ),
-                      onPressed: _showSettings,
-                    ),
-                  ],
-                ),
             ],
           ),
-        );
-      },
+          Row(
+            children: List.generate(
+              5,
+              (index) => Icon(
+                Icons.favorite,
+                color: index < gameState.lives ? Colors.red : Colors.grey,
+                size: 26,
+              ),
+            ),
+          ),
+          if (!gameState.isGameOver)
+            Row(
+              children: [
+                IconButton(
+                  icon: const Icon(
+                    Icons.settings,
+                    color: Colors.white,
+                    size: 30,
+                  ),
+                  onPressed: _showSettings,
+                ),
+              ],
+            ),
+        ],
+      ),
     );
   }
 
@@ -343,4 +380,10 @@ class _GameScreenState extends State<GameScreen> {
       },
     );
   }
+}
+
+String takenTimeFormate(int totalSeconds) {
+  final minutes = totalSeconds ~/ 60;
+  final seconds = totalSeconds % 60;
+  return '${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}';
 }

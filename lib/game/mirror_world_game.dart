@@ -38,11 +38,7 @@ class MirrorWorldGame extends FlameGame
   Future<void> onLoad() async {
     await super.onLoad();
 
-    // Load sound effects
-    await FlameAudio.audioCache.loadAll([
-      'bomb.mp3',
-      // 'powerup.mp3'
-    ]);
+    await FlameAudio.audioCache.loadAll(['bomb.mp3']);
 
     gameWorld = GameWorld();
     add(gameWorld);
@@ -72,16 +68,13 @@ class MirrorWorldGame extends FlameGame
         gameState.decreaseLife();
       },
       onPowerUpCollected: (PowerUpType type) {
-        switch (type) {
-          case PowerUpType.speedBoost:
-            break;
-          case PowerUpType.shield:
-            break;
-          case PowerUpType.scoreMultiplier:
-            gameState.incrementScore(100);
-            // Play powerup sound
-            // FlameAudio.play('powerup.mp3', volume: 0.7);
-            break;
+        if (type == PowerUpType.extraLife) {
+          if (gameState.lives < 5) {
+            gameState.increaseLife();
+          }
+        } else {
+          normalPlayer.activatePowerUp();
+          mirroredPlayer.activatePowerUp();
         }
       },
     );
@@ -116,6 +109,9 @@ class MirrorWorldGame extends FlameGame
 
       _applySmoothMovement(dt);
 
+      normalPlayer.updatePowerUp(dt);
+      mirroredPlayer.updatePowerUp(dt);
+
       _checkCollisions();
     }
   }
@@ -127,7 +123,6 @@ class MirrorWorldGame extends FlameGame
       final moveY = _targetDy * moveDistance;
 
       _movePlayer(normalPlayer, moveX, moveY);
-
       _movePlayer(mirroredPlayer, moveX, moveY);
     }
   }
@@ -189,12 +184,16 @@ class MirrorWorldGame extends FlameGame
 
     gameWorld.add(boom);
 
-    // Play explosion sound
     FlameAudio.play('bomb.mp3', volume: 0.8);
 
     Vibration.vibrate(duration: 100);
 
-    gameState.decreaseLife();
+    if (player.isPoweredUp) {
+      player.registerPowerUpHit();
+    } else {
+      gameState.decreaseLife();
+    }
+
     obstacle.removeFromParent();
   }
 
