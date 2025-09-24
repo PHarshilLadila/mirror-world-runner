@@ -14,9 +14,10 @@ Key features:
 
 * 🌟 Control both characters at the same time
 * 🎯 Synchronized but mirrored obstacle challenges
-* ⚡ Multiple power-ups that change gameplay
+* ⚡ Power-ups: collect star-shaped items to gain 3 obstacle-avoid chances for 5 seconds
+* ❤️ Lives: collect heart-shaped items to increase lives (max 5 if none left)
 * 👆 Drag anywhere to move both players simultaneously
-* 🎮 Arrow keys for precise control (desktop)
+* 🎮 Arrow keys for precise control (desktopapp and web app)
 * ❤️ Simple, addictive survival gameplay
 
 This project is implemented using **Flutter** and the **Flame game engine**, and is built to run on **Flutter Web** and as a **mobile Flutter app**.
@@ -36,6 +37,9 @@ Main Screen
 
 Game Screen  
 [![Game Screen Demo](https://raw.githubusercontent.com/PHarshilLadila/mirror-world-runner/main/assets/images/demo/game_screen.png)](https://raw.githubusercontent.com/PHarshilLadila/mirror-world-runner/main/assets/images/demo/game_screen.png)
+
+Game Over Screen
+[![Game Over Screen](https://raw.githubusercontent.com/PHarshilLadila/mirror-world-runner/main/assets/images/demo/game_over.png)](https://raw.githubusercontent.com/PHarshilLadila/mirror-world-runner/main/assets/images/demo/game_over.png)
 
 Settings Screen  
 [![Settings Screen Demo](https://raw.githubusercontent.com/PHarshilLadila/mirror-world-runner/main/assets/images/demo/setting_screen.png)](https://raw.githubusercontent.com/PHarshilLadila/mirror-world-runner/main/assets/images/demo/setting_screen.png)
