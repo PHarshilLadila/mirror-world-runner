@@ -1,7 +1,8 @@
 {
   "name": "Mirror World Runner",
   "short_name": "Mirror World Runner",
-  "start_url": ".",
+  "start_url": "/",
+  "scope": "/",
   "display": "standalone",
   "background_color": "#0175C2",
   "theme_color": "#0175C2",

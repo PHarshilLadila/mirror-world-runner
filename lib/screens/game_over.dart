@@ -160,28 +160,6 @@ class _GameOverScreenState extends State<GameOverScreen>
                                     child: Stack(
                                       alignment: Alignment.center,
                                       children: [
-                                        Text(
-                                          'GAME OVER',
-                                          style: TextStyle(
-                                            fontSize: 42,
-                                            fontWeight: FontWeight.w900,
-                                            foreground:
-                                                Paint()
-                                                  ..style = PaintingStyle.stroke
-                                                  ..strokeWidth = 8
-                                                  ..color = Colors.purpleAccent
-                                                      .withOpacity(0.5),
-                                            shadows: [
-                                              Shadow(
-                                                color: Colors.purpleAccent
-                                                    .withOpacity(0.5),
-                                                blurRadius: 30,
-                                              ),
-                                            ],
-                                          ),
-                                          textAlign: TextAlign.center,
-                                        ),
-
                                         ShaderMask(
                                           shaderCallback:
                                               (bounds) => const LinearGradient(
@@ -207,10 +185,9 @@ class _GameOverScreenState extends State<GameOverScreen>
                                           child: const Text(
                                             'GAME OVER',
                                             style: TextStyle(
-                                              fontSize: 42,
+                                              fontSize: 40,
                                               fontWeight: FontWeight.w900,
                                               color: Colors.white,
-                                              letterSpacing: 2,
                                             ),
                                             textAlign: TextAlign.center,
                                           ),
