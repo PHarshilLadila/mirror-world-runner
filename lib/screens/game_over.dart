@@ -3,6 +3,8 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:mirror_world_runner/widgets/particle_painter.dart';
+import 'package:mirror_world_runner/widgets/particles.dart';
 import 'package:provider/provider.dart';
 import 'package:mirror_world_runner/providers/game_state.dart';
 import 'package:mirror_world_runner/screens/main_menu.dart';
@@ -23,7 +25,7 @@ class _GameOverScreenState extends State<GameOverScreen>
   late Animation<double> _scaleAnimation;
   late Animation<double> _fadeAnimation;
   late Animation<Offset> _slideAnimation;
-  final List<Particle> _particles = [];
+  final List<Particles> _particles = [];
   late Ticker _ticker;
   final numberOfParticle = kIsWeb ? 60 : 50;
   Duration _lastElapsed = Duration.zero;
@@ -64,7 +66,7 @@ class _GameOverScreenState extends State<GameOverScreen>
     super.initState();
 
     for (int i = 0; i < numberOfParticle; i++) {
-      _particles.add(Particle());
+      _particles.add(Particles());
     }
 
     _ticker = createTicker((elapsed) {
@@ -430,37 +432,6 @@ class _GameOverScreenState extends State<GameOverScreen>
               ),
             ),
           ),
-        ),
-      ),
-    );
-  }
-}
-
-class AnimatedButton extends StatefulWidget {
-  final VoidCallback onTap;
-  final Widget child;
-
-  const AnimatedButton({super.key, required this.onTap, required this.child});
-
-  @override
-  State<AnimatedButton> createState() => _AnimatedButtonState();
-}
-
-class _AnimatedButtonState extends State<AnimatedButton> {
-  bool _isPressed = false;
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTapDown: (_) => setState(() => _isPressed = true),
-      onTapUp: (_) => setState(() => _isPressed = false),
-      onTapCancel: () => setState(() => _isPressed = false),
-      onTap: widget.onTap,
-      child: Transform.scale(
-        scale: _isPressed ? 0.95 : 1.0,
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 100),
-          child: widget.child,
         ),
       ),
     );

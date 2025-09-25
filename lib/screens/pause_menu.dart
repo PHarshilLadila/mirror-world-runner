@@ -1,6 +1,7 @@
 // ignore_for_file: deprecated_member_use
 
 import 'package:flutter/material.dart';
+import 'package:mirror_world_runner/widgets/particles.dart';
 import 'package:provider/provider.dart';
 import 'package:mirror_world_runner/providers/game_state.dart';
 import 'package:mirror_world_runner/screens/main_menu.dart';
@@ -18,7 +19,7 @@ class _PauseMenuState extends State<PauseMenu>
   late Animation<double> _scaleAnimation;
   late Animation<double> _fadeAnimation;
 
-  final List<Particle> _particles = [];
+  final List<Particles> _particles = [];
 
   @override
   void initState() {

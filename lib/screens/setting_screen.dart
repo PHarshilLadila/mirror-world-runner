@@ -5,6 +5,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:mirror_world_runner/providers/game_state.dart';
 import 'package:mirror_world_runner/screens/main_menu.dart';
+import 'package:mirror_world_runner/widgets/custom_slider.dart';
+import 'package:mirror_world_runner/widgets/custom_toast.dart';
+import 'package:mirror_world_runner/widgets/difficulty_button.dart';
+import 'package:mirror_world_runner/widgets/gradient_button.dart';
+import 'package:mirror_world_runner/widgets/holographic_button.dart';
+import 'package:mirror_world_runner/widgets/particle_painter.dart';
+import 'package:mirror_world_runner/widgets/particles.dart';
+import 'package:mirror_world_runner/widgets/toggle_button.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -41,7 +49,7 @@ class _SettingScreenState extends State<SettingScreen>
     super.initState();
 
     for (int i = 0; i < numberOfParticle; i++) {
-      _particles.add(Particle());
+      _particles.add(Particles());
     }
 
     _ticker = createTicker((elapsed) {
@@ -116,7 +124,7 @@ class _SettingScreenState extends State<SettingScreen>
     }
   }
 
-  final List<Particle> _particles = [];
+  final List<Particles> _particles = [];
 
   @override
   Widget build(BuildContext context) {
@@ -208,17 +216,19 @@ class _SettingScreenState extends State<SettingScreen>
 
               Column(
                 children: [
-                  _buildToggleSetting(
-                    "Sound",
-                    enableSound,
-                    Icons.music_note,
-                    (value) => setState(() => enableSound = value),
+                  ToggleButton(
+                    title: "Sound",
+                    value: enableSound,
+                    icon: Icons.music_note,
+                    onChanged: (value) => setState(() => enableSound = value),
                   ),
-                  _buildToggleSetting(
-                    "Notifications",
-                    enableNotifications,
-                    Icons.notifications,
-                    (value) => setState(() => enableNotifications = value),
+
+                  ToggleButton(
+                    title: "Notifications",
+                    value: enableNotifications,
+                    icon: Icons.notifications,
+                    onChanged:
+                        (value) => setState(() => enableNotifications = value),
                   ),
                 ],
               ),
@@ -226,50 +236,52 @@ class _SettingScreenState extends State<SettingScreen>
               const SizedBox(height: 20),
               Divider(color: Colors.white24, thickness: 1),
               const SizedBox(height: 20),
-
-              _buildSliderSetting(
-                "Movement Speed",
-                movementSpeed,
-                1,
-                10,
-                Icons.speed,
-                Colors.cyanAccent,
-                false,
-                (value) => setState(() => movementSpeed = value),
+              CustomSlider(
+                title: "Movement Speed",
+                value: movementSpeed,
+                min: 0,
+                max: 10,
+                icon: Icons.music_note,
+                color: Colors.cyanAccent,
+                isDisabled: false,
+                onChanged: (value) => setState(() => movementSpeed = value),
               ),
+
               const SizedBox(height: 20),
               enableSound == true
-                  ? _buildSliderSetting(
-                    "Sound Volume",
-                    soundVolume,
-                    0,
-                    10,
-                    Icons.volume_up,
-                    Colors.pinkAccent,
-                    false,
-                    (value) => setState(() {
-                      soundVolume = value;
-                    }),
+                  ? CustomSlider(
+                    title: "Sound Volume",
+                    value: soundVolume,
+                    min: 0,
+                    max: 10,
+                    icon: Icons.volume_up,
+                    color: Colors.pinkAccent,
+                    isDisabled: false,
+                    onChanged:
+                        (value) => setState(() {
+                          soundVolume = value;
+                        }),
                   )
                   : GestureDetector(
                     onTap: () {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text("Please enable the sound first"),
-                        ),
+                      CustomToast.show(
+                        context,
+                        message: "Please enable the sound first",
+                        type: GameToastType.error,
                       );
                     },
-                    child: _buildSliderSetting(
-                      "Sound Volume",
-                      soundVolume,
-                      0,
-                      10,
-                      Icons.volume_up,
-                      Colors.pinkAccent,
-                      true,
-                      (value) => setState(() {
-                        // soundVolume = value;
-                      }),
+                    child: CustomSlider(
+                      title: "Sound Volume",
+                      value: soundVolume,
+                      min: 0,
+                      max: 10,
+                      icon: Icons.volume_up,
+                      color: Colors.pinkAccent,
+                      isDisabled: true,
+                      onChanged:
+                          (value) => setState(() {
+                            // soundVolume = value;
+                          }),
                     ),
                   ),
               const SizedBox(height: 20),
@@ -284,10 +296,12 @@ class _SettingScreenState extends State<SettingScreen>
                   : Row(
                     children: [
                       Expanded(
-                        child: _buildGradientButton(
-                          label: 'Resume',
+                        child: GradientButton(
+                          label: "Resume",
                           gradient: const LinearGradient(
                             colors: [Color(0xFF00C6FF), Color(0xFF0072FF)],
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
                           ),
                           onTap: () {
                             Provider.of<GameState>(
@@ -298,13 +312,16 @@ class _SettingScreenState extends State<SettingScreen>
                           },
                         ),
                       ),
+
                       const SizedBox(width: 12),
 
                       Expanded(
-                        child: _buildGradientButton(
-                          label: 'Main Menu',
+                        child: GradientButton(
+                          label: "Main Menu",
                           gradient: const LinearGradient(
                             colors: [Color(0xFF0072FF), Color(0xFF00C6FF)],
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
                           ),
                           onTap: () {
                             Navigator.pushAndRemoveUntil(
@@ -325,21 +342,22 @@ class _SettingScreenState extends State<SettingScreen>
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   Expanded(
-                    child: _buildActionButton(
-                      "CANCEL",
-                      Icons.close_rounded,
-                      Color(0xFFFF4E50),
-                      () => Navigator.pop(context),
+                    child: HolographicButton(
+                      verticalPadding: 12,
+                      label: "CANCEL",
+                      fontSize: 13,
+                      colors: const [Colors.deepOrange, Colors.red],
+                      onTap: () => Navigator.pop(context),
                     ),
                   ),
                   SizedBox(width: 12),
-
                   Expanded(
-                    child: _buildActionButton(
-                      "APPLY",
-                      Icons.check_circle_rounded,
-                      Color(0xFF56ab2f),
-                      _applySettings,
+                    child: HolographicButton(
+                      verticalPadding: 12,
+                      label: "APPLY",
+                      fontSize: 13,
+                      colors: const [Color(0xFF56ab2f), Color(0xFF56ab2f)],
+                      onTap: _applySettings,
                     ),
                   ),
                 ],
@@ -374,19 +392,39 @@ class _SettingScreenState extends State<SettingScreen>
         Row(
           children: [
             Expanded(
-              child: _buildDifficultyButton("Easy", "easy", Colors.greenAccent),
-            ),
-            SizedBox(width: 12),
-            Expanded(
-              child: _buildDifficultyButton(
-                "Medium",
-                "medium",
-                Colors.orangeAccent,
+              child: DifficultyButton(
+                label: "Easy",
+                value: "easy",
+                selectedValue: difficulty,
+                color: Colors.green,
+                onSelected: (val) {
+                  setState(() => difficulty = val);
+                },
               ),
             ),
             SizedBox(width: 12),
             Expanded(
-              child: _buildDifficultyButton("Hard", "hard", Colors.redAccent),
+              child: DifficultyButton(
+                label: "Medium",
+                value: "medium",
+                selectedValue: difficulty,
+                color: Colors.orange,
+                onSelected: (val) {
+                  setState(() => difficulty = val);
+                },
+              ),
+            ),
+            SizedBox(width: 12),
+            Expanded(
+              child: DifficultyButton(
+                label: "Hard",
+                value: "hard",
+                selectedValue: difficulty,
+                color: Colors.red,
+                onSelected: (val) {
+                  setState(() => difficulty = val);
+                },
+              ),
             ),
           ],
         ),
@@ -417,283 +455,5 @@ class _SettingScreenState extends State<SettingScreen>
         ),
       ],
     );
-  }
-
-  Widget _buildDifficultyButton(String label, String value, Color color) {
-    bool isSelected = difficulty == value;
-
-    return AnimatedButton(
-      onTap: () => setState(() => difficulty = value),
-      child: Container(
-        padding: EdgeInsets.symmetric(vertical: 12),
-        decoration: BoxDecoration(
-          gradient:
-              isSelected
-                  ? LinearGradient(
-                    colors: [color, Color.lerp(color, Colors.black, 0.3)!],
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                  )
-                  : null,
-          color: isSelected ? null : Colors.grey.shade800.withOpacity(0.5),
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(
-            color: isSelected ? color : Colors.grey.shade600,
-            width: isSelected ? 2 : 1,
-          ),
-        ),
-        child: Center(
-          child: Text(
-            label,
-            style: TextStyle(
-              color: isSelected ? Colors.white : Colors.white70,
-              fontWeight: FontWeight.bold,
-              fontSize: 14,
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildGradientButton({
-    required String label,
-    required Gradient gradient,
-    required VoidCallback onTap,
-  }) {
-    return AnimatedButton(
-      onTap: onTap,
-      child: Container(
-        padding: EdgeInsets.symmetric(vertical: 4),
-        width: double.infinity,
-        decoration: BoxDecoration(
-          gradient: gradient,
-          borderRadius: BorderRadius.circular(12),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.4),
-              blurRadius: 8,
-              offset: const Offset(0, 4),
-            ),
-          ],
-        ),
-        alignment: Alignment.center,
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Text(
-            label,
-            style: const TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-              color: Colors.white,
-              shadows: [
-                Shadow(
-                  color: Colors.black26,
-                  blurRadius: 4,
-                  offset: Offset(2, 2),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildSliderSetting(
-    String title,
-    double value,
-    double min,
-    double max,
-    IconData icon,
-    Color color,
-    bool isDisable,
-    Function(double) onChanged,
-  ) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          children: [
-            Icon(icon, color: color, size: 22),
-            const SizedBox(width: 8),
-            Text(
-              title,
-              style: const TextStyle(
-                color: Colors.white70,
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 10),
-        SliderTheme(
-          data: SliderThemeData(
-            trackHeight: 6,
-            thumbShape: CustomThumbShape(),
-            overlayColor: color.withOpacity(0.2),
-            activeTrackColor: color,
-            inactiveTrackColor: Colors.white24,
-            thumbColor: color,
-            disabledActiveTrackColor: Colors.grey.shade700,
-            disabledInactiveTrackColor: Colors.grey.shade800,
-            disabledThumbColor: Colors.grey.shade600,
-          ),
-          child: Slider(
-            value: value,
-            min: min,
-            max: max,
-            divisions: (max - min).toInt(),
-            label: value.toStringAsFixed(1),
-            onChanged: isDisable ? null : onChanged,
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildToggleSetting(
-    String title,
-    bool value,
-    IconData icon,
-    Function(bool) onChanged,
-  ) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Row(
-            children: [
-              Icon(icon, color: Colors.white70, size: 20),
-              const SizedBox(width: 8),
-              Text(
-                title,
-                style: const TextStyle(color: Colors.white70, fontSize: 15),
-              ),
-            ],
-          ),
-          Switch(
-            value: value,
-            onChanged: onChanged,
-            activeColor: Colors.cyanAccent,
-            activeTrackColor: Colors.cyanAccent.withOpacity(0.5),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildActionButton(
-    String text,
-    IconData icon,
-    Color color,
-    Function() onTap,
-  ) {
-    return AnimatedButton(
-      onTap: onTap,
-      child: Container(
-        padding: EdgeInsets.symmetric(vertical: 4),
-        width: double.infinity,
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [color, Color.lerp(color, Colors.black, 0.4)!],
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-          ),
-          borderRadius: BorderRadius.circular(12),
-        ),
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Icon(icon, color: Colors.white, size: 18),
-              const SizedBox(width: 8),
-              Text(
-                text,
-                style: const TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
-                  shadows: [
-                    Shadow(
-                      color: Colors.black26,
-                      blurRadius: 4,
-                      offset: Offset(2, 2),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class AnimatedButton extends StatefulWidget {
-  final Widget child;
-  final VoidCallback onTap;
-
-  const AnimatedButton({super.key, required this.child, required this.onTap});
-
-  @override
-  State<AnimatedButton> createState() => _AnimatedButtonState();
-}
-
-class _AnimatedButtonState extends State<AnimatedButton> {
-  bool _isPressed = false;
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTapDown: (_) => setState(() => _isPressed = true),
-      onTapUp: (_) => setState(() => _isPressed = false),
-      onTapCancel: () => setState(() => _isPressed = false),
-      onTap: widget.onTap,
-      child: Transform.scale(
-        scale: _isPressed ? 0.95 : 1.0,
-        child: AnimatedOpacity(
-          opacity: _isPressed ? 0.8 : 1.0,
-          duration: Duration(milliseconds: 100),
-          child: widget.child,
-        ),
-      ),
-    );
-  }
-}
-
-class CustomThumbShape extends SliderComponentShape {
-  @override
-  Size getPreferredSize(bool isEnabled, bool isDiscrete) => const Size(18, 18);
-
-  @override
-  void paint(
-    PaintingContext context,
-    Offset center, {
-    required Animation<double> activationAnimation,
-    required Animation<double> enableAnimation,
-    required bool isDiscrete,
-    required TextPainter labelPainter,
-    required RenderBox parentBox,
-    required SliderThemeData sliderTheme,
-    required TextDirection textDirection,
-    required double value,
-    required double textScaleFactor,
-    required Size sizeWithOverflow,
-  }) {
-    final Canvas canvas = context.canvas;
-    final Paint paint =
-        Paint()
-          ..shader = RadialGradient(
-            colors: [sliderTheme.thumbColor!, Colors.white],
-          ).createShader(Rect.fromCircle(center: center, radius: 10));
-
-    canvas.drawCircle(center, 9, paint);
-    canvas.drawCircle(center, 4, Paint()..color = Colors.white);
   }
 }

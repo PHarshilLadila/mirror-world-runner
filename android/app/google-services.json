@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "307164978142",
+    "project_id": "mirror-world-runner",
+    "storage_bucket": "mirror-world-runner.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:307164978142:android:1eff33903c49fcf4809b4f",
+        "android_client_info": {
+          "package_name": "com.example.mirror_world_runner"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCZcoZzp1kRc_74YJhGmXAjK7sWQzoDtNQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

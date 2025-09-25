@@ -1,9 +1,14 @@
-// ignore_for_file: deprecated_member_use, library_private_types_in_public_api
+// ignore_for_file: deprecated_member_use, library_private_types_in_public_api, use_build_context_synchronously
 
-import 'dart:math' as math;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:mirror_world_runner/auth/login_screen.dart';
+import 'package:mirror_world_runner/providers/auth_provider.dart';
 import 'package:mirror_world_runner/screens/setting_screen.dart';
+import 'package:mirror_world_runner/widgets/animated_button.dart';
+import 'package:mirror_world_runner/widgets/holographic_button.dart';
+import 'package:mirror_world_runner/widgets/particle_painter.dart';
+import 'package:mirror_world_runner/widgets/particles.dart';
 import 'package:provider/provider.dart';
 import 'package:mirror_world_runner/providers/game_state.dart';
 import 'package:mirror_world_runner/screens/game_screen.dart';
@@ -19,7 +24,7 @@ class MainMenuScreen extends StatefulWidget {
 class _MainMenuScreenState extends State<MainMenuScreen>
     with SingleTickerProviderStateMixin {
   late Ticker _ticker;
-  final List<Particle> _particles = [];
+  final List<Particles> _particles = [];
   final ValueNotifier<int> _particleNotifier = ValueNotifier<int>(0);
 
   Duration _lastElapsed = Duration.zero;
@@ -31,7 +36,7 @@ class _MainMenuScreenState extends State<MainMenuScreen>
     super.initState();
 
     for (int i = 0; i < numberOfParticle; i++) {
-      _particles.add(Particle());
+      _particles.add(Particles());
     }
 
     _ticker = createTicker((elapsed) {
@@ -82,20 +87,6 @@ class _MainMenuScreenState extends State<MainMenuScreen>
                   size: Size.infinite,
                 );
               },
-            ),
-          ),
-
-          Container(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [
-                  Colors.transparent,
-                  Colors.white.withOpacity(0.05),
-                  Colors.transparent,
-                ],
-                begin: Alignment.centerLeft,
-                end: Alignment.centerRight,
-              ),
             ),
           ),
 
@@ -160,11 +151,42 @@ class _MainMenuScreenState extends State<MainMenuScreen>
                     ),
                   ),
 
+                  const SizedBox(height: 10),
+
+                  const SizedBox(height: 10),
+
+                  Consumer<AuthProvider>(
+                    builder: (context, authProvider, _) {
+                      if (authProvider.isLoading) {
+                        return const Text(
+                          "Loading...",
+                          style: TextStyle(
+                            color: Colors.white70,
+                            fontSize: 14,
+                            fontWeight: FontWeight.w300,
+                          ),
+                        );
+                      }
+
+                      final userName =
+                          authProvider.currentUser?['userName'] ?? "Player";
+                      return Text(
+                        "Welcome back $userName..",
+                        style: const TextStyle(
+                          color: Colors.white70,
+                          fontSize: 14,
+                          fontWeight: FontWeight.w300,
+                        ),
+                        textAlign: TextAlign.center,
+                      );
+                    },
+                  ),
+
                   const SizedBox(height: 70),
 
-                  _buildHolographicButton(
-                    context,
-                    label: 'START GAME',
+                  //
+                  HolographicButton(
+                    label: "START GAME",
                     colors: const [Colors.blue, Colors.cyanAccent],
                     onTap: () {
                       debugPrint("START GAME");
@@ -183,9 +205,8 @@ class _MainMenuScreenState extends State<MainMenuScreen>
 
                   const SizedBox(height: 25),
 
-                  _buildHolographicButton(
-                    context,
-                    label: 'HOW TO PLAY',
+                  HolographicButton(
+                    label: "HOW TO PLAY",
                     colors: const [Colors.green, Colors.lightGreenAccent],
                     onTap: () {
                       debugPrint("HOW TO PLAY");
@@ -198,9 +219,8 @@ class _MainMenuScreenState extends State<MainMenuScreen>
 
                   const SizedBox(height: 25),
 
-                  _buildHolographicButton(
-                    context,
-                    label: 'SETTINGS',
+                  HolographicButton(
+                    label: "SETTINGS",
                     colors: const [Colors.purple, Colors.pinkAccent],
                     onTap: () {
                       debugPrint("SETTINGS");
@@ -212,6 +232,28 @@ class _MainMenuScreenState extends State<MainMenuScreen>
                                   const SettingScreen(isSettingScreen: true),
                         ),
                       );
+                    },
+                  ),
+                  const SizedBox(height: 25),
+
+                  HolographicButton(
+                    label: "LOGOUT",
+                    colors: const [Colors.deepOrange, Colors.red],
+                    onTap: () async {
+                      debugPrint("Log Out");
+                      final authProvider = Provider.of<AuthProvider>(
+                        context,
+                        listen: false,
+                      );
+                      await authProvider.logout();
+
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const LoginScreen(),
+                        ),
+                      );
+                      debugPrint("Log Out Done");
                     },
                   ),
 
@@ -230,63 +272,6 @@ class _MainMenuScreenState extends State<MainMenuScreen>
             ),
           ),
         ],
-      ),
-    );
-  }
-
-  Widget _buildHolographicButton(
-    BuildContext context, {
-    required String label,
-    required List<Color> colors,
-    required VoidCallback onTap,
-  }) {
-    return AnimatedButton(
-      onTap: onTap,
-      child: Container(
-        width: 280,
-        padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 30),
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: colors,
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-          ),
-          borderRadius: BorderRadius.circular(12),
-          boxShadow: [
-            BoxShadow(
-              color: colors[0].withOpacity(0.6),
-              blurRadius: 20,
-              spreadRadius: 2,
-              offset: const Offset(0, 5),
-            ),
-            BoxShadow(
-              color: Colors.black.withOpacity(0.3),
-              blurRadius: 15,
-              offset: const Offset(0, 10),
-            ),
-          ],
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              label,
-              style: const TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
-                letterSpacing: 1.5,
-                shadows: [
-                  Shadow(
-                    color: Colors.black45,
-                    blurRadius: 10,
-                    offset: Offset(2, 2),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
       ),
     );
   }
@@ -372,133 +357,4 @@ class _MainMenuScreenState extends State<MainMenuScreen>
       ),
     );
   }
-}
-
-class AnimatedButton extends StatefulWidget {
-  final Widget child;
-  final VoidCallback onTap;
-
-  const AnimatedButton({super.key, required this.child, required this.onTap});
-
-  @override
-  _AnimatedButtonState createState() => _AnimatedButtonState();
-}
-
-class _AnimatedButtonState extends State<AnimatedButton>
-    with SingleTickerProviderStateMixin {
-  late AnimationController _animationController;
-  late Animation<double> _scaleAnimation;
-
-  @override
-  void initState() {
-    super.initState();
-    _animationController = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 10),
-    );
-    _scaleAnimation = Tween<double>(begin: 1.0, end: 1.08).animate(
-      CurvedAnimation(parent: _animationController, curve: Curves.easeInOut),
-    );
-  }
-
-  @override
-  void dispose() {
-    _animationController.dispose();
-    super.dispose();
-  }
-
-  void _onTapDown(TapDownDetails details) {
-    _animationController.forward();
-  }
-
-  void _onTapUp(TapUpDetails details) {
-    _animationController.reverse().then((_) {
-      widget.onTap();
-    });
-  }
-
-  void _onTapCancel() {
-    _animationController.reverse();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTapDown: _onTapDown,
-      onTapUp: _onTapUp,
-      onTapCancel: _onTapCancel,
-      child: ScaleTransition(scale: _scaleAnimation, child: widget.child),
-    );
-  }
-}
-
-class Particle {
-  double x = 0;
-  double y = 0;
-  double size = 0;
-  double speed = 0;
-  Color color = Colors.white;
-  double opacity = 0;
-
-  Particle() {
-    reset();
-  }
-
-  void reset() {
-    if (kIsWeb) {
-      x = Random.nextDouble() * 1800;
-    } else {
-      x = Random.nextDouble() * 400;
-    }
-
-    y = Random.nextDouble() * 1000;
-
-    size = Random.nextDouble() * 3 + 1;
-
-    speed = Random.nextDouble() * 50 + 20;
-
-    opacity = Random.nextDouble() * 0.5 + 0.1;
-
-    color = Colors.accents[Random.nextInt(Colors.accents.length)].withOpacity(
-      opacity,
-    );
-  }
-
-  void update(double dt) {
-    y += speed * dt;
-
-    if (y > 1000) {
-      reset();
-      y = 0;
-    }
-
-    x += math.sin(y * 0.01) * 0.5;
-  }
-}
-
-class ParticlePainter extends CustomPainter {
-  final List<Particle> particles;
-
-  ParticlePainter(this.particles);
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    for (var particle in particles) {
-      final paint =
-          Paint()
-            ..color = particle.color
-            ..style = PaintingStyle.fill;
-      canvas.drawCircle(Offset(particle.x, particle.y), particle.size, paint);
-    }
-  }
-
-  @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => true;
-}
-
-class Random {
-  static final _random = math.Random();
-
-  static double nextDouble() => _random.nextDouble();
-  static int nextInt(int max) => _random.nextInt(max);
 }
