@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:mirror_world_runner/auth/login_screen.dart';
 import 'package:mirror_world_runner/providers/auth_provider.dart';
+import 'package:mirror_world_runner/screens/leader_board_screen.dart';
 import 'package:mirror_world_runner/screens/setting_screen.dart';
 import 'package:mirror_world_runner/widgets/animated_button.dart';
 import 'package:mirror_world_runner/widgets/holographic_button.dart';
@@ -216,6 +217,20 @@ class _MainMenuScreenState extends State<MainMenuScreen>
                       );
                     },
                   ),
+                  const SizedBox(height: 25),
+                  HolographicButton(
+                    label: "LEADER BOARD",
+                    colors: const [Colors.amber, Colors.yellowAccent],
+                    onTap: () {
+                      debugPrint("LEADER BOARD");
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const LeaderboardScreen(),
+                        ),
+                      );
+                    },
+                  ),
 
                   const SizedBox(height: 25),
 
@@ -234,8 +249,8 @@ class _MainMenuScreenState extends State<MainMenuScreen>
                       );
                     },
                   ),
-                  const SizedBox(height: 25),
 
+                  const SizedBox(height: 25),
                   HolographicButton(
                     label: "LOGOUT",
                     colors: const [Colors.deepOrange, Colors.red],
