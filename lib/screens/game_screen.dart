@@ -1,4 +1,4 @@
-// ignore_for_file: deprecated_member_use
+// ignore_for_file: deprecated_member_use, use_build_context_synchronously
 
 import 'dart:async';
 import 'dart:math' as math;
@@ -34,6 +34,7 @@ class _GameScreenState extends State<GameScreen> {
 
   Timer? _timer;
   int _elapsedSeconds = 0;
+  int _currentGameTime = 0;
 
   @override
   void initState() {
@@ -61,17 +62,19 @@ class _GameScreenState extends State<GameScreen> {
 
   void _startTimer(GameState gameState) {
     _elapsedSeconds = 0;
+    _currentGameTime = 0;
 
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) async {
       if (!gameState.isPaused && !gameState.isGameOver) {
         setState(() {
           _elapsedSeconds++;
+          _currentGameTime = _elapsedSeconds;
         });
       }
 
       if (gameState.isGameOver) {
         final prefs = await SharedPreferences.getInstance();
-        await prefs.setInt('lastGameTimeSeconds', _elapsedSeconds);
+        await prefs.setInt('lastGameTimeSeconds', _currentGameTime);
         timer.cancel();
       }
     });
@@ -198,7 +201,10 @@ class _GameScreenState extends State<GameScreen> {
         }
 
         if (gameState.isGameOver) {
-          WidgetsBinding.instance.addPostFrameCallback((_) {
+          WidgetsBinding.instance.addPostFrameCallback((_) async {
+            final prefs = await SharedPreferences.getInstance();
+            await prefs.setInt('lastGameTimeSeconds', _currentGameTime);
+
             showDialog(
               context: context,
               barrierDismissible: false,
@@ -253,7 +259,7 @@ class _GameScreenState extends State<GameScreen> {
               ),
               SizedBox(height: 8),
               Text(
-                'Time: ${takenTimeFormate(_elapsedSeconds)}',
+                'Time: ${takenTimeFormate(_currentGameTime)}',
                 style: const TextStyle(
                   color: Colors.white,
                   fontSize: 16,

@@ -12,6 +12,7 @@ import 'package:mirror_world_runner/game/components/boom_animation.dart';
 import 'package:mirror_world_runner/game/managers/game_manager.dart';
 import 'package:mirror_world_runner/game/game_world.dart';
 import 'package:flame_audio/flame_audio.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 
 class MirrorWorldGame extends FlameGame
     with HasCollisionDetection, TapDetector {
@@ -186,7 +187,7 @@ class MirrorWorldGame extends FlameGame
 
     FlameAudio.play('bomb.mp3', volume: 0.8);
 
-    Vibration.vibrate(duration: 100);
+    _vibrate();
 
     if (player.isPoweredUp) {
       player.registerPowerUpHit();
@@ -195,6 +196,18 @@ class MirrorWorldGame extends FlameGame
     }
 
     obstacle.removeFromParent();
+  }
+
+  Future<void> _vibrate() async {
+    try {
+      if (!kIsWeb) {
+        if (await Vibration.hasVibrator()) {
+          Vibration.vibrate(duration: 100);
+        }
+      }
+    } catch (e) {
+      debugPrint('Vibration not available: $e');
+    }
   }
 
   bool _checkRectCollision(PositionComponent a, PositionComponent b) {

@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class GameState with ChangeNotifier {
   int _score = 0;
@@ -7,8 +8,31 @@ class GameState with ChangeNotifier {
   bool _isGameOver = false;
   int _lives = 5;
   double _gameSpeed = 1.0;
-
   int _difficultyLevel = 2;
+
+  GameState() {
+    _loadSettings();
+  }
+
+  Future<void> _loadSettings() async {
+    final prefs = await SharedPreferences.getInstance();
+    final difficulty = prefs.getString('difficulty') ?? "medium";
+    _difficultyLevel = _getDifficultyLevelFromString(difficulty);
+    notifyListeners();
+  }
+
+  int _getDifficultyLevelFromString(String diff) {
+    switch (diff) {
+      case "easy":
+        return 1;
+      case "medium":
+        return 2;
+      case "hard":
+        return 3;
+      default:
+        return 2;
+    }
+  }
 
   int get score => _score;
   int get highScore => _highScore;

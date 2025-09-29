@@ -1,7 +1,12 @@
+// ignore_for_file: deprecated_member_use
+
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:mirror_world_runner/service/auth_service.dart';
-import 'package:provider/provider.dart';
-import 'package:mirror_world_runner/providers/game_state.dart';
+import 'package:mirror_world_runner/widgets/custom_loader.dart';
+import 'package:mirror_world_runner/widgets/particle_painter.dart';
+import 'package:mirror_world_runner/widgets/particles.dart';
 
 class LeaderboardScreen extends StatefulWidget {
   const LeaderboardScreen({super.key});
@@ -10,15 +15,41 @@ class LeaderboardScreen extends StatefulWidget {
   State<LeaderboardScreen> createState() => _LeaderboardScreenState();
 }
 
-class _LeaderboardScreenState extends State<LeaderboardScreen> {
+class _LeaderboardScreenState extends State<LeaderboardScreen>
+    with SingleTickerProviderStateMixin {
   final AuthService _authService = AuthService();
+  final List<Particles> _particles = [];
+  late Ticker _ticker;
+  final numberOfParticle = kIsWeb ? 50 : 40;
+  Duration _lastElapsed = Duration.zero;
+  final ValueNotifier<int> _particleNotifier = ValueNotifier<int>(0);
+
   List<Map<String, dynamic>> _leaderboard = [];
   bool _isLoading = true;
 
   @override
   void initState() {
     super.initState();
+    _setupParticles();
     _loadLeaderboard();
+  }
+
+  void _setupParticles() {
+    for (int i = 0; i < numberOfParticle; i++) {
+      _particles.add(Particles());
+    }
+
+    _ticker = createTicker((elapsed) {
+      final dt = (elapsed - _lastElapsed).inMicroseconds / 1e6;
+      _lastElapsed = elapsed;
+
+      for (var p in _particles) {
+        p.update(dt);
+      }
+
+      _particleNotifier.value++;
+    });
+    _ticker.start();
   }
 
   Future<void> _loadLeaderboard() async {
@@ -32,9 +63,7 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
         _leaderboard = leaderboard;
       });
     } catch (e) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('Failed to load leaderboard: $e')));
+      debugPrint("_loadLeaderboard error: $e");
     } finally {
       setState(() {
         _isLoading = false;
@@ -43,184 +72,88 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    final gameState = Provider.of<GameState>(context);
-
-    return Scaffold(
-      backgroundColor: Colors.black,
-      appBar: AppBar(
-        title: Text('Leaderboard'),
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back),
-          onPressed: () => Navigator.pop(context),
-        ),
-      ),
-      body: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [Colors.purple.shade900, Colors.indigo.shade900],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-          ),
-        ),
-        child:
-            _isLoading
-                ? Center(child: CircularProgressIndicator())
-                : Column(
-                  children: [
-                    // Current user stats
-                    Container(
-                      margin: EdgeInsets.all(16),
-                      padding: EdgeInsets.all(16),
-                      decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.1),
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: [
-                          Column(
-                            children: [
-                              Text(
-                                'YOUR SCORE',
-                                style: TextStyle(
-                                  color: Colors.white70,
-                                  fontSize: 12,
-                                ),
-                              ),
-                              Text(
-                                gameState.highScore.toString(),
-                                style: TextStyle(
-                                  color: Colors.yellow,
-                                  fontSize: 24,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ],
-                          ),
-                          Column(
-                            children: [
-                              Text(
-                                'YOUR RANK',
-                                style: TextStyle(
-                                  color: Colors.white70,
-                                  fontSize: 12,
-                                ),
-                              ),
-                              Text(
-                                '#${_getUserRank(gameState.highScore)}',
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 24,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-
-                    Expanded(
-                      child: ListView.builder(
-                        itemCount: _leaderboard.length,
-                        itemBuilder: (context, index) {
-                          final player = _leaderboard[index];
-                          return LeaderboardItem(
-                            rank: index,
-                            player: player,
-                            isCurrentUser:
-                                player['highestScore'] == gameState.highScore,
-                          );
-                        },
-                      ),
-                    ),
-                  ],
-                ),
-      ),
-    );
+  void dispose() {
+    _ticker.dispose();
+    super.dispose();
   }
-
-  int _getUserRank(int userScore) {
-    for (int i = 0; i < _leaderboard.length; i++) {
-      if (_leaderboard[i]['highestScore'] <= userScore) {
-        return i + 1;
-      }
-    }
-    return _leaderboard.length + 1;
-  }
-}
-
-class LeaderboardItem extends StatelessWidget {
-  final int rank;
-  final Map<String, dynamic> player;
-  final bool isCurrentUser;
-
-  const LeaderboardItem({
-    super.key,
-    required this.rank,
-    required this.player,
-    required this.isCurrentUser,
-  });
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-      padding: EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color:
-            isCurrentUser
-                ? Colors.yellow.withOpacity(0.2)
-                : Colors.white.withOpacity(0.05),
-        borderRadius: BorderRadius.circular(8),
-        border: isCurrentUser ? Border.all(color: Colors.yellow) : null,
-      ),
-      child: Row(
+    return Scaffold(
+      backgroundColor: Colors.transparent,
+      body: Stack(
         children: [
           Container(
-            width: 30,
-            height: 30,
-            alignment: Alignment.center,
             decoration: BoxDecoration(
-              color: _getRankColor(rank),
-              shape: BoxShape.circle,
-            ),
-            child: Text(
-              rank.toString(),
-              style: TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
+              gradient: LinearGradient(
+                colors: [
+                  Colors.purple.shade900,
+                  Colors.indigo.shade900,
+                  Colors.black87,
+                ],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                stops: const [0.0, 0.5, 1.0],
               ),
             ),
           ),
-          SizedBox(width: 16),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  player['userName'] ?? 'Unknown',
-                  style: TextStyle(
-                    color: isCurrentUser ? Colors.yellow : Colors.white,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                Text(
-                  'Games: ${player['totalGamesPlayed'] ?? 0}',
-                  style: TextStyle(color: Colors.white70, fontSize: 12),
-                ),
-              ],
+          RepaintBoundary(
+            child: ValueListenableBuilder<int>(
+              valueListenable: _particleNotifier,
+              builder: (context, _, __) {
+                return CustomPaint(
+                  painter: ParticlePainter(_particles),
+                  size: Size.infinite,
+                );
+              },
             ),
           ),
-          Text(
-            player['highestScore'].toString(),
-            style: TextStyle(
-              color: isCurrentUser ? Colors.yellow : Colors.white,
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
+          SafeArea(
+            child: Padding(
+              padding: const EdgeInsets.all(20),
+              child: Column(
+                children: [
+                  Row(
+                    children: [
+                      IconButton(
+                        icon: const Icon(Icons.arrow_back, color: Colors.white),
+                        onPressed: () => Navigator.pop(context),
+                      ),
+                      const SizedBox(width: 10),
+                      const Text(
+                        'LEADERBOARD',
+                        style: TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 20),
+                  Expanded(
+                    child:
+                        _isLoading
+                            ? const Center(
+                              child: GameLoadingWidget(width: 80, height: 80),
+                            )
+                            : _leaderboard.isEmpty
+                            ? const Center(
+                              child: Text(
+                                'No leaderboard data available',
+                                style: TextStyle(color: Colors.white),
+                              ),
+                            )
+                            : ListView.builder(
+                              itemCount: _leaderboard.length,
+                              itemBuilder: (context, index) {
+                                final player = _leaderboard[index];
+                                return _buildLeaderboardItem(player, index + 1);
+                              },
+                            ),
+                  ),
+                ],
+              ),
             ),
           ),
         ],
@@ -228,16 +161,56 @@ class LeaderboardItem extends StatelessWidget {
     );
   }
 
-  Color _getRankColor(int rank) {
+  Widget _buildLeaderboardItem(Map<String, dynamic> player, int rank) {
+    Color rankColor;
+    IconData rankIcon;
+
     switch (rank) {
       case 1:
-        return Colors.amber;
+        rankColor = Colors.yellow;
+        rankIcon = Icons.emoji_events;
+        break;
       case 2:
-        return Colors.grey;
+        rankColor = Colors.grey;
+        rankIcon = Icons.emoji_events;
+        break;
       case 3:
-        return Colors.orange;
+        rankColor = Colors.orange;
+        rankIcon = Icons.emoji_events;
+        break;
       default:
-        return Colors.blue;
+        rankColor = Colors.white;
+        rankIcon = Icons.person;
     }
+
+    return Card(
+      color: Colors.white.withOpacity(0.1),
+      margin: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+      child: ListTile(
+        leading: CircleAvatar(
+          backgroundColor: rankColor.withOpacity(0.2),
+          child: Icon(rankIcon, color: rankColor),
+        ),
+        title: Text(
+          player['userName'] ?? 'Unknown',
+          style: TextStyle(
+            color: Colors.white,
+            fontWeight: rank <= 3 ? FontWeight.bold : FontWeight.normal,
+          ),
+        ),
+        subtitle: Text(
+          'Games: ${player['totalGamesPlayed'] ?? 0}',
+          style: TextStyle(color: Colors.white70),
+        ),
+        trailing: Text(
+          '${player['highestScore'] ?? 0}',
+          style: TextStyle(
+            color: rankColor,
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ),
+    );
   }
 }

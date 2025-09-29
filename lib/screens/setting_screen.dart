@@ -89,6 +89,11 @@ class _SettingScreenState extends State<SettingScreen>
 
   void _applySettings() {
     _saveSettingsInToSharedpreference();
+
+    // Update GameState with new difficulty
+    final gameState = Provider.of<GameState>(context, listen: false);
+    gameState.setDifficultyLevel(_getDifficultyLevelFromString(difficulty));
+
     if (widget.onSpeedChanged != null) {
       widget.onSpeedChanged!(movementSpeed);
     }
@@ -96,6 +101,20 @@ class _SettingScreenState extends State<SettingScreen>
       widget.onDifficultyChanged!(difficulty);
     }
     Navigator.pop(context);
+  }
+
+  // Convert string difficulty to numeric level
+  int _getDifficultyLevelFromString(String diff) {
+    switch (diff) {
+      case "easy":
+        return 1;
+      case "medium":
+        return 2;
+      case "hard":
+        return 3;
+      default:
+        return 2;
+    }
   }
 
   String getDifficultyText(String diff) {
