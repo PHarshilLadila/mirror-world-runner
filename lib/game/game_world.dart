@@ -1,6 +1,7 @@
 // ignore_for_file: deprecated_member_use
 
 import 'package:flame/components.dart';
+import 'package:flutter/foundation.dart';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
@@ -8,12 +9,13 @@ import 'package:flutter/material.dart';
 class GameWorld extends Component with HasGameRef {
   final List<Vector2> _stars = [];
   final Random _random = Random();
+  final dotsNumbers = kIsWeb ? 130 : 80;
 
   @override
   Future<void> onLoad() async {
     super.onLoad();
 
-    for (int i = 0; i < 50; i++) {
+    for (int i = 0; i < dotsNumbers; i++) {
       _stars.add(
         Vector2(
           _random.nextDouble() * gameRef.size.x,

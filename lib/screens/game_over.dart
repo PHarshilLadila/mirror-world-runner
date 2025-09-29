@@ -377,10 +377,16 @@ class _GameOverScreenState extends State<GameOverScreen>
                                             Divider(color: Colors.white38),
                                             const SizedBox(height: 8),
 
+                                            // _buildStatItem(
+                                            //   Icons.star,
+                                            //   'HIGH SCORE',
+                                            //   '${_userData!['highestScore'] ?? 0}',
+                                            //   Colors.orangeAccent,
+                                            // ),
                                             _buildStatItem(
                                               Icons.star,
                                               'HIGH SCORE',
-                                              '${_userData!['highestScore'] ?? 0}',
+                                              '${_userData?['highestScore'] ?? 0}',
                                               Colors.orangeAccent,
                                             ),
                                             const SizedBox(height: 8),
