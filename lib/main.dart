@@ -10,29 +10,20 @@ import 'package:provider/provider.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mirror_world_runner/providers/game_state.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await dotenv.load(fileName: ".env");
-  final String? apiKey = dotenv.env['APIKEY'];
-  final String? authDomain = dotenv.env['AUTHDOMAIN'];
-  final String? projectId = dotenv.env['PROJECTID'];
-  final String? storageBucket = dotenv.env['STORAGEBUCKET'];
-  final String? messagingSenderId = dotenv.env['MESSAGINGSENDERID'];
-  final String? appId = dotenv.env['APPID'];
-  final String? measurementId = dotenv.env['MEASUREMENTID'];
 
   await Firebase.initializeApp(
     // add your firebase details
     options: FirebaseOptions(
-      apiKey: apiKey ?? "",
-      authDomain: authDomain ?? "",
-      projectId: projectId ?? "",
-      storageBucket: storageBucket ?? "",
-      messagingSenderId: messagingSenderId ?? "",
-      appId: appId ?? "",
-      measurementId: measurementId ?? "",
+      apiKey: "AIzaSyA7hz4MIrO9ynTtC-IRUijuqKXQ6kuDk0Y",
+      authDomain: "mirror-world-runner.firebaseapp.com",
+      projectId: "mirror-world-runner",
+      storageBucket: "mirror-world-runner.firebasestorage.app",
+      messagingSenderId: "307164978142",
+      appId: "1:307164978142:web:3f31f5c65fa7d8c8809b4f",
+      measurementId: "G-5PT2NCVZH2",
     ),
   );
 
