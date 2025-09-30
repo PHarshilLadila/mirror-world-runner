@@ -175,6 +175,21 @@ class _GameOverScreenState extends State<GameOverScreen>
     }
   }
 
+  List<Map<String, dynamic>> getUniqueGames(List<Map<String, dynamic>> games) {
+    final seen = <String>{};
+    final uniqueGames = <Map<String, dynamic>>[];
+
+    for (var game in games) {
+      final key = '${game['score']}_${game['timeTaken']}';
+      if (!seen.contains(key)) {
+        seen.add(key);
+        uniqueGames.add(game);
+      }
+    }
+
+    return uniqueGames;
+  }
+
   @override
   void dispose() {
     _ticker.dispose();
@@ -195,7 +210,7 @@ class _GameOverScreenState extends State<GameOverScreen>
   @override
   Widget build(BuildContext context) {
     final gameState = Provider.of<GameState>(context);
-
+    final uniqueGames = getUniqueGames(_gameHistory);
     return Scaffold(
       backgroundColor: Colors.transparent,
       body: Stack(
@@ -607,7 +622,8 @@ class _GameOverScreenState extends State<GameOverScreen>
                                                 ],
                                               ),
                                               const SizedBox(height: 10),
-                                              ..._gameHistory
+
+                                              ...uniqueGames
                                                   .take(3)
                                                   .map(
                                                     (game) => Padding(

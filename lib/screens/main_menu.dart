@@ -97,7 +97,7 @@ class _MainMenuScreenState extends State<MainMenuScreen>
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 60),
                   Align(
                     alignment: Alignment.center,
                     child: Text(
@@ -272,7 +272,7 @@ class _MainMenuScreenState extends State<MainMenuScreen>
                     },
                   ),
 
-                  const SizedBox(height: 80),
+                  const SizedBox(height: 40),
 
                   Text(
                     '© 2025 Mirror World Runner',
@@ -282,6 +282,7 @@ class _MainMenuScreenState extends State<MainMenuScreen>
                       letterSpacing: 1,
                     ),
                   ),
+                  const SizedBox(height: 80),
                 ],
               ),
             ),
@@ -308,7 +309,7 @@ class _MainMenuScreenState extends State<MainMenuScreen>
           borderRadius: BorderRadius.circular(20),
           border: Border.all(color: Colors.white.withOpacity(0.2), width: 2),
         ),
-        padding: const EdgeInsets.all(30),
+        padding: EdgeInsets.only(top: 30, left: 30, right: 30),
         child: SingleChildScrollView(
           child: Column(
             mainAxisSize: MainAxisSize.min,

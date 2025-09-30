@@ -67,6 +67,13 @@ class _SettingScreenState extends State<SettingScreen>
     _loadSettingsFromSharedpreference();
   }
 
+  @override
+  void dispose() {
+    _ticker.dispose();
+    _particleNotifier.dispose();
+    super.dispose();
+  }
+
   Future<void> _loadSettingsFromSharedpreference() async {
     final prefs = await SharedPreferences.getInstance();
     setState(() {
@@ -90,7 +97,6 @@ class _SettingScreenState extends State<SettingScreen>
   void _applySettings() {
     _saveSettingsInToSharedpreference();
 
-    // Update GameState with new difficulty
     final gameState = Provider.of<GameState>(context, listen: false);
     gameState.setDifficultyLevel(_getDifficultyLevelFromString(difficulty));
 
@@ -103,7 +109,6 @@ class _SettingScreenState extends State<SettingScreen>
     Navigator.pop(context);
   }
 
-  // Convert string difficulty to numeric level
   int _getDifficultyLevelFromString(String diff) {
     switch (diff) {
       case "easy":
