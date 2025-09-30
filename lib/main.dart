@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:mirror_world_runner/auth/login_screen.dart';
@@ -14,18 +15,20 @@ import 'package:shared_preferences/shared_preferences.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  await Firebase.initializeApp(
-    // add your firebase details
-    options: FirebaseOptions(
-      apiKey: "AIzaSyA7hz4MIrO9ynTtC-IRUijuqKXQ6kuDk0Y",
-      authDomain: "mirror-world-runner.firebaseapp.com",
-      projectId: "mirror-world-runner",
-      storageBucket: "mirror-world-runner.firebasestorage.app",
-      messagingSenderId: "307164978142",
-      appId: "1:307164978142:web:3f31f5c65fa7d8c8809b4f",
-      measurementId: "G-5PT2NCVZH2",
-    ),
-  );
+  kIsWeb
+      ? await Firebase.initializeApp(
+        // add your firebase details
+        options: FirebaseOptions(
+          apiKey: "AIzaSyA7hz4MIrO9ynTtC-IRUijuqKXQ6kuDk0Y",
+          authDomain: "mirror-world-runner.firebaseapp.com",
+          projectId: "mirror-world-runner",
+          storageBucket: "mirror-world-runner.firebasestorage.app",
+          messagingSenderId: "307164978142",
+          appId: "1:307164978142:web:3f31f5c65fa7d8c8809b4f",
+          measurementId: "G-5PT2NCVZH2",
+        ),
+      )
+      : await Firebase.initializeApp();
 
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,

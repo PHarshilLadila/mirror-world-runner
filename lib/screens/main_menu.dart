@@ -309,65 +309,67 @@ class _MainMenuScreenState extends State<MainMenuScreen>
           border: Border.all(color: Colors.white.withOpacity(0.2), width: 2),
         ),
         padding: const EdgeInsets.all(30),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              'HOW TO PLAY',
-              style: TextStyle(
-                fontSize: 28,
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
-                decoration: TextDecoration.underline,
-                shadows: [
-                  Shadow(
-                    color: Colors.black.withOpacity(0.8),
-                    blurRadius: 10,
-                    offset: const Offset(2, 2),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 30),
-            const Text(
-              '🌟 Control both characters simultaneously.\n\n'
-              '🎯 Avoid obstacles in mirrored worlds.\n\n'
-              '⚡ Collect power-ups for special abilities.\n\n'
-              '👆 Drag anywhere to move both players.\n\n'
-              '🎮 Use arrow keys for precise control.\n\n'
-              '❤️ Survive as long as possible!',
-              style: TextStyle(
-                color: Colors.white70,
-                fontSize: 16,
-                height: 1.5,
-              ),
-              textAlign: TextAlign.start,
-            ),
-            const SizedBox(height: 25),
-            AnimatedButton(
-              onTap: () => Navigator.pop(context),
-              child: Container(
-                padding: const EdgeInsets.symmetric(
-                  vertical: 12,
-                  horizontal: 30,
-                ),
-                decoration: BoxDecoration(
-                  gradient: const LinearGradient(
-                    colors: [Colors.green, Colors.lightGreenAccent],
-                  ),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: const Text(
-                  'GOT IT!',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16,
-                  ),
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                'HOW TO PLAY',
+                style: TextStyle(
+                  fontSize: 28,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                  decoration: TextDecoration.underline,
+                  shadows: [
+                    Shadow(
+                      color: Colors.black.withOpacity(0.8),
+                      blurRadius: 10,
+                      offset: const Offset(2, 2),
+                    ),
+                  ],
                 ),
               ),
-            ),
-          ],
+              const SizedBox(height: 30),
+              const Text(
+                '🌟 Control both characters simultaneously.\n\n'
+                '🎯 Avoid obstacles in mirrored worlds.\n\n'
+                '⚡ Collect power-ups for special abilities.\n\n'
+                '👆 Drag anywhere to move both players.\n\n'
+                '🎮 Use arrow keys for precise control.\n\n'
+                '❤️ Survive as long as possible!',
+                style: TextStyle(
+                  color: Colors.white70,
+                  fontSize: 14,
+                  height: 1.5,
+                ),
+                textAlign: TextAlign.start,
+              ),
+              const SizedBox(height: 25),
+              AnimatedButton(
+                onTap: () => Navigator.pop(context),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                    vertical: 12,
+                    horizontal: 30,
+                  ),
+                  decoration: BoxDecoration(
+                    gradient: const LinearGradient(
+                      colors: [Colors.green, Colors.lightGreenAccent],
+                    ),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: const Text(
+                    'GOT IT!',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

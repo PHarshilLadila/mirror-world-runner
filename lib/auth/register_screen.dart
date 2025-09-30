@@ -152,6 +152,7 @@ class _RegisterScreenState extends State<RegisterScreen>
                               fontSize: 14,
                               fontWeight: FontWeight.w300,
                             ),
+                            textAlign: TextAlign.center,
                           ),
                           const SizedBox(height: 40),
                           Container(

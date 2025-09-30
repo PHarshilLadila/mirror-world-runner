@@ -253,7 +253,7 @@ class _GameScreenState extends State<GameScreen> {
                 'Score: ${gameState.score}',
                 style: const TextStyle(
                   color: Colors.white,
-                  fontSize: 16,
+                  fontSize: 14,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -262,7 +262,7 @@ class _GameScreenState extends State<GameScreen> {
                 'Time: ${takenTimeFormate(_currentGameTime)}',
                 style: const TextStyle(
                   color: Colors.white,
-                  fontSize: 16,
+                  fontSize: 14,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -322,7 +322,7 @@ class _GameScreenState extends State<GameScreen> {
                   child: const Icon(
                     Icons.arrow_upward,
                     color: Colors.white,
-                    size: 40,
+                    size: 30,
                   ),
                 ),
               ),
@@ -340,7 +340,7 @@ class _GameScreenState extends State<GameScreen> {
                   child: const Icon(
                     Icons.arrow_downward,
                     color: Colors.white,
-                    size: 40,
+                    size: 30,
                   ),
                 ),
               ),
@@ -358,7 +358,7 @@ class _GameScreenState extends State<GameScreen> {
                   child: const Icon(
                     Icons.arrow_back,
                     color: Colors.white,
-                    size: 40,
+                    size: 30,
                   ),
                 ),
               ),
@@ -376,7 +376,7 @@ class _GameScreenState extends State<GameScreen> {
                   child: const Icon(
                     Icons.arrow_forward,
                     color: Colors.white,
-                    size: 40,
+                    size: 30,
                   ),
                 ),
               ),
