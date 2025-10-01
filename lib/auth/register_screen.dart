@@ -269,6 +269,17 @@ class _RegisterScreenState extends State<RegisterScreen>
                                       );
                                       return;
                                     }
+                                    if (userNameController.text
+                                            .trim()
+                                            .isEmpty ||
+                                        userNameController.text.trim() == "") {
+                                      CustomToast.show(
+                                        context,
+                                        message: "Please enter your username",
+                                        type: GameToastType.error,
+                                      );
+                                      return;
+                                    }
                                     try {
                                       await authProvider.register(
                                         emailController.text.trim(),

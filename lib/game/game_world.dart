@@ -31,7 +31,12 @@ class GameWorld extends Component with HasGameRef {
 
     final backgroundPaint = Paint()..color = Color(0xFF1a1a2e);
     canvas.drawRect(
-      Rect.fromLTWH(0, 0, gameRef.size.x, gameRef.size.y),
+      Rect.fromLTWH(
+        gameRef.size.x,
+        gameRef.size.y,
+        gameRef.size.x,
+        gameRef.size.y,
+      ),
       backgroundPaint,
     );
 

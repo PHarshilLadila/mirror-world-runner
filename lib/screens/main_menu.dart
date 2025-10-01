@@ -36,6 +36,11 @@ class _MainMenuScreenState extends State<MainMenuScreen>
   void initState() {
     super.initState();
 
+    Future.microtask(() {
+      final authProvider = Provider.of<AuthProvider>(context, listen: false);
+      authProvider.fetchCurrentUser();
+    });
+
     for (int i = 0; i < numberOfParticle; i++) {
       _particles.add(Particles());
     }
@@ -152,9 +157,7 @@ class _MainMenuScreenState extends State<MainMenuScreen>
                     ),
                   ),
 
-                  const SizedBox(height: 10),
-
-                  const SizedBox(height: 10),
+                  const SizedBox(height: 20),
 
                   Consumer<AuthProvider>(
                     builder: (context, authProvider, _) {
@@ -185,7 +188,6 @@ class _MainMenuScreenState extends State<MainMenuScreen>
 
                   const SizedBox(height: 70),
 
-                  //
                   HolographicButton(
                     label: "START GAME",
                     colors: const [Colors.blue, Colors.cyanAccent],

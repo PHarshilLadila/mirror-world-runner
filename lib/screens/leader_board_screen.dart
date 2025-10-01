@@ -1,8 +1,12 @@
 // ignore_for_file: deprecated_member_use
 
+import 'dart:developer';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
 import 'package:mirror_world_runner/service/auth_service.dart';
 import 'package:mirror_world_runner/widgets/custom_loader.dart';
 import 'package:mirror_world_runner/widgets/particle_painter.dart';
@@ -27,11 +31,29 @@ class _LeaderboardScreenState extends State<LeaderboardScreen>
   List<Map<String, dynamic>> _leaderboard = [];
   bool _isLoading = true;
 
+  final String userIdForPreference = "USERID";
+
+  String userUID = "";
+  bool isLoading = true;
+
   @override
   void initState() {
     super.initState();
+    getUserIdFromPreferences();
     _setupParticles();
     _loadLeaderboard();
+  }
+
+  Future<void> getUserIdFromPreferences() async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+
+    final result = preferences.getString(userIdForPreference);
+    setState(() {
+      userUID = result ?? "";
+      isLoading = false;
+    });
+
+    log("[leaderboard.dart] User UID => $result");
   }
 
   void _setupParticles() {
@@ -108,6 +130,7 @@ class _LeaderboardScreenState extends State<LeaderboardScreen>
               },
             ),
           ),
+
           SafeArea(
             child: Padding(
               padding: const EdgeInsets.all(20),
@@ -129,7 +152,7 @@ class _LeaderboardScreenState extends State<LeaderboardScreen>
                             ),
                           ),
                         ),
-                        Center(
+                        const Center(
                           child: Text(
                             'LEADERBOARD',
                             style: TextStyle(
@@ -142,8 +165,8 @@ class _LeaderboardScreenState extends State<LeaderboardScreen>
                       ],
                     ),
                   ),
-
                   const SizedBox(height: 20),
+
                   Expanded(
                     child:
                         _isLoading
@@ -161,7 +184,15 @@ class _LeaderboardScreenState extends State<LeaderboardScreen>
                               itemCount: _leaderboard.length,
                               itemBuilder: (context, index) {
                                 final player = _leaderboard[index];
-                                return _buildLeaderboardItem(player, index + 1);
+                                final playerUid = player['userId']?.toString();
+                                final isCurrentPlayer = (playerUid == userUID);
+
+                                return _buildLeaderboardItem(
+                                  index: index,
+                                  player: player,
+                                  rank: index + 1,
+                                  isCurrentPlayer: isCurrentPlayer,
+                                );
                               },
                             ),
                   ),
@@ -174,7 +205,12 @@ class _LeaderboardScreenState extends State<LeaderboardScreen>
     );
   }
 
-  Widget _buildLeaderboardItem(Map<String, dynamic> player, int rank) {
+  Widget _buildLeaderboardItem({
+    required int index,
+    required Map<String, dynamic> player,
+    required int rank,
+    required bool isCurrentPlayer,
+  }) {
     Color rankColor;
     IconData rankIcon;
 
@@ -196,31 +232,102 @@ class _LeaderboardScreenState extends State<LeaderboardScreen>
         rankIcon = Icons.person;
     }
 
-    return Card(
-      color: Colors.white.withOpacity(0.1),
-      margin: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
-      child: ListTile(
-        leading: CircleAvatar(
-          backgroundColor: rankColor.withOpacity(0.2),
-          child: Icon(rankIcon, color: rankColor),
-        ),
-        title: Text(
-          player['userName'] ?? 'Unknown',
-          style: TextStyle(
-            color: Colors.white,
-            fontWeight: rank <= 3 ? FontWeight.bold : FontWeight.normal,
-          ),
-        ),
-        subtitle: Text(
-          'Games: ${player['totalGamesPlayed'] ?? 0}',
-          style: TextStyle(color: Colors.white70),
-        ),
-        trailing: Text(
-          '${player['highestScore'] ?? 0}',
-          style: TextStyle(
-            color: rankColor,
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
+    return LeaderboardCard(
+      index: index,
+      player: player,
+      rank: rank,
+      rankColor: rankColor,
+      rankIcon: rankIcon,
+      isCurrentPlayer: isCurrentPlayer,
+    );
+  }
+}
+
+class LeaderboardCard extends StatefulWidget {
+  final int index;
+  final int rank;
+  final Map<String, dynamic> player;
+  final Color rankColor;
+  final IconData rankIcon;
+  final bool isCurrentPlayer;
+
+  const LeaderboardCard({
+    super.key,
+    required this.index,
+    required this.rank,
+    required this.player,
+    required this.rankColor,
+    required this.rankIcon,
+    required this.isCurrentPlayer,
+  });
+
+  @override
+  State<LeaderboardCard> createState() => _LeaderboardCardState();
+}
+
+class _LeaderboardCardState extends State<LeaderboardCard>
+    with SingleTickerProviderStateMixin {
+  bool _isHovered = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return MouseRegion(
+      onEnter: (_) => setState(() => _isHovered = true),
+      onExit: (_) => setState(() => _isHovered = false),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeOutBack,
+        alignment: Alignment.center,
+        transform:
+            Matrix4.identity()
+              ..translate(0, _isHovered ? -10 : 0)
+              ..scale(_isHovered ? 1.001 : 1.0),
+        child: Card(
+          color:
+              widget.isCurrentPlayer
+                  ? Colors.amber.withOpacity(0.3)
+                  : Colors.white.withOpacity(0.1),
+          margin: EdgeInsets.only(top: _isHovered ? 22 : 5),
+          child: ListTile(
+            leading: CircleAvatar(
+              backgroundColor: widget.rankColor.withOpacity(0.2),
+              child:
+                  widget.rank <= 3
+                      ? Icon(widget.rankIcon, color: widget.rankColor)
+                      : Text(
+                        "${widget.rank}",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 14,
+                        ),
+                      ),
+            ),
+            title: Text(
+              widget.isCurrentPlayer
+                  ? "You(${widget.player['userName'] ?? 'Unknown'})"
+                  : widget.player['userName'] ?? 'Unknown',
+              style: TextStyle(
+                color: Colors.white,
+                fontWeight:
+                    widget.rank <= 3 ? FontWeight.bold : FontWeight.normal,
+              ),
+            ),
+            subtitle: Padding(
+              padding: EdgeInsets.only(top: 8.0),
+              child: Text(
+                'Games: ${widget.player['totalGamesPlayed'] ?? 0}',
+                style: const TextStyle(color: Colors.white70),
+              ),
+            ),
+            trailing: Text(
+              '${widget.player['highestScore'] ?? 0}',
+              style: TextStyle(
+                color: widget.rankColor,
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
           ),
         ),
       ),

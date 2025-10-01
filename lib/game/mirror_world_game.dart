@@ -33,6 +33,7 @@ class MirrorWorldGame extends FlameGame
 
   MirrorWorldGame({required this.gameState, double initialSpeed = 400.0}) {
     _moveSpeed = initialSpeed;
+    // pauseWhenBackgrounded = false;
   }
 
   @override

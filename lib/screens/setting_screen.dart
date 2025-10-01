@@ -44,6 +44,8 @@ class _SettingScreenState extends State<SettingScreen>
   Duration _lastElapsed = Duration.zero;
   final ValueNotifier<int> _particleNotifier = ValueNotifier<int>(0);
 
+  final List<Particles> _particles = [];
+
   @override
   void initState() {
     super.initState();
@@ -148,15 +150,16 @@ class _SettingScreenState extends State<SettingScreen>
     }
   }
 
-  final List<Particles> _particles = [];
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.transparent,
       body: Stack(
         children: [
+          // Background gradient
           Container(
+            width: double.infinity,
+            height: double.infinity,
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 colors: [
@@ -170,225 +173,248 @@ class _SettingScreenState extends State<SettingScreen>
               ),
             ),
           ),
-          RepaintBoundary(
-            child: ValueListenableBuilder<int>(
-              valueListenable: _particleNotifier,
-              builder: (context, _, __) {
-                return CustomPaint(
-                  painter: ParticlePainter(_particles),
-                  size: Size.infinite,
-                );
-              },
+
+          // Particle effect
+          IgnorePointer(
+            child: RepaintBoundary(
+              child: ValueListenableBuilder<int>(
+                valueListenable: _particleNotifier,
+                builder: (context, _, __) {
+                  return CustomPaint(
+                    painter: ParticlePainter(_particles),
+                    size: Size.infinite,
+                  );
+                },
+              ),
             ),
           ),
-          Center(child: buildSettingDialog()),
-        ],
-      ),
-    );
-  }
 
-  Widget buildSettingDialog() {
-    return Dialog(
-      backgroundColor: Colors.transparent,
-      insetPadding: const EdgeInsets.all(12),
-      child: Container(
-        width: kIsWeb ? 500 : double.infinity,
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [
-              Colors.black.withOpacity(0.35),
-              Colors.indigo.shade900,
-              Colors.purple.shade900,
-            ],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-          ),
-          borderRadius: BorderRadius.circular(30),
-
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.2),
-              blurRadius: 80,
-              spreadRadius: 50,
-            ),
-          ],
-        ),
-        padding: const EdgeInsets.all(28),
-        child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const SizedBox(height: 18),
-              Text(
-                'SETTINGS',
-                style: TextStyle(
-                  fontSize: 30,
-                  fontWeight: FontWeight.bold,
-                  letterSpacing: 2,
-                  color: Colors.white,
-                  shadows: [
-                    Shadow(
-                      color: Colors.black87,
-                      blurRadius: 10,
-                      offset: Offset(2, 2),
+          // AppBar and content
+          SafeArea(
+            child: Column(
+              children: [
+                // AppBar section
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 12),
+                  child: SizedBox(
+                    height: 56,
+                    child: Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        Align(
+                          alignment: Alignment.centerLeft,
+                          child: BackButton(color: Colors.white),
+                        ),
+                        const Center(
+                          child: Text(
+                            'SETTINGS',
+                            style: TextStyle(
+                              fontSize: 22,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
-                  ],
+                  ),
                 ),
-              ),
-              const SizedBox(height: 30),
 
-              Column(
-                children: [
-                  ToggleButton(
-                    title: "Sound",
-                    value: enableSound,
-                    icon: Icons.music_note,
-                    onChanged: (value) => setState(() => enableSound = value),
-                  ),
+                // Content section
+                Expanded(
+                  child: Center(
+                    child: Container(
+                      width: kIsWeb ? 500 : double.infinity,
+                      padding: const EdgeInsets.all(12),
+                      child: SingleChildScrollView(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            const SizedBox(height: 18),
 
-                  ToggleButton(
-                    title: "Notifications",
-                    value: enableNotifications,
-                    icon: Icons.notifications,
-                    onChanged:
-                        (value) => setState(() => enableNotifications = value),
-                  ),
-                ],
-              ),
+                            // Toggle buttons
+                            Column(
+                              children: [
+                                ToggleButton(
+                                  title: "Sound",
+                                  value: enableSound,
+                                  icon: Icons.music_note,
+                                  onChanged:
+                                      (value) =>
+                                          setState(() => enableSound = value),
+                                ),
+                                ToggleButton(
+                                  title: "Notifications",
+                                  value: enableNotifications,
+                                  icon: Icons.notifications,
+                                  onChanged:
+                                      (value) => setState(
+                                        () => enableNotifications = value,
+                                      ),
+                                ),
+                              ],
+                            ),
 
-              const SizedBox(height: 20),
-              Divider(color: Colors.white24, thickness: 1),
-              const SizedBox(height: 20),
-              CustomSlider(
-                title: "Movement Speed",
-                value: movementSpeed,
-                min: 0,
-                max: 10,
-                icon: Icons.music_note,
-                color: Colors.cyanAccent,
-                isDisabled: false,
-                onChanged: (value) => setState(() => movementSpeed = value),
-              ),
+                            const SizedBox(height: 20),
+                            Divider(color: Colors.white24, thickness: 1),
+                            const SizedBox(height: 20),
 
-              const SizedBox(height: 20),
-              enableSound == true
-                  ? CustomSlider(
-                    title: "Sound Volume",
-                    value: soundVolume,
-                    min: 0,
-                    max: 10,
-                    icon: Icons.volume_up,
-                    color: Colors.pinkAccent,
-                    isDisabled: false,
-                    onChanged:
-                        (value) => setState(() {
-                          soundVolume = value;
-                        }),
-                  )
-                  : GestureDetector(
-                    onTap: () {
-                      CustomToast.show(
-                        context,
-                        message: "Please enable the sound first",
-                        type: GameToastType.error,
-                      );
-                    },
-                    child: CustomSlider(
-                      title: "Sound Volume",
-                      value: soundVolume,
-                      min: 0,
-                      max: 10,
-                      icon: Icons.volume_up,
-                      color: Colors.pinkAccent,
-                      isDisabled: true,
-                      onChanged:
-                          (value) => setState(() {
-                            // soundVolume = value;
-                          }),
-                    ),
-                  ),
-              const SizedBox(height: 20),
+                            // Movement speed slider
+                            CustomSlider(
+                              title: "Movement Speed",
+                              value: movementSpeed,
+                              min: 0,
+                              max: 10,
+                              icon: Icons.music_note,
+                              color: Colors.cyanAccent,
+                              isDisabled: false,
+                              onChanged:
+                                  (value) =>
+                                      setState(() => movementSpeed = value),
+                            ),
 
-              _buildDifficultySection(),
+                            const SizedBox(height: 20),
 
-              widget.isSettingScreen == true
-                  ? SizedBox(height: 20)
-                  : const SizedBox(height: 35),
-              widget.isSettingScreen == true
-                  ? SizedBox()
-                  : Row(
-                    children: [
-                      Expanded(
-                        child: GradientButton(
-                          label: "Resume",
-                          gradient: const LinearGradient(
-                            colors: [Color(0xFF00C6FF), Color(0xFF0072FF)],
-                            begin: Alignment.topLeft,
-                            end: Alignment.bottomRight,
-                          ),
-                          onTap: () {
-                            Provider.of<GameState>(
-                              context,
-                              listen: false,
-                            ).togglePause();
-                            Navigator.pop(context);
-                          },
-                        ),
-                      ),
+                            // Sound volume slider
+                            enableSound
+                                ? CustomSlider(
+                                  title: "Sound Volume",
+                                  value: soundVolume,
+                                  min: 0,
+                                  max: 10,
+                                  icon: Icons.volume_up,
+                                  color: Colors.pinkAccent,
+                                  isDisabled: false,
+                                  onChanged:
+                                      (value) => setState(() {
+                                        soundVolume = value;
+                                      }),
+                                )
+                                : GestureDetector(
+                                  onTap: () {
+                                    CustomToast.show(
+                                      context,
+                                      message: "Please enable the sound first",
+                                      type: GameToastType.error,
+                                    );
+                                  },
+                                  child: CustomSlider(
+                                    title: "Sound Volume",
+                                    value: soundVolume,
+                                    min: 0,
+                                    max: 10,
+                                    icon: Icons.volume_up,
+                                    color: Colors.pinkAccent,
+                                    isDisabled: true,
+                                    onChanged: (value) {},
+                                  ),
+                                ),
 
-                      const SizedBox(width: 12),
+                            const SizedBox(height: 20),
 
-                      Expanded(
-                        child: GradientButton(
-                          label: "Main Menu",
-                          gradient: const LinearGradient(
-                            colors: [Color(0xFF0072FF), Color(0xFF00C6FF)],
-                            begin: Alignment.topLeft,
-                            end: Alignment.bottomRight,
-                          ),
-                          onTap: () {
-                            Navigator.pushAndRemoveUntil(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => const MainMenuScreen(),
+                            // Difficulty section
+                            _buildDifficultySection(),
+
+                            widget.isSettingScreen
+                                ? const SizedBox(height: 20)
+                                : const SizedBox(height: 35),
+
+                            // Resume/Main Menu buttons
+                            if (!widget.isSettingScreen)
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: GradientButton(
+                                      label: "Resume",
+                                      gradient: const LinearGradient(
+                                        colors: [
+                                          Color(0xFF00C6FF),
+                                          Color(0xFF0072FF),
+                                        ],
+                                        begin: Alignment.topLeft,
+                                        end: Alignment.bottomRight,
+                                      ),
+                                      onTap: () {
+                                        Provider.of<GameState>(
+                                          context,
+                                          listen: false,
+                                        ).togglePause();
+                                        Navigator.pop(context);
+                                      },
+                                    ),
+                                  ),
+                                  const SizedBox(width: 12),
+                                  Expanded(
+                                    child: GradientButton(
+                                      label: "Main Menu",
+                                      gradient: const LinearGradient(
+                                        colors: [
+                                          Color(0xFF0072FF),
+                                          Color(0xFF00C6FF),
+                                        ],
+                                        begin: Alignment.topLeft,
+                                        end: Alignment.bottomRight,
+                                      ),
+                                      onTap: () {
+                                        Navigator.pushAndRemoveUntil(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder:
+                                                (context) =>
+                                                    const MainMenuScreen(),
+                                          ),
+                                          (route) => false,
+                                        );
+                                      },
+                                    ),
+                                  ),
+                                ],
                               ),
-                              (route) => false,
-                            );
-                          },
+
+                            const SizedBox(height: 20),
+
+                            // Apply/Cancel buttons
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: [
+                                Expanded(
+                                  child: HolographicButton(
+                                    verticalPadding: 12,
+                                    label: "CANCEL",
+                                    fontSize: 13,
+                                    colors: const [
+                                      Colors.deepOrange,
+                                      Colors.red,
+                                    ],
+                                    onTap: () => Navigator.pop(context),
+                                  ),
+                                ),
+                                const SizedBox(width: 12),
+                                Expanded(
+                                  child: HolographicButton(
+                                    verticalPadding: 12,
+                                    label: "APPLY",
+                                    fontSize: 13,
+                                    colors: const [
+                                      Color(0xFF56ab2f),
+                                      Color(0xFF56ab2f),
+                                    ],
+                                    onTap: _applySettings,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 20),
+                          ],
                         ),
                       ),
-                    ],
-                  ),
-              SizedBox(height: 20),
-
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  Expanded(
-                    child: HolographicButton(
-                      verticalPadding: 12,
-                      label: "CANCEL",
-                      fontSize: 13,
-                      colors: const [Colors.deepOrange, Colors.red],
-                      onTap: () => Navigator.pop(context),
                     ),
                   ),
-                  SizedBox(width: 12),
-                  Expanded(
-                    child: HolographicButton(
-                      verticalPadding: 12,
-                      label: "APPLY",
-                      fontSize: 13,
-                      colors: const [Color(0xFF56ab2f), Color(0xFF56ab2f)],
-                      onTap: _applySettings,
-                    ),
-                  ),
-                ],
-              ),
-            ],
+                ),
+              ],
+            ),
           ),
-        ),
+        ],
       ),
     );
   }
@@ -401,9 +427,9 @@ class _SettingScreenState extends State<SettingScreen>
           children: [
             Icon(Icons.leaderboard, color: Colors.orangeAccent, size: 22),
             const SizedBox(width: 8),
-            Text(
+            const Text(
               "Difficulty Level",
-              style: const TextStyle(
+              style: TextStyle(
                 color: Colors.white70,
                 fontSize: 16,
                 fontWeight: FontWeight.w600,
@@ -412,7 +438,6 @@ class _SettingScreenState extends State<SettingScreen>
           ],
         ),
         const SizedBox(height: 30),
-
         Row(
           children: [
             Expanded(
@@ -421,43 +446,36 @@ class _SettingScreenState extends State<SettingScreen>
                 value: "easy",
                 selectedValue: difficulty,
                 color: Colors.green,
-                onSelected: (val) {
-                  setState(() => difficulty = val);
-                },
+                onSelected: (val) => setState(() => difficulty = val),
               ),
             ),
-            SizedBox(width: 12),
+            const SizedBox(width: 12),
             Expanded(
               child: DifficultyButton(
                 label: "Medium",
                 value: "medium",
                 selectedValue: difficulty,
                 color: Colors.orange,
-                onSelected: (val) {
-                  setState(() => difficulty = val);
-                },
+                onSelected: (val) => setState(() => difficulty = val),
               ),
             ),
-            SizedBox(width: 12),
+            const SizedBox(width: 12),
             Expanded(
               child: DifficultyButton(
                 label: "Hard",
                 value: "hard",
                 selectedValue: difficulty,
                 color: Colors.red,
-                onSelected: (val) {
-                  setState(() => difficulty = val);
-                },
+                onSelected: (val) => setState(() => difficulty = val),
               ),
             ),
           ],
         ),
-        SizedBox(height: 8),
-
+        const SizedBox(height: 8),
         Container(
           width: double.infinity,
-          margin: EdgeInsets.only(top: 10),
-          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          margin: const EdgeInsets.only(top: 10),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           decoration: BoxDecoration(
             color: getDifficultyColor(difficulty).withOpacity(0.2),
             borderRadius: BorderRadius.circular(12),

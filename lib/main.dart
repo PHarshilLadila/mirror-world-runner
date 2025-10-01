@@ -34,6 +34,8 @@ Future<void> main() async {
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown,
   ]);
+  final authProvider = AuthProvider();
+  await authProvider.fetchCurrentUser();
   runApp(
     MultiProvider(
       providers: [
