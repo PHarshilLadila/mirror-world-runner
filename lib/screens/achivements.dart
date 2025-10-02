@@ -71,7 +71,6 @@ class _AchivementsScreenState extends State<AchivementsScreen>
             double width = constraints.maxWidth;
             double height = constraints.maxHeight;
 
-            // Responsive grid calculation
             int crossAxisCount = 2;
             double childAspectRatio = 1.5;
             double headerFontSize = 16;
@@ -84,7 +83,6 @@ class _AchivementsScreenState extends State<AchivementsScreen>
             double gridPadding = 8;
             double achievementPadding = 14;
 
-            // Desktop - Large screens
             if (width >= 1400) {
               crossAxisCount = 5;
               childAspectRatio = 1;
@@ -173,7 +171,6 @@ class _AchivementsScreenState extends State<AchivementsScreen>
 
             return Stack(
               children: [
-                // Background gradient
                 Container(
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
@@ -384,7 +381,6 @@ class _AchivementsScreenState extends State<AchivementsScreen>
                                     : 12,
                           ),
 
-                        // Achievements Grid
                         Expanded(
                           child: Consumer<AchievementsProvider>(
                             builder: (context, provider, _) {
@@ -854,7 +850,6 @@ class _AchievementCardState extends State<_AchievementCard>
                 ),
                 SizedBox(height: widget.isDesktop ? 12 : 8),
 
-                // Progress Text
                 Text(
                   '${(widget.progress * 100).toStringAsFixed(0)}% Complete',
                   style: TextStyle(
@@ -865,7 +860,6 @@ class _AchievementCardState extends State<_AchievementCard>
                 ),
                 SizedBox(height: widget.isDesktop ? 8 : 4),
 
-                // Linear Progress
                 Container(
                   height: widget.isDesktop ? 8 : 6,
                   width: double.infinity,
@@ -901,7 +895,6 @@ class _AchievementCardState extends State<_AchievementCard>
                 ),
                 SizedBox(height: widget.isDesktop ? 8 : 4),
 
-                // Status
                 Container(
                   padding: EdgeInsets.symmetric(
                     horizontal: widget.isDesktop ? 12 : 8,
@@ -934,7 +927,6 @@ class _AchievementCardState extends State<_AchievementCard>
               ],
             ),
           ),
-          // Flip indicator
           Positioned(
             top: 8,
             right: 8,
