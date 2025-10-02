@@ -235,6 +235,8 @@
 //   }
 // }
 
+// ignore_for_file: deprecated_member_use
+
 import 'package:flame/components.dart';
 import 'package:flame/game.dart';
 import 'package:flame/input.dart';

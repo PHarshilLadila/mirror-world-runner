@@ -1,3 +1,5 @@
+// ignore_for_file: deprecated_member_use, use_build_context_synchronously
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
@@ -96,7 +98,7 @@ class _AchivementsScreenState extends State<AchivementsScreen>
               gridPadding = 12;
               achievementPadding = 18;
             } else if (width >= 1200) {
-              crossAxisCount = 5;
+              crossAxisCount = 4;
               childAspectRatio = 1;
               headerFontSize = 28;
               achievementTitleFontSize = 18;
@@ -187,7 +189,6 @@ class _AchivementsScreenState extends State<AchivementsScreen>
                   ),
                 ),
 
-                // Particle effect
                 RepaintBoundary(
                   child: ValueListenableBuilder<int>(
                     valueListenable: _particleNotifier,
@@ -200,13 +201,11 @@ class _AchivementsScreenState extends State<AchivementsScreen>
                   ),
                 ),
 
-                // Content
                 SafeArea(
                   child: Padding(
                     padding: EdgeInsets.all(headerPadding),
                     child: Column(
                       children: [
-                        // Header
                         SizedBox(
                           width: double.infinity,
                           child: Stack(
@@ -214,28 +213,10 @@ class _AchivementsScreenState extends State<AchivementsScreen>
                             children: [
                               Align(
                                 alignment: Alignment.centerLeft,
-                                child: GestureDetector(
-                                  onTap: () => Navigator.pop(context),
-                                  child: Container(
-                                    padding: const EdgeInsets.all(8),
-                                    decoration: BoxDecoration(
-                                      color: Colors.black.withOpacity(0.3),
-                                      borderRadius: BorderRadius.circular(12),
-                                      border: Border.all(
-                                        color: Colors.white24,
-                                        width: 1,
-                                      ),
-                                    ),
-                                    child: Icon(
-                                      Icons.arrow_back_ios_new_rounded,
-                                      color: Colors.white,
-                                      size: isDesktop ? 24 : 20,
-                                    ),
-                                  ),
-                                ),
+                                child: BackButton(),
                               ),
                               Text(
-                                '🏆 ACHIEVEMENTS',
+                                'ACHIEVEMENTS',
                                 style: TextStyle(
                                   fontSize: headerFontSize,
                                   fontWeight: FontWeight.bold,
@@ -284,7 +265,7 @@ class _AchivementsScreenState extends State<AchivementsScreen>
                               ),
                               child: DropdownButtonHideUnderline(
                                 child: DropdownButton<String>(
-                                  isExpanded: true, // Important for mobile
+                                  isExpanded: true,
                                   icon: Icon(
                                     Icons.arrow_drop_down,
                                     color: Colors.white,
@@ -333,7 +314,6 @@ class _AchivementsScreenState extends State<AchivementsScreen>
                                   : 16,
                         ),
 
-                        // Stats Bar
                         if (!(isMobile && height > width && width < 400))
                           Container(
                             width: double.infinity,
@@ -588,32 +568,47 @@ class _AchievementCardState extends State<_AchievementCard>
     _isFront = !_isFront;
   }
 
+  bool _isHovered = false;
+
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: _flipCard,
-      child: AnimatedBuilder(
-        animation: _controller,
-        builder: (context, child) {
-          final angle = _controller.value * 3.14159;
-          final transform =
+    return MouseRegion(
+      onEnter: (_) => setState(() => _isHovered = true),
+      onExit: (_) => setState(() => _isHovered = false),
+      child: GestureDetector(
+        onTap: _flipCard,
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeOutBack,
+          alignment: Alignment.center,
+          transform:
               Matrix4.identity()
-                ..setEntry(3, 2, 0.001)
-                ..rotateY(angle);
+                ..translate(0, _isHovered ? -10 : 0)
+                ..scale(_isHovered ? 1.001 : 1.0),
+          child: AnimatedBuilder(
+            animation: _controller,
+            builder: (context, child) {
+              final angle = _controller.value * 3.14159;
+              final transform =
+                  Matrix4.identity()
+                    ..setEntry(3, 2, 0.001)
+                    ..rotateY(angle);
 
-          return Transform(
-            transform: transform,
-            alignment: Alignment.center,
-            child:
-                _controller.value < 0.5
-                    ? _buildFrontSide()
-                    : Transform(
-                      alignment: Alignment.center,
-                      transform: Matrix4.rotationY(3.14159),
-                      child: _buildBackSide(),
-                    ),
-          );
-        },
+              return Transform(
+                transform: transform,
+                alignment: Alignment.center,
+                child:
+                    _controller.value < 0.5
+                        ? _buildFrontSide()
+                        : Transform(
+                          alignment: Alignment.center,
+                          transform: Matrix4.rotationY(3.14159),
+                          child: _buildBackSide(),
+                        ),
+              );
+            },
+          ),
+        ),
       ),
     );
   }
@@ -736,29 +731,51 @@ class _AchievementCardState extends State<_AchievementCard>
                       ],
                     ),
                   ),
-
-                if (widget.isUnlocked)
-                  (Container(
-                    color: Colors.pink,
-                    child: Text("Achievement Done"),
-                  )),
+                // if (widget.isUnlocked) (SizedBox(height: 12)),
+                // if (widget.isUnlocked)
+                //   (Container(
+                //     padding: EdgeInsets.all(widget.isDesktop ? 6 : 4),
+                //     decoration: BoxDecoration(
+                //       color: Colors.green,
+                //       borderRadius: BorderRadius.circular(8),
+                //     ),
+                //     child: Text(
+                //       "Achievement Done",
+                //       textAlign: TextAlign.center,
+                //       overflow: TextOverflow.ellipsis,
+                //       maxLines: 2,
+                //       style: TextStyle(fontSize: 12),
+                //     ),
+                //   )),
               ],
             ),
           ),
           Positioned(
             top: 8,
             right: 8,
-            child: Container(
-              padding: const EdgeInsets.all(4),
-              decoration: BoxDecoration(
-                color: Colors.black.withOpacity(0.5),
-                shape: BoxShape.circle,
-              ),
-              child: Icon(
-                Icons.flip,
-                color: Colors.white70,
-                size: widget.isDesktop ? 16 : 12,
-              ),
+            child: Column(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(4),
+                  decoration: BoxDecoration(
+                    color: Colors.black.withOpacity(0.5),
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(
+                    Icons.flip,
+                    color: Colors.white70,
+                    size: widget.isDesktop ? 16 : 12,
+                  ),
+                ),
+                SizedBox(height: 4),
+                Text(
+                  "Flip",
+                  textAlign: TextAlign.center,
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 2,
+                  style: TextStyle(fontSize: 6),
+                ),
+              ],
             ),
           ),
         ],
