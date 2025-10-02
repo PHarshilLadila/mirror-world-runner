@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:mirror_world_runner/auth/login_screen.dart';
 import 'package:mirror_world_runner/providers/auth_provider.dart';
+import 'package:mirror_world_runner/screens/achivements.dart';
 import 'package:mirror_world_runner/screens/leader_board_screen.dart';
 import 'package:mirror_world_runner/screens/setting_screen.dart';
 import 'package:mirror_world_runner/widgets/animated_button.dart';
@@ -247,6 +248,21 @@ class _MainMenuScreenState extends State<MainMenuScreen>
                           builder:
                               (context) =>
                                   const SettingScreen(isSettingScreen: true),
+                        ),
+                      );
+                    },
+                  ),
+
+                  const SizedBox(height: 25),
+                  HolographicButton(
+                    label: "ACHIVEMENTS",
+                    colors: const [Colors.purpleAccent, Colors.deepPurple],
+                    onTap: () {
+                      debugPrint("ACHIVEMENTS");
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const AchivementsScreen(),
                         ),
                       );
                     },
