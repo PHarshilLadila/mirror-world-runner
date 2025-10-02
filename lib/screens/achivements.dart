@@ -69,152 +69,109 @@ class _AchivementsScreenState extends State<AchivementsScreen>
             double width = constraints.maxWidth;
             double height = constraints.maxHeight;
 
+            // Responsive grid calculation
             int crossAxisCount = 2;
             double childAspectRatio = 1.5;
-            double headerFontSize = 20;
-            double categoryFontSize = 14;
+            double headerFontSize = 16;
             double achievementTitleFontSize = 16;
             double achievementDescFontSize = 12;
             double statValueFontSize = 20;
             double statLabelFontSize = 12;
             double iconSize = 36;
-            double categoryHeight = 55;
             double headerPadding = 20;
-            double categoryPadding = 20;
             double gridPadding = 8;
-            double categoryItemPadding = 18;
             double achievementPadding = 14;
 
-            if (width >= 1200) {
+            // Desktop - Large screens
+            if (width >= 1400) {
               crossAxisCount = 5;
               childAspectRatio = 1;
-              headerFontSize = 20;
-              categoryFontSize = 16;
+              headerFontSize = 28;
               achievementTitleFontSize = 18;
               achievementDescFontSize = 13;
               statValueFontSize = 24;
               statLabelFontSize = 14;
               iconSize = 40;
-              categoryHeight = 65;
               headerPadding = 30;
-              categoryPadding = 25;
               gridPadding = 12;
-              categoryItemPadding = 22;
               achievementPadding = 18;
-            }
-            // Desktop - Medium screens
-            else if (width >= 1024) {
+            } else if (width >= 1200) {
+              crossAxisCount = 5;
+              childAspectRatio = 1;
+              headerFontSize = 28;
+              achievementTitleFontSize = 18;
+              achievementDescFontSize = 13;
+              statValueFontSize = 24;
+              statLabelFontSize = 14;
+              iconSize = 40;
+              headerPadding = 30;
+              gridPadding = 12;
+              achievementPadding = 18;
+            } else if (width >= 1024) {
               crossAxisCount = 4;
               childAspectRatio = 1;
-              headerFontSize = 20;
-              categoryFontSize = 15;
+              headerFontSize = 26;
               achievementTitleFontSize = 17;
               achievementDescFontSize = 12;
               statValueFontSize = 22;
               statLabelFontSize = 13;
               iconSize = 38;
-              categoryHeight = 60;
               headerPadding = 25;
-              categoryPadding = 22;
               gridPadding = 10;
-              categoryItemPadding = 20;
               achievementPadding = 16;
-            }
-            // Tablet - Landscape
-            else if (width >= 900) {
+            } else if (width >= 900) {
               crossAxisCount = 3;
               childAspectRatio = 1.3;
-              headerFontSize = 18;
-              categoryFontSize = 14;
+              headerFontSize = 24;
               achievementTitleFontSize = 16;
               achievementDescFontSize = 12;
               statValueFontSize = 20;
               statLabelFontSize = 12;
               iconSize = 36;
-              categoryHeight = 58;
               headerPadding = 22;
-              categoryPadding = 20;
               gridPadding = 10;
-              categoryItemPadding = 18;
               achievementPadding = 15;
-            } else if (width >= 800) {
-              crossAxisCount = 3;
-              childAspectRatio = 1.3;
-              headerFontSize = 17;
-              categoryFontSize = 14;
-              achievementTitleFontSize = 16;
-              achievementDescFontSize = 12;
-              statValueFontSize = 20;
-              statLabelFontSize = 12;
-              iconSize = 36;
-              categoryHeight = 58;
-              headerPadding = 22;
-              categoryPadding = 20;
-              gridPadding = 10;
-              categoryItemPadding = 18;
-              achievementPadding = 15;
-            }
-            // Tablet - Portrait
-            else if (width >= 600) {
+            } else if (width >= 600) {
               crossAxisCount = 2;
               childAspectRatio = height > 1000 ? 1.6 : 1.4;
-              headerFontSize = 16;
-              categoryFontSize = 13;
+              headerFontSize = 22;
               achievementTitleFontSize = 15;
               achievementDescFontSize = 11;
               statValueFontSize = 18;
               statLabelFontSize = 11;
               iconSize = 32;
-              categoryHeight = 52;
               headerPadding = 18;
-              categoryPadding = 16;
               gridPadding = 8;
-              categoryItemPadding = 16;
               achievementPadding = 12;
-            }
-            // Mobile - Large
-            else if (width >= 390) {
+            } else if (width >= 390) {
               crossAxisCount = 2;
               childAspectRatio = 1;
-              headerFontSize = 15;
-              categoryFontSize = 12;
+              headerFontSize = 20;
               achievementTitleFontSize = 14;
               achievementDescFontSize = 10;
               statValueFontSize = 16;
               statLabelFontSize = 10;
               iconSize = 30;
-              categoryHeight = 48;
               headerPadding = 16;
-              categoryPadding = 14;
               gridPadding = 6;
-              categoryItemPadding = 14;
               achievementPadding = 10;
-            }
-            // Mobile - Small
-            else {
+            } else {
               crossAxisCount = 1;
               childAspectRatio = 1.8;
-              headerFontSize = 15;
-              categoryFontSize = 11;
+              headerFontSize = 18;
               achievementTitleFontSize = 13;
               achievementDescFontSize = 9;
               statValueFontSize = 14;
               statLabelFontSize = 9;
               iconSize = 28;
-              categoryHeight = 45;
               headerPadding = 12;
-              categoryPadding = 12;
               gridPadding = 4;
-              categoryItemPadding = 12;
               achievementPadding = 8;
-            }
-
-            if (height > 1000 && isMobile) {
-              childAspectRatio = 1.3;
             }
 
             return Stack(
               children: [
+                // Background gradient
                 Container(
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
@@ -230,6 +187,7 @@ class _AchivementsScreenState extends State<AchivementsScreen>
                   ),
                 ),
 
+                // Particle effect
                 RepaintBoundary(
                   child: ValueListenableBuilder<int>(
                     valueListenable: _particleNotifier,
@@ -242,11 +200,13 @@ class _AchivementsScreenState extends State<AchivementsScreen>
                   ),
                 ),
 
+                // Content
                 SafeArea(
                   child: Padding(
                     padding: EdgeInsets.all(headerPadding),
                     child: Column(
                       children: [
+                        // Header
                         SizedBox(
                           width: double.infinity,
                           child: Stack(
@@ -275,7 +235,7 @@ class _AchivementsScreenState extends State<AchivementsScreen>
                                 ),
                               ),
                               Text(
-                                'ACHIEVEMENTS',
+                                '🏆 ACHIEVEMENTS',
                                 style: TextStyle(
                                   fontSize: headerFontSize,
                                   fontWeight: FontWeight.bold,
@@ -304,99 +264,66 @@ class _AchivementsScreenState extends State<AchivementsScreen>
 
                         Consumer<AchievementsProvider>(
                           builder: (context, provider, _) {
-                            return SizedBox(
-                              height: isDesktop ? 60 : 50,
-                              child: ListView.separated(
-                                scrollDirection: Axis.horizontal,
-                                physics: const BouncingScrollPhysics(),
-                                shrinkWrap: true,
-                                padding: EdgeInsets.symmetric(
-                                  horizontal: isDesktop ? 12 : 8,
+                            return Container(
+                              padding: EdgeInsets.symmetric(
+                                horizontal: 8,
+                                vertical: 4,
+                              ),
+                              decoration: BoxDecoration(
+                                gradient: LinearGradient(
+                                  colors: [
+                                    Colors.blueGrey.shade800.withOpacity(0.6),
+                                    Colors.black.withOpacity(0.4),
+                                  ],
                                 ),
-                                itemCount: provider.categories.length,
-                                separatorBuilder:
-                                    (_, __) =>
-                                        SizedBox(width: isDesktop ? 12 : 6),
-                                itemBuilder: (context, index) {
-                                  final category = provider.categories[index];
-                                  final isSelected =
-                                      category == provider.selectedCategory;
-
-                                  return GestureDetector(
-                                    onTap: () => provider.setCategory(category),
-                                    child: AnimatedContainer(
-                                      duration: const Duration(
-                                        milliseconds: 400,
-                                      ),
-                                      curve: Curves.easeInOut,
-                                      padding: EdgeInsets.symmetric(
-                                        horizontal: categoryItemPadding,
-                                        vertical:
-                                            isDesktop
-                                                ? 14
-                                                : isTablet
-                                                ? 10
-                                                : 8,
-                                      ),
-                                      decoration: BoxDecoration(
-                                        gradient:
-                                            isSelected
-                                                ? LinearGradient(
-                                                  colors: [
-                                                    Colors.amber.shade400,
-                                                    Colors.orange.shade600,
-                                                  ],
-                                                  begin: Alignment.topCenter,
-                                                  end: Alignment.bottomCenter,
-                                                )
-                                                : const LinearGradient(
-                                                  colors: [
-                                                    Colors.transparent,
-                                                    Colors.transparent,
-                                                  ],
-                                                ),
-                                        borderRadius: BorderRadius.circular(12),
-                                        border:
-                                            isSelected
-                                                ? null
-                                                : Border.all(
-                                                  color: Colors.white38,
-                                                  width: 1,
-                                                ),
-                                        boxShadow:
-                                            isSelected
-                                                ? [
-                                                  BoxShadow(
-                                                    color: Colors.amber
-                                                        .withOpacity(0.5),
-                                                    blurRadius: 12,
-                                                    spreadRadius: 2,
-                                                    offset: const Offset(0, 2),
+                                borderRadius: BorderRadius.circular(12),
+                                border: Border.all(
+                                  color: Colors.white24,
+                                  width: 1,
+                                ),
+                              ),
+                              child: DropdownButtonHideUnderline(
+                                child: DropdownButton<String>(
+                                  isExpanded: true, // Important for mobile
+                                  icon: Icon(
+                                    Icons.arrow_drop_down,
+                                    color: Colors.white,
+                                    size: 20,
+                                  ),
+                                  dropdownColor: Colors.grey.shade900,
+                                  value: provider.selectedCategory,
+                                  items:
+                                      provider.categories
+                                          .map(
+                                            (cat) => DropdownMenuItem<String>(
+                                              value: cat,
+                                              child: Flexible(
+                                                child: Text(
+                                                  cat,
+                                                  style: TextStyle(
+                                                    color: Colors.white,
+                                                    fontSize: 12,
+                                                    fontWeight: FontWeight.w600,
                                                   ),
-                                                ]
-                                                : [],
-                                      ),
-                                      child: Center(
-                                        child: Text(
-                                          category,
-                                          style: TextStyle(
-                                            color:
-                                                isSelected
-                                                    ? Colors.black
-                                                    : Colors.white70,
-                                            fontWeight: FontWeight.w600,
-                                            fontSize: categoryFontSize,
-                                            letterSpacing: 0.5,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  );
-                                },
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                  maxLines: 1,
+                                                ),
+                                              ),
+                                            ),
+                                          )
+                                          .toList(),
+                                  onChanged: (value) {
+                                    if (value != null) {
+                                      provider.setCategory(value);
+                                    }
+                                  },
+                                ),
                               ),
                             );
                           },
                         ),
+
                         SizedBox(
                           height:
                               isDesktop
@@ -406,6 +333,7 @@ class _AchivementsScreenState extends State<AchivementsScreen>
                                   : 16,
                         ),
 
+                        // Stats Bar
                         if (!(isMobile && height > width && width < 400))
                           Container(
                             width: double.infinity,
@@ -476,6 +404,7 @@ class _AchivementsScreenState extends State<AchivementsScreen>
                                     : 12,
                           ),
 
+                        // Achievements Grid
                         Expanded(
                           child: Consumer<AchievementsProvider>(
                             builder: (context, provider, _) {
@@ -502,7 +431,20 @@ class _AchivementsScreenState extends State<AchivementsScreen>
                                 itemCount: achievements.length,
                                 itemBuilder: (context, index) {
                                   final achv = achievements[index];
-                                  final isUnlocked = index % 3 != 0;
+                                  final achievementProgress = provider
+                                      .getAchievementProgress(
+                                        achv["title"] ?? "",
+                                      );
+                                  final isUnlocked =
+                                      achievementProgress['isUnlocked'] ??
+                                      false;
+                                  final currentValue =
+                                      achievementProgress['current'] ?? 0;
+                                  final targetValue =
+                                      achievementProgress['target'] ?? 1;
+                                  final progress =
+                                      achievementProgress['progress'] ?? 0.0;
+
                                   return TweenAnimationBuilder(
                                     tween: Tween<double>(begin: 0.9, end: 1.0),
                                     duration: Duration(
@@ -515,304 +457,20 @@ class _AchivementsScreenState extends State<AchivementsScreen>
                                         child: child,
                                       );
                                     },
-                                    child: Container(
-                                      decoration: BoxDecoration(
-                                        gradient:
-                                            isUnlocked
-                                                ? LinearGradient(
-                                                  colors: [
-                                                    Colors.blueGrey.shade800,
-                                                    Colors.black.withOpacity(
-                                                      0.8,
-                                                    ),
-                                                  ],
-                                                  begin: Alignment.topLeft,
-                                                  end: Alignment.bottomRight,
-                                                )
-                                                : LinearGradient(
-                                                  colors: [
-                                                    Colors.grey.shade800,
-                                                    Colors.grey.shade900,
-                                                  ],
-                                                  begin: Alignment.topLeft,
-                                                  end: Alignment.bottomRight,
-                                                ),
-                                        borderRadius: BorderRadius.circular(
-                                          isDesktop ? 20 : 16,
-                                        ),
-                                        border: Border.all(
-                                          color:
-                                              isUnlocked
-                                                  ? Colors.amber.shade400
-                                                  : Colors.grey.shade600,
-                                          width: isDesktop ? 2 : 1.5,
-                                        ),
-                                        boxShadow: [
-                                          BoxShadow(
-                                            color:
-                                                isUnlocked
-                                                    ? Colors.amber.withOpacity(
-                                                      0.2,
-                                                    )
-                                                    : Colors.black.withOpacity(
-                                                      0.4,
-                                                    ),
-                                            blurRadius: 10,
-                                            offset: const Offset(0, 4),
-                                          ),
-                                        ],
-                                      ),
-                                      padding: EdgeInsets.all(
-                                        achievementPadding,
-                                      ),
-                                      child: Stack(
-                                        children: [
-                                          Column(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.center,
-                                            children: [
-                                              Container(
-                                                padding: EdgeInsets.all(
-                                                  isDesktop ? 10 : 6,
-                                                ),
-                                                decoration: BoxDecoration(
-                                                  shape: BoxShape.circle,
-                                                  gradient:
-                                                      isUnlocked
-                                                          ? LinearGradient(
-                                                            colors: [
-                                                              Colors
-                                                                  .amber
-                                                                  .shade200,
-                                                              Colors
-                                                                  .orange
-                                                                  .shade400,
-                                                            ],
-                                                          )
-                                                          : LinearGradient(
-                                                            colors: [
-                                                              Colors
-                                                                  .grey
-                                                                  .shade500,
-                                                              Colors
-                                                                  .grey
-                                                                  .shade700,
-                                                            ],
-                                                          ),
-                                                  boxShadow:
-                                                      isUnlocked
-                                                          ? [
-                                                            BoxShadow(
-                                                              color: Colors
-                                                                  .amber
-                                                                  .withOpacity(
-                                                                    0.4,
-                                                                  ),
-                                                              blurRadius: 15,
-                                                              spreadRadius: 2,
-                                                            ),
-                                                          ]
-                                                          : [],
-                                                ),
-                                                child: Icon(
-                                                  isUnlocked
-                                                      ? Icons.emoji_events
-                                                      : Icons.lock_outline,
-                                                  color:
-                                                      isUnlocked
-                                                          ? Colors.white
-                                                          : Colors
-                                                              .grey
-                                                              .shade300,
-                                                  size: iconSize,
-                                                ),
-                                              ),
-                                              SizedBox(
-                                                height: isDesktop ? 12 : 8,
-                                              ),
-
-                                              Text(
-                                                achv["title"] ?? "",
-                                                textAlign: TextAlign.center,
-                                                maxLines: 2,
-                                                overflow: TextOverflow.ellipsis,
-                                                style: TextStyle(
-                                                  color:
-                                                      isUnlocked
-                                                          ? Colors.white
-                                                          : Colors
-                                                              .grey
-                                                              .shade400,
-                                                  fontWeight: FontWeight.bold,
-                                                  fontSize:
-                                                      achievementTitleFontSize,
-                                                  letterSpacing: 0.5,
-                                                ),
-                                              ),
-                                              SizedBox(
-                                                height: isDesktop ? 6 : 4,
-                                              ),
-
-                                              Text(
-                                                achv["desc"] ?? "",
-                                                textAlign: TextAlign.center,
-                                                maxLines: 2,
-                                                overflow: TextOverflow.ellipsis,
-                                                style: TextStyle(
-                                                  color:
-                                                      isUnlocked
-                                                          ? Colors.white70
-                                                          : Colors
-                                                              .grey
-                                                              .shade500,
-                                                  fontSize:
-                                                      achievementDescFontSize,
-                                                  height: 1.3,
-                                                ),
-                                              ),
-                                              SizedBox(
-                                                height: isDesktop ? 10 : 6,
-                                              ),
-
-                                              if (!isUnlocked)
-                                                Container(
-                                                  height: isDesktop ? 6 : 4,
-                                                  width: double.infinity,
-                                                  decoration: BoxDecoration(
-                                                    color: Colors.grey.shade800,
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                          3,
-                                                        ),
-                                                  ),
-                                                  child: Stack(
-                                                    children: [
-                                                      Container(
-                                                        width: 60,
-                                                        decoration: BoxDecoration(
-                                                          gradient:
-                                                              LinearGradient(
-                                                                colors: [
-                                                                  Colors
-                                                                      .amber
-                                                                      .shade400,
-                                                                  Colors
-                                                                      .orange
-                                                                      .shade400,
-                                                                ],
-                                                              ),
-                                                          borderRadius:
-                                                              BorderRadius.circular(
-                                                                3,
-                                                              ),
-                                                        ),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ),
-                                            ],
-                                          ),
-
-                                          if (isUnlocked)
-                                            Positioned(
-                                              bottom: isDesktop ? 8 : 4,
-                                              right: isDesktop ? 8 : 4,
-                                              child: Container(
-                                                width: isDesktop ? 28 : 20,
-                                                height: isDesktop ? 28 : 20,
-                                                decoration: BoxDecoration(
-                                                  color: Colors.green.shade500,
-                                                  shape: BoxShape.circle,
-                                                  boxShadow: [
-                                                    BoxShadow(
-                                                      color: Colors.green
-                                                          .withOpacity(0.6),
-                                                      blurRadius: 6,
-                                                      spreadRadius: 1,
-                                                    ),
-                                                  ],
-                                                ),
-                                                child: Icon(
-                                                  Icons.check,
-                                                  color: Colors.white,
-                                                  size: isDesktop ? 16 : 12,
-                                                ),
-                                              ),
-                                            ),
-
-                                          if (!isUnlocked && index % 2 == 0)
-                                            Positioned(
-                                              bottom: isDesktop ? 8 : 4,
-                                              right: isDesktop ? 8 : 4,
-                                              child: GestureDetector(
-                                                onTap: () {},
-                                                child: Container(
-                                                  padding: EdgeInsets.symmetric(
-                                                    horizontal:
-                                                        isDesktop ? 12 : 8,
-                                                    vertical: isDesktop ? 6 : 4,
-                                                  ),
-                                                  decoration: BoxDecoration(
-                                                    gradient:
-                                                        const LinearGradient(
-                                                          colors: [
-                                                            Colors.green,
-                                                            Colors.lightGreen,
-                                                          ],
-                                                        ),
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                          isDesktop ? 12 : 8,
-                                                        ),
-                                                    boxShadow: [
-                                                      BoxShadow(
-                                                        color: Colors.green
-                                                            .withOpacity(0.4),
-                                                        blurRadius: 8,
-                                                        offset: const Offset(
-                                                          0,
-                                                          2,
-                                                        ),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                  child: Text(
-                                                    'COLLECT',
-                                                    style: TextStyle(
-                                                      color: Colors.white,
-                                                      fontSize:
-                                                          isDesktop ? 10 : 8,
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      letterSpacing: 0.5,
-                                                    ),
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-
-                                          if (!isUnlocked && index % 2 != 0)
-                                            Positioned(
-                                              top: isDesktop ? 8 : 4,
-                                              right: isDesktop ? 8 : 4,
-                                              child: Container(
-                                                padding: EdgeInsets.all(
-                                                  isDesktop ? 4 : 2,
-                                                ),
-                                                decoration: BoxDecoration(
-                                                  color: Colors.black
-                                                      .withOpacity(0.6),
-                                                  shape: BoxShape.circle,
-                                                ),
-                                                child: Icon(
-                                                  Icons.lock,
-                                                  color: Colors.grey.shade400,
-                                                  size: isDesktop ? 16 : 12,
-                                                ),
-                                              ),
-                                            ),
-                                        ],
-                                      ),
+                                    child: _AchievementCard(
+                                      title: achv["title"] ?? "",
+                                      description: achv["desc"] ?? "",
+                                      isUnlocked: isUnlocked,
+                                      currentValue: currentValue,
+                                      targetValue: targetValue,
+                                      progress: progress,
+                                      iconSize: iconSize,
+                                      achievementPadding: achievementPadding,
+                                      isDesktop: isDesktop,
+                                      achievementTitleFontSize:
+                                          achievementTitleFontSize,
+                                      achievementDescFontSize:
+                                          achievementDescFontSize,
                                     ),
                                   );
                                 },
@@ -866,6 +524,418 @@ class _AchivementsScreenState extends State<AchivementsScreen>
           ),
         ),
       ],
+    );
+  }
+}
+
+class _AchievementCard extends StatefulWidget {
+  final String title;
+  final String description;
+  final bool isUnlocked;
+  final int currentValue;
+  final int targetValue;
+  final double progress;
+  final double iconSize;
+  final double achievementPadding;
+  final bool isDesktop;
+  final double achievementTitleFontSize;
+  final double achievementDescFontSize;
+
+  const _AchievementCard({
+    required this.title,
+    required this.description,
+    required this.isUnlocked,
+    required this.currentValue,
+    required this.targetValue,
+    required this.progress,
+    required this.iconSize,
+    required this.achievementPadding,
+    required this.isDesktop,
+    required this.achievementTitleFontSize,
+    required this.achievementDescFontSize,
+  });
+
+  @override
+  State<_AchievementCard> createState() => _AchievementCardState();
+}
+
+class _AchievementCardState extends State<_AchievementCard>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  bool _isFront = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      duration: const Duration(milliseconds: 600),
+      vsync: this,
+    );
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  void _flipCard() {
+    if (_isFront) {
+      _controller.forward();
+    } else {
+      _controller.reverse();
+    }
+    _isFront = !_isFront;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: _flipCard,
+      child: AnimatedBuilder(
+        animation: _controller,
+        builder: (context, child) {
+          final angle = _controller.value * 3.14159;
+          final transform =
+              Matrix4.identity()
+                ..setEntry(3, 2, 0.001)
+                ..rotateY(angle);
+
+          return Transform(
+            transform: transform,
+            alignment: Alignment.center,
+            child:
+                _controller.value < 0.5
+                    ? _buildFrontSide()
+                    : Transform(
+                      alignment: Alignment.center,
+                      transform: Matrix4.rotationY(3.14159),
+                      child: _buildBackSide(),
+                    ),
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _buildFrontSide() {
+    return Container(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [Colors.grey.shade800, Colors.grey.shade900],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(widget.isDesktop ? 20 : 16),
+        border: Border.all(
+          color:
+              widget.isUnlocked ? Colors.amber.shade400 : Colors.grey.shade600,
+          width: widget.isDesktop ? 2 : 1.5,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color:
+                widget.isUnlocked
+                    ? Colors.amber.withOpacity(0.2)
+                    : Colors.black.withOpacity(0.4),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      padding: EdgeInsets.all(widget.achievementPadding),
+      child: Stack(
+        children: [
+          Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Container(
+                  padding: EdgeInsets.all(widget.isDesktop ? 10 : 6),
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    gradient: LinearGradient(
+                      colors:
+                          widget.isUnlocked
+                              ? [Colors.amber.shade600, Colors.orange.shade400]
+                              : [Colors.grey.shade600, Colors.grey.shade800],
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color:
+                            widget.isUnlocked
+                                ? Colors.amber.withOpacity(0.4)
+                                : Colors.grey.withOpacity(0.2),
+                        blurRadius: 15,
+                        spreadRadius: 2,
+                      ),
+                    ],
+                  ),
+                  child: Icon(
+                    widget.isUnlocked ? Icons.emoji_events : Icons.lock,
+                    color: Colors.white,
+                    size: widget.iconSize,
+                  ),
+                ),
+                SizedBox(height: widget.isDesktop ? 12 : 8),
+                Text(
+                  widget.title,
+                  textAlign: TextAlign.center,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    color:
+                        widget.isUnlocked ? Colors.white : Colors.grey.shade400,
+                    fontWeight: FontWeight.bold,
+                    fontSize: widget.achievementTitleFontSize,
+                    letterSpacing: 0.5,
+                  ),
+                ),
+                SizedBox(height: widget.isDesktop ? 6 : 4),
+                Text(
+                  widget.description,
+                  textAlign: TextAlign.center,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    color:
+                        widget.isUnlocked
+                            ? Colors.white70
+                            : Colors.grey.shade500,
+                    fontSize: widget.achievementDescFontSize,
+                    height: 1.3,
+                  ),
+                ),
+                if (!widget.isUnlocked)
+                  SizedBox(height: widget.isDesktop ? 10 : 6),
+                if (!widget.isUnlocked)
+                  Container(
+                    height: widget.isDesktop ? 6 : 4,
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                      color: Colors.grey.shade800,
+                      borderRadius: BorderRadius.circular(3),
+                    ),
+                    child: Stack(
+                      children: [
+                        Container(
+                          width:
+                              (MediaQuery.of(context).size.width * 0.15) *
+                              widget.progress,
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              colors: [
+                                Colors.amber.shade400,
+                                Colors.orange.shade400,
+                              ],
+                            ),
+                            borderRadius: BorderRadius.circular(3),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+
+                if (widget.isUnlocked)
+                  (Container(
+                    color: Colors.pink,
+                    child: Text("Achievement Done"),
+                  )),
+              ],
+            ),
+          ),
+          Positioned(
+            top: 8,
+            right: 8,
+            child: Container(
+              padding: const EdgeInsets.all(4),
+              decoration: BoxDecoration(
+                color: Colors.black.withOpacity(0.5),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(
+                Icons.flip,
+                color: Colors.white70,
+                size: widget.isDesktop ? 16 : 12,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildBackSide() {
+    return Container(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [Colors.blueGrey.shade800, Colors.blueGrey.shade900],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(widget.isDesktop ? 20 : 16),
+        border: Border.all(
+          color: Colors.blueGrey.shade400,
+          width: widget.isDesktop ? 2 : 1.5,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.blueGrey.withOpacity(0.3),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      padding: EdgeInsets.all(widget.achievementPadding),
+      child: Stack(
+        children: [
+          Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    SizedBox(
+                      width: widget.isDesktop ? 100 : 80,
+                      height: widget.isDesktop ? 100 : 80,
+                      child: CircularProgressIndicator(
+                        value: widget.progress,
+
+                        strokeWidth: widget.isDesktop ? 8 : 6,
+                        backgroundColor: Colors.grey.shade800,
+                        valueColor: AlwaysStoppedAnimation<Color>(
+                          widget.isUnlocked
+                              ? Colors.amber
+                              : Colors.blue.shade400,
+                        ),
+                      ),
+                    ),
+                    Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          '${widget.currentValue}',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: widget.isDesktop ? 16 : 12,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        Text(
+                          '/${widget.targetValue}',
+                          style: TextStyle(
+                            color: Colors.white70,
+                            fontSize: widget.isDesktop ? 12 : 9,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+                SizedBox(height: widget.isDesktop ? 12 : 8),
+
+                // Progress Text
+                Text(
+                  '${(widget.progress * 100).toStringAsFixed(0)}% Complete',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: widget.achievementDescFontSize,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                SizedBox(height: widget.isDesktop ? 8 : 4),
+
+                // Linear Progress
+                Container(
+                  height: widget.isDesktop ? 8 : 6,
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    color: Colors.grey.shade800,
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                  child: Stack(
+                    children: [
+                      AnimatedContainer(
+                        duration: const Duration(milliseconds: 500),
+                        width:
+                            (MediaQuery.of(context).size.width * 0.2) *
+                            widget.progress,
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            colors:
+                                widget.isUnlocked
+                                    ? [
+                                      Colors.amber.shade400,
+                                      Colors.orange.shade400,
+                                    ]
+                                    : [
+                                      Colors.blue.shade400,
+                                      Colors.blue.shade600,
+                                    ],
+                          ),
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                SizedBox(height: widget.isDesktop ? 8 : 4),
+
+                // Status
+                Container(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: widget.isDesktop ? 12 : 8,
+                    vertical: widget.isDesktop ? 4 : 2,
+                  ),
+                  decoration: BoxDecoration(
+                    color:
+                        widget.isUnlocked
+                            ? Colors.amber.withOpacity(0.2)
+                            : Colors.blue.withOpacity(0.2),
+                    borderRadius: BorderRadius.circular(20),
+                    border: Border.all(
+                      color: widget.isUnlocked ? Colors.amber : Colors.blue,
+                      width: 1,
+                    ),
+                  ),
+                  child: Text(
+                    widget.isUnlocked ? 'UNLOCKED' : 'IN PROGRESS',
+                    style: TextStyle(
+                      color:
+                          widget.isUnlocked
+                              ? Colors.amber
+                              : Colors.blue.shade300,
+                      fontSize: widget.isDesktop ? 12 : 9,
+                      fontWeight: FontWeight.bold,
+                      letterSpacing: 0.5,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          // Flip indicator
+          Positioned(
+            top: 8,
+            right: 8,
+            child: Container(
+              padding: const EdgeInsets.all(4),
+              decoration: BoxDecoration(
+                color: Colors.black.withOpacity(0.5),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(
+                Icons.flip,
+                color: Colors.white70,
+                size: widget.isDesktop ? 16 : 12,
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
