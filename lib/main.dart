@@ -5,6 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:mirror_world_runner/auth/login_screen.dart';
+import 'package:mirror_world_runner/providers/achievements_provider.dart';
 import 'package:mirror_world_runner/providers/auth_provider.dart';
 import 'package:mirror_world_runner/screens/main_menu.dart';
 import 'package:provider/provider.dart';
@@ -43,6 +44,7 @@ Future<void> main() async {
         ChangeNotifierProvider(
           create: (_) => AuthProvider()..fetchCurrentUser(),
         ),
+        ChangeNotifierProvider(create: (_) => AchievementsProvider()),
       ],
       child: MyApp(),
     ),
