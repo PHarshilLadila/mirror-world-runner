@@ -1,6 +1,7 @@
 import 'dart:developer';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthService {
@@ -240,6 +241,28 @@ class AuthService {
     } catch (e) {
       log("[AuthService] getUserPersonalBests error: ${_extractMessage(e)}");
       return {};
+    }
+  }
+
+  Future<void> updateMaxSurvivalTime(int currentGameTime) async {
+    try {
+      final user = auth.currentUser;
+      if (user == null) return;
+
+      final userDoc = await firestore.collection('users').doc(user.uid).get();
+      final currentMax = userDoc.data()?['maxSurvivalTime'] ?? 0;
+
+      if (currentGameTime > currentMax) {
+        await firestore.collection('users').doc(user.uid).set({
+          'maxSurvivalTime': currentGameTime,
+          'lastUpdated': FieldValue.serverTimestamp(),
+        }, SetOptions(merge: true));
+
+        debugPrint('New max survival time recorded: $currentGameTime seconds');
+      }
+    } catch (e) {
+      debugPrint('Error updating max survival time: $e');
+      rethrow;
     }
   }
 

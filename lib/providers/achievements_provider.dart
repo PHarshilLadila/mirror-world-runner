@@ -94,13 +94,16 @@ class AchievementsProvider extends ChangeNotifier {
         debugPrint('User data found: $userData');
 
         if (userData != null) {
-          final survivalTime = userData['totalPlayTime'] ?? 0;
-          debugPrint('Total survival time: $survivalTime seconds');
+          final maxSurvivalTime = userData['maxSurvivalTime'] ?? 0;
+          final maxSurvivalTimeInMinutes = maxSurvivalTime ~/ 60;
+          debugPrint(
+            'Max survival time: $maxSurvivalTime seconds ($maxSurvivalTimeInMinutes minutes)',
+          );
 
           final highScore = userData['highestScore'] ?? 0;
           debugPrint('Highest score: $highScore');
 
-          _updateSurvivalAchievements(survivalTime);
+          _updateSurvivalAchievements(maxSurvivalTimeInMinutes);
 
           _updateScoreAchievements(highScore);
 
@@ -124,39 +127,42 @@ class AchievementsProvider extends ChangeNotifier {
     }
   }
 
-  void _updateSurvivalAchievements(int totalSurvivalTime) {
-    final survivalTimeInMinutes = totalSurvivalTime ~/ 60;
-    debugPrint('Survival time in minutes: $survivalTimeInMinutes');
+  void _updateSurvivalAchievements(int maxSurvivalTimeInMinutes) {
+    debugPrint('Max survival time in minutes: $maxSurvivalTimeInMinutes');
 
     _userProgress["First Steps"] = {
-      "current": survivalTimeInMinutes,
+      "current": maxSurvivalTimeInMinutes,
       "target": 1,
-      "isUnlocked": survivalTimeInMinutes >= 1,
+      "isUnlocked": maxSurvivalTimeInMinutes >= 1,
     };
 
     _userProgress["Getting Serious"] = {
-      "current": survivalTimeInMinutes,
+      "current": maxSurvivalTimeInMinutes,
       "target": 5,
-      "isUnlocked": survivalTimeInMinutes >= 5,
+      "isUnlocked": maxSurvivalTimeInMinutes >= 5,
     };
 
     _userProgress["Marathon Runner"] = {
-      "current": survivalTimeInMinutes,
+      "current": maxSurvivalTimeInMinutes,
       "target": 10,
-      "isUnlocked": survivalTimeInMinutes >= 10,
+      "isUnlocked": maxSurvivalTimeInMinutes >= 10,
     };
 
     _userProgress["Runner Master"] = {
-      "current": survivalTimeInMinutes,
+      "current": maxSurvivalTimeInMinutes,
       "target": 18,
-      "isUnlocked": survivalTimeInMinutes >= 18,
+      "isUnlocked": maxSurvivalTimeInMinutes >= 18,
     };
 
     _userProgress["Legendary Runner"] = {
-      "current": survivalTimeInMinutes,
+      "current": maxSurvivalTimeInMinutes,
       "target": 25,
-      "isUnlocked": survivalTimeInMinutes >= 25,
+      "isUnlocked": maxSurvivalTimeInMinutes >= 25,
     };
+
+    debugPrint(
+      'Survival achievements updated with max time: $maxSurvivalTimeInMinutes minutes',
+    );
   }
 
   void _updateScoreAchievements(int highScore) {

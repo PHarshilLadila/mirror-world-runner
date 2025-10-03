@@ -186,6 +186,33 @@ class _MainMenuScreenState extends State<MainMenuScreen>
                       );
                     },
                   ),
+                  SizedBox(height: 8),
+                  Consumer<AuthProvider>(
+                    builder: (context, authProvider, _) {
+                      if (authProvider.isLoading) {
+                        return const Text(
+                          "",
+                          style: TextStyle(
+                            color: Colors.white70,
+                            fontSize: 14,
+                            fontWeight: FontWeight.w300,
+                          ),
+                        );
+                      }
+
+                      final eamil =
+                          authProvider.currentUser?['email'] ?? "Player";
+                      return Text(
+                        "$eamil",
+                        style: const TextStyle(
+                          color: Colors.white70,
+                          fontSize: 14,
+                          fontWeight: FontWeight.w300,
+                        ),
+                        textAlign: TextAlign.center,
+                      );
+                    },
+                  ),
 
                   const SizedBox(height: 70),
 

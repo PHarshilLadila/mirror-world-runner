@@ -156,7 +156,6 @@ class _SettingScreenState extends State<SettingScreen>
       backgroundColor: Colors.transparent,
       body: Stack(
         children: [
-          // Background gradient
           Container(
             width: double.infinity,
             height: double.infinity,
@@ -174,7 +173,6 @@ class _SettingScreenState extends State<SettingScreen>
             ),
           ),
 
-          // Particle effect
           IgnorePointer(
             child: RepaintBoundary(
               child: ValueListenableBuilder<int>(
@@ -189,11 +187,9 @@ class _SettingScreenState extends State<SettingScreen>
             ),
           ),
 
-          // AppBar and content
           SafeArea(
             child: Column(
               children: [
-                // AppBar section
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 12),
                   child: SizedBox(
@@ -220,7 +216,6 @@ class _SettingScreenState extends State<SettingScreen>
                   ),
                 ),
 
-                // Content section
                 Expanded(
                   child: Center(
                     child: Container(
@@ -232,7 +227,6 @@ class _SettingScreenState extends State<SettingScreen>
                           children: [
                             const SizedBox(height: 18),
 
-                            // Toggle buttons
                             Column(
                               children: [
                                 ToggleButton(
@@ -259,7 +253,6 @@ class _SettingScreenState extends State<SettingScreen>
                             Divider(color: Colors.white24, thickness: 1),
                             const SizedBox(height: 20),
 
-                            // Movement speed slider
                             CustomSlider(
                               title: "Movement Speed",
                               value: movementSpeed,
@@ -275,7 +268,6 @@ class _SettingScreenState extends State<SettingScreen>
 
                             const SizedBox(height: 20),
 
-                            // Sound volume slider
                             enableSound
                                 ? CustomSlider(
                                   title: "Sound Volume",
@@ -312,14 +304,12 @@ class _SettingScreenState extends State<SettingScreen>
 
                             const SizedBox(height: 20),
 
-                            // Difficulty section
                             _buildDifficultySection(),
 
                             widget.isSettingScreen
                                 ? const SizedBox(height: 20)
                                 : const SizedBox(height: 35),
 
-                            // Resume/Main Menu buttons
                             if (!widget.isSettingScreen)
                               Row(
                                 children: [
@@ -373,7 +363,6 @@ class _SettingScreenState extends State<SettingScreen>
 
                             const SizedBox(height: 20),
 
-                            // Apply/Cancel buttons
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                               children: [
