@@ -280,7 +280,7 @@ class _LeaderboardCardState extends State<LeaderboardCard>
         alignment: Alignment.center,
         transform:
             Matrix4.identity()
-              ..translate(0, _isHovered ? -10 : 0)
+              ..translate(0.0, _isHovered ? -10 : 0.0)
               ..scale(_isHovered ? 1.001 : 1.0),
         child: Card(
           color:

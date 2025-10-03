@@ -2,13 +2,14 @@ import 'package:flutter/material.dart';
 
 class AchievementsProvider extends ChangeNotifier {
   final Map<String, List<Map<String, String>>> _achievementsData = {
-    "Survival Achievements": [
-      {"title": "First Steps", "desc": "Survive 60 seconds (1 minute)"},
+    "Survival Master": [
+      {"title": "First Steps", "desc": "Survive 1 minute"},
       {"title": "Getting Serious", "desc": "Survive 5 minutes"},
       {"title": "Marathon Runner", "desc": "Survive 10 minutes"},
-      {"title": "Legendary Runner", "desc": "Survive 15+ minutes"},
+      {"title": "Runner Master", "desc": "Survive 18 minutes"},
+      {"title": "Legendary Runner", "desc": "Survive 25+ minutes"},
     ],
-    "Power-Up Achievements": [
+    "Power Collector": [
       {"title": "Power Collector", "desc": "Collect first star or heart"},
       {
         "title": "Invincible",
@@ -18,27 +19,28 @@ class AchievementsProvider extends ChangeNotifier {
       {"title": "Maximum Life", "desc": "Reach 5 lives in a run"},
       {"title": "Combo Master", "desc": "Collect 3 power-ups consecutively"},
     ],
-    "Addicted Adventurer": [
+    "Addicted Runner": [
       {"title": "20 Games", "desc": "Play 20 games in 1 hour"},
       {"title": "100 Games", "desc": "Play 100 games in 1 day"},
       {"title": "1000 Games", "desc": "Play 1000 games in 1 week"},
       {"title": "25000 Games", "desc": "Play 25000 games in 3 weeks"},
       {"title": "60000 Games", "desc": "Play 60000 games in 1 month"},
     ],
-    "Score-Based Achievements": [
-      {"title": "Rising Star", "desc": "Score 100 points"},
-      {"title": "High Flyer", "desc": "Score 500 points"},
-      {"title": "Score King", "desc": "Score 1000 points"},
-      {"title": "Ultimate Champion", "desc": "Score 5000 points"},
+    "Score Champion": [
+      {"title": "Rising Star", "desc": "Score 500 points"},
+      {"title": "High Flyer", "desc": "Score 1500 points"},
+      {"title": "Score King", "desc": "Score 4000 points"},
+      {"title": "Score Breaker", "desc": "Score 7500 points"},
+      {"title": "Ultimate Champion", "desc": "Score 11111 points"},
     ],
   };
 
-  // Mock user progress data - in real app, this would come from backend
   final Map<String, Map<String, dynamic>> _userProgress = {
-    "First Steps": {"current": 60, "target": 60, "isUnlocked": true},
-    "Getting Serious": {"current": 180, "target": 300, "isUnlocked": false},
-    "Marathon Runner": {"current": 0, "target": 600, "isUnlocked": false},
-    "Legendary Runner": {"current": 0, "target": 900, "isUnlocked": false},
+    "First Steps": {"current": 60, "target": 1, "isUnlocked": true},
+    "Getting Serious": {"current": 180, "target": 5, "isUnlocked": false},
+    "Marathon Runner": {"current": 0, "target": 10, "isUnlocked": false},
+    "Runner Master": {"current": 50, "target": 18, "isUnlocked": false},
+    "Legendary Runner": {"current": 0, "target": 25, "isUnlocked": false},
     "Power Collector": {"current": 1, "target": 1, "isUnlocked": true},
     "Invincible": {"current": 2, "target": 3, "isUnlocked": false},
     "Heart Collector": {"current": 3, "target": 5, "isUnlocked": false},
@@ -55,7 +57,7 @@ class AchievementsProvider extends ChangeNotifier {
     "Ultimate Champion": {"current": 1200, "target": 5000, "isUnlocked": false},
   };
 
-  String _selectedCategory = "Survival Achievements";
+  String _selectedCategory = "Survival Master";
 
   List<String> get categories => _achievementsData.keys.toList();
 

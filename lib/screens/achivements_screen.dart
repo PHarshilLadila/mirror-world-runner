@@ -17,12 +17,20 @@ class AchivementsScreen extends StatefulWidget {
 }
 
 class _AchivementsScreenState extends State<AchivementsScreen>
-    with SingleTickerProviderStateMixin {
+    with TickerProviderStateMixin {
   late Ticker _ticker;
   final List<Particles> _particles = [];
   final ValueNotifier<int> _particleNotifier = ValueNotifier<int>(0);
   Duration _lastElapsed = Duration.zero;
   final numberOfParticle = kIsWeb ? 60 : 50;
+
+  late AnimationController _categoryAnimationController;
+  late Animation<double> _categoryImageAnimation;
+  late Animation<Offset> _categoryTextAnimation;
+
+  String _currentCategory = "Survival Master";
+  String _previousCategory = "Survival Master";
+  bool _isAnimating = false;
 
   @override
   void initState() {
@@ -31,6 +39,32 @@ class _AchivementsScreenState extends State<AchivementsScreen>
     Future.microtask(() {
       final authProvider = Provider.of<AuthProvider>(context, listen: false);
       authProvider.fetchCurrentUser();
+    });
+
+    _categoryAnimationController = AnimationController(
+      duration: const Duration(milliseconds: 1200),
+      vsync: this,
+    );
+
+    _categoryImageAnimation = Tween<double>(begin: 10.0, end: 1.0).animate(
+      CurvedAnimation(
+        parent: _categoryAnimationController,
+        curve: const Interval(0.0, 0.7, curve: Curves.fastEaseInToSlowEaseOut),
+      ),
+    );
+
+    _categoryTextAnimation = Tween<Offset>(
+      begin: const Offset(-1.0, 0.0),
+      end: Offset.zero,
+    ).animate(
+      CurvedAnimation(
+        parent: _categoryAnimationController,
+        curve: const Interval(0.1, 1.0, curve: Curves.easeOutBack),
+      ),
+    );
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _startCategoryAnimation();
     });
 
     for (int i = 0; i < numberOfParticle; i++) {
@@ -50,9 +84,75 @@ class _AchivementsScreenState extends State<AchivementsScreen>
     _ticker.start();
   }
 
+  void _startCategoryAnimation() {
+    _categoryAnimationController.forward(from: 0.0);
+  }
+
+  void _onCategoryChanged(String newCategory) {
+    if (newCategory != _currentCategory && !_isAnimating) {
+      setState(() {
+        _previousCategory = _currentCategory;
+        _currentCategory = newCategory;
+        _isAnimating = true;
+      });
+
+      _categoryAnimationController.forward(from: 0.0).then((_) {
+        setState(() {
+          _isAnimating = false;
+        });
+      });
+    }
+  }
+
+  String _getCategoryImagePath(String category) {
+    switch (category) {
+      case "Survival Master":
+        return 'assets/images/png/survival.png';
+      case "Power Collector":
+        return 'assets/images/png/powerup.png';
+      case "Addicted Runner":
+        return 'assets/images/png/addicted.png';
+      case "Score Champion":
+        return 'assets/images/png/score_master.png';
+      default:
+        return 'assets/images/png/survival.png';
+    }
+  }
+
+  String _getCategoryTitle(String category) {
+    switch (category) {
+      case "Survival Master":
+        return "SURVIVAL MASTER";
+      case "Power Collector":
+        return "POWER COLLECTOR";
+      case "Addicted Runner":
+        return "ADDICTED RUNNER";
+      case "Score Champion":
+        return "SCORE CHAMPION";
+      default:
+        return "ACHIEVEMENTS";
+    }
+  }
+
+  String _getCategoryDescription(String category) {
+    switch (category) {
+      case "Survival Master":
+        return "Prove your endurance by surviving against all odds";
+      case "Power Collector":
+        return "Master the art of collecting powerful items";
+      case "Addicted Runner":
+        return "Show your dedication with countless runs";
+      case "Score Champion":
+        return "Reach new heights with incredible scores";
+      default:
+        return "Unlock amazing achievements";
+    }
+  }
+
   @override
   void dispose() {
     _ticker.dispose();
+    _categoryAnimationController.dispose();
     super.dispose();
   }
 
@@ -62,6 +162,8 @@ class _AchivementsScreenState extends State<AchivementsScreen>
     final isDesktop = screenSize.width >= 1024;
     final isTablet = screenSize.width >= 600 && screenSize.width < 1024;
     final isMobile = screenSize.width < 600;
+    final isSmallMobile = screenSize.width < 400;
+    final isExtraSmallMobile = screenSize.width < 280;
 
     return ChangeNotifierProvider(
       create: (_) => AchievementsProvider(),
@@ -275,18 +377,15 @@ class _AchivementsScreenState extends State<AchivementsScreen>
                                           .map(
                                             (cat) => DropdownMenuItem<String>(
                                               value: cat,
-                                              child: Flexible(
-                                                child: Text(
-                                                  cat,
-                                                  style: TextStyle(
-                                                    color: Colors.white,
-                                                    fontSize: 12,
-                                                    fontWeight: FontWeight.w600,
-                                                  ),
-                                                  overflow:
-                                                      TextOverflow.ellipsis,
-                                                  maxLines: 1,
+                                              child: Text(
+                                                cat,
+                                                style: TextStyle(
+                                                  color: Colors.white,
+                                                  fontSize: 12,
+                                                  fontWeight: FontWeight.w600,
                                                 ),
+                                                overflow: TextOverflow.ellipsis,
+                                                maxLines: 1,
                                               ),
                                             ),
                                           )
@@ -294,6 +393,7 @@ class _AchivementsScreenState extends State<AchivementsScreen>
                                   onChanged: (value) {
                                     if (value != null) {
                                       provider.setCategory(value);
+                                      _onCategoryChanged(value);
                                     }
                                   },
                                 ),
@@ -310,7 +410,199 @@ class _AchivementsScreenState extends State<AchivementsScreen>
                                   ? 18
                                   : 16,
                         ),
+                        AnimatedBuilder(
+                          animation: _categoryAnimationController,
+                          builder: (context, child) {
+                            return Container(
+                              width: double.infinity,
+                              height:
+                                  isDesktop
+                                      ? 200
+                                      : isTablet
+                                      ? 180
+                                      : isMobile
+                                      ? 200
+                                      : isSmallMobile
+                                      ? 180
+                                      : isExtraSmallMobile
+                                      ? 200
+                                      : 180,
+                              margin: EdgeInsets.only(
+                                bottom:
+                                    isDesktop
+                                        ? 25
+                                        : isTablet
+                                        ? 18
+                                        : 16,
+                              ),
+                              child: Stack(
+                                children: [
+                                  Container(
+                                    width: double.infinity,
+                                    height: double.infinity,
+                                    decoration: BoxDecoration(
+                                      gradient: LinearGradient(
+                                        colors: [
+                                          Colors.blueGrey.shade800.withOpacity(
+                                            0.7,
+                                          ),
+                                          Colors.black.withOpacity(0.5),
+                                        ],
+                                        begin: Alignment.topLeft,
+                                        end: Alignment.bottomRight,
+                                      ),
+                                      borderRadius: BorderRadius.circular(12),
+                                      border: Border.all(
+                                        color: Colors.white24,
+                                        width: 1,
+                                      ),
+                                    ),
+                                  ),
 
+                                  Padding(
+                                    padding: EdgeInsets.all(
+                                      isDesktop
+                                          ? 20
+                                          : isTablet
+                                          ? 16
+                                          : 12,
+                                    ),
+                                    child: Row(
+                                      children: [
+                                        Expanded(
+                                          flex: 2,
+                                          child: SlideTransition(
+                                            position: _categoryTextAnimation,
+                                            child: Column(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Text(
+                                                  _getCategoryTitle(
+                                                    _currentCategory,
+                                                  ),
+                                                  style: TextStyle(
+                                                    fontSize:
+                                                        isDesktop
+                                                            ? 28
+                                                            : isTablet
+                                                            ? 22
+                                                            : 18,
+                                                    fontWeight: FontWeight.bold,
+                                                    color: Colors.amber,
+                                                    letterSpacing: 1.2,
+                                                    shadows: const [
+                                                      Shadow(
+                                                        color: Colors.black54,
+                                                        offset: Offset(2, 2),
+                                                        blurRadius: 4,
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                                SizedBox(
+                                                  height: isDesktop ? 8 : 6,
+                                                ),
+                                                Text(
+                                                  _getCategoryDescription(
+                                                    _currentCategory,
+                                                  ),
+                                                  style: TextStyle(
+                                                    fontSize:
+                                                        isDesktop
+                                                            ? 16
+                                                            : isTablet
+                                                            ? 14
+                                                            : 12,
+                                                    color: Colors.white70,
+                                                    fontWeight: FontWeight.w500,
+                                                  ),
+                                                  maxLines: 4,
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                ),
+                                                SizedBox(
+                                                  height: isDesktop ? 12 : 8,
+                                                ),
+                                                Container(
+                                                  padding: EdgeInsets.symmetric(
+                                                    horizontal:
+                                                        isDesktop ? 16 : 12,
+                                                    vertical: isDesktop ? 8 : 6,
+                                                  ),
+                                                  decoration: BoxDecoration(
+                                                    gradient: LinearGradient(
+                                                      colors: [
+                                                        Colors.amber.shade600,
+                                                        Colors.orange.shade400,
+                                                      ],
+                                                    ),
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                          12,
+                                                        ),
+                                                    boxShadow: [
+                                                      BoxShadow(
+                                                        color: Colors.amber
+                                                            .withOpacity(0.4),
+                                                        blurRadius: 10,
+                                                        offset: const Offset(
+                                                          0,
+                                                          4,
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  child: Text(
+                                                    '${_getAchievementsCount(_currentCategory)} ACHIEVEMENTS',
+                                                    style: TextStyle(
+                                                      fontSize:
+                                                          isDesktop
+                                                              ? 14
+                                                              : isTablet
+                                                              ? 12
+                                                              : 10,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      color: Colors.white,
+                                                      letterSpacing: 0.5,
+                                                    ),
+                                                    maxLines: 2,
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                        Expanded(
+                                          flex: 1,
+                                          child: ScaleTransition(
+                                            scale: _categoryImageAnimation,
+                                            child: SizedBox(
+                                              height: double.infinity,
+                                              child: Image.asset(
+                                                _getCategoryImagePath(
+                                                  _currentCategory,
+                                                ),
+                                                fit: BoxFit.contain,
+                                                filterQuality:
+                                                    FilterQuality.high,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            );
+                          },
+                        ),
                         if (!(isMobile && height > width && width < 400))
                           Container(
                             width: double.infinity,
@@ -330,7 +622,7 @@ class _AchivementsScreenState extends State<AchivementsScreen>
                                 begin: Alignment.topLeft,
                                 end: Alignment.bottomRight,
                               ),
-                              borderRadius: BorderRadius.circular(16),
+                              borderRadius: BorderRadius.circular(12),
                               border: Border.all(
                                 color: Colors.white24,
                                 width: 1,
@@ -343,7 +635,7 @@ class _AchivementsScreenState extends State<AchivementsScreen>
                                       : MainAxisAlignment.spaceBetween,
                               children: [
                                 _buildStatItem(
-                                  "12",
+                                  "18",
                                   "Total",
                                   statValueFontSize,
                                   statLabelFontSize,
@@ -433,7 +725,7 @@ class _AchivementsScreenState extends State<AchivementsScreen>
                                         child: child,
                                       );
                                     },
-                                    child: _AchievementCard(
+                                    child: AchievementCard(
                                       title: achv["title"] ?? "",
                                       description: achv["desc"] ?? "",
                                       isUnlocked: isUnlocked,
@@ -464,6 +756,21 @@ class _AchivementsScreenState extends State<AchivementsScreen>
         ),
       ),
     );
+  }
+
+  int _getAchievementsCount(String category) {
+    switch (category) {
+      case "Survival Master":
+        return 4;
+      case "Power Collector":
+        return 5;
+      case "Addicted Runner":
+        return 5;
+      case "Score Champion":
+        return 4;
+      default:
+        return 0;
+    }
   }
 
   Widget _buildStatItem(
@@ -504,7 +811,7 @@ class _AchivementsScreenState extends State<AchivementsScreen>
   }
 }
 
-class _AchievementCard extends StatefulWidget {
+class AchievementCard extends StatefulWidget {
   final String title;
   final String description;
   final bool isUnlocked;
@@ -517,7 +824,8 @@ class _AchievementCard extends StatefulWidget {
   final double achievementTitleFontSize;
   final double achievementDescFontSize;
 
-  const _AchievementCard({
+  const AchievementCard({
+    super.key,
     required this.title,
     required this.description,
     required this.isUnlocked,
@@ -532,10 +840,10 @@ class _AchievementCard extends StatefulWidget {
   });
 
   @override
-  State<_AchievementCard> createState() => _AchievementCardState();
+  State<AchievementCard> createState() => _AchievementCardState();
 }
 
-class _AchievementCardState extends State<_AchievementCard>
+class _AchievementCardState extends State<AchievementCard>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   bool _isFront = true;
@@ -579,8 +887,8 @@ class _AchievementCardState extends State<_AchievementCard>
           alignment: Alignment.center,
           transform:
               Matrix4.identity()
-                ..translate(0, _isHovered ? -10 : 0)
-                ..scale(_isHovered ? 1.001 : 1.0),
+                ..translate(0.0, _isHovered ? -10.0 : 0.0)
+                ..scale(_isHovered ? 1.005 : 1.0),
           child: AnimatedBuilder(
             animation: _controller,
             builder: (context, child) {
@@ -597,8 +905,8 @@ class _AchievementCardState extends State<_AchievementCard>
                     _controller.value < 0.5
                         ? _buildFrontSide()
                         : Transform(
+                          transform: Matrix4.identity()..rotateY(3.14159),
                           alignment: Alignment.center,
-                          transform: Matrix4.rotationY(3.14159),
                           child: _buildBackSide(),
                         ),
               );
@@ -617,7 +925,7 @@ class _AchievementCardState extends State<_AchievementCard>
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
-        borderRadius: BorderRadius.circular(widget.isDesktop ? 20 : 16),
+        borderRadius: BorderRadius.circular(12),
         border: Border.all(
           color:
               widget.isUnlocked ? Colors.amber.shade400 : Colors.grey.shade600,
@@ -673,7 +981,7 @@ class _AchievementCardState extends State<_AchievementCard>
                 Text(
                   widget.title,
                   textAlign: TextAlign.center,
-                  maxLines: 2,
+                  maxLines: 3,
                   overflow: TextOverflow.ellipsis,
                   style: TextStyle(
                     color:
@@ -687,7 +995,7 @@ class _AchievementCardState extends State<_AchievementCard>
                 Text(
                   widget.description,
                   textAlign: TextAlign.center,
-                  maxLines: 2,
+                  maxLines: 3,
                   overflow: TextOverflow.ellipsis,
                   style: TextStyle(
                     color:
@@ -727,22 +1035,6 @@ class _AchievementCardState extends State<_AchievementCard>
                       ],
                     ),
                   ),
-                // if (widget.isUnlocked) (SizedBox(height: 12)),
-                // if (widget.isUnlocked)
-                //   (Container(
-                //     padding: EdgeInsets.all(widget.isDesktop ? 6 : 4),
-                //     decoration: BoxDecoration(
-                //       color: Colors.green,
-                //       borderRadius: BorderRadius.circular(8),
-                //     ),
-                //     child: Text(
-                //       "Achievement Done",
-                //       textAlign: TextAlign.center,
-                //       overflow: TextOverflow.ellipsis,
-                //       maxLines: 2,
-                //       style: TextStyle(fontSize: 12),
-                //     ),
-                //   )),
               ],
             ),
           ),
@@ -787,7 +1079,7 @@ class _AchievementCardState extends State<_AchievementCard>
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
-        borderRadius: BorderRadius.circular(widget.isDesktop ? 20 : 16),
+        borderRadius: BorderRadius.circular(12),
         border: Border.all(
           color: Colors.blueGrey.shade400,
           width: widget.isDesktop ? 2 : 1.5,
@@ -905,7 +1197,7 @@ class _AchievementCardState extends State<_AchievementCard>
                         widget.isUnlocked
                             ? Colors.amber.withOpacity(0.2)
                             : Colors.blue.withOpacity(0.2),
-                    borderRadius: BorderRadius.circular(20),
+                    borderRadius: BorderRadius.circular(12),
                     border: Border.all(
                       color: widget.isUnlocked ? Colors.amber : Colors.blue,
                       width: 1,

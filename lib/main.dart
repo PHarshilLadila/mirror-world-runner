@@ -90,6 +90,8 @@ class _MyAppState extends State<MyApp> {
           ThemeData.dark().textTheme,
         ),
       ),
+      showPerformanceOverlay: false,
+
       debugShowCheckedModeBanner: false,
 
       home:
