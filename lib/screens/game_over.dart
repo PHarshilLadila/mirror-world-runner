@@ -144,6 +144,49 @@ class _GameOverScreenState extends State<GameOverScreen>
     }
   }
 
+  // Future<void> _saveGameDataToFirebase() async {
+  //   if (_isSaving) return;
+
+  //   if (mounted) setState(() => _isSaving = true);
+
+  //   try {
+  //     final gameState = Provider.of<GameState>(context, listen: false);
+
+  //     await _authService.saveGameData(
+  //       score: gameState.score,
+  //       timeTaken: timeTaken,
+  //       livesLeft: gameState.lives,
+  //       difficultyLevel: gameState.difficultyLevel,
+  //     );
+
+  //     await _loadUserData();
+  //     await _loadGameHistory();
+  //     await _loadPersonalBests();
+
+  //     if (mounted) {
+  //       CustomToast.show(
+  //         context,
+  //         message: "Game data saved successfully!",
+  //         type: GameToastType.success,
+  //       );
+  //     }
+  //   } catch (e) {
+  //     if (mounted) {
+  //       CustomToast.show(
+  //         context,
+  //         message: "Failed to save game data: $e",
+  //         type: GameToastType.error,
+  //       );
+  //     }
+  //   } finally {
+  //     if (mounted) {
+  //       setState(() {
+  //         _isSaving = false;
+  //       });
+  //     }
+  //   }
+  // }
+
   Future<void> _saveGameDataToFirebase() async {
     if (_isSaving) return;
 
