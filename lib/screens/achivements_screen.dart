@@ -1,10 +1,9 @@
-// ignore_for_file: deprecated_member_use
+// ignore_for_file: deprecated_member_use, use_build_context_synchronously
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:mirror_world_runner/widgets/achievement_card.dart';
-import 'package:mirror_world_runner/widgets/holographic_button.dart';
 import 'package:mirror_world_runner/widgets/particle_painter.dart';
 import 'package:mirror_world_runner/widgets/particles.dart';
 import 'package:mirror_world_runner/providers/achievements_provider.dart';
@@ -60,7 +59,6 @@ class _AchivementsScreenState extends State<AchivementsScreen>
       ),
     );
 
-    // Initialize after widget is built and providers are available
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _initializeAchievements();
       _startCategoryAnimation();
@@ -90,9 +88,8 @@ class _AchivementsScreenState extends State<AchivementsScreen>
     final userId = preferences.getString("USERID") ?? "";
 
     if (userId.isNotEmpty) {
-      print('User ID from SharedPreferences: $userId');
+      debugPrint('User ID from SharedPreferences: $userId');
 
-      // Use the SAME provider instance that's in the widget tree
       final achievementsProvider = Provider.of<AchievementsProvider>(
         context,
         listen: false,
@@ -101,7 +98,7 @@ class _AchivementsScreenState extends State<AchivementsScreen>
 
       _isInitialized = true;
     } else {
-      print('No user ID found in SharedPreferences');
+      debugPrint('No user ID found in SharedPreferences');
     }
   }
 
@@ -305,7 +302,6 @@ class _AchivementsScreenState extends State<AchivementsScreen>
                   ),
                 ),
               ),
-
               RepaintBoundary(
                 child: ValueListenableBuilder<int>(
                   valueListenable: _particleNotifier,
@@ -317,394 +313,402 @@ class _AchivementsScreenState extends State<AchivementsScreen>
                   },
                 ),
               ),
-
               SafeArea(
                 child: Padding(
                   padding: EdgeInsets.all(headerPadding),
-                  child: Column(
-                    children: [
-                      SizedBox(
-                        width: double.infinity,
-                        child: Stack(
-                          alignment: Alignment.center,
-                          children: [
-                            Align(
-                              alignment: Alignment.centerLeft,
-                              child: BackButton(),
-                            ),
-                            Text(
-                              'ACHIEVEMENTS',
-                              style: TextStyle(
-                                fontSize: headerFontSize,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.white,
-                                letterSpacing: 1.5,
-                                shadows: const [
-                                  Shadow(
-                                    color: Colors.black54,
-                                    offset: Offset(2, 2),
-                                    blurRadius: 4,
-                                  ),
-                                ],
+                  child: CustomScrollView(
+                    slivers: [
+                      SliverToBoxAdapter(
+                        child: SizedBox(
+                          width: double.infinity,
+                          child: Stack(
+                            alignment: Alignment.center,
+                            children: [
+                              Align(
+                                alignment: Alignment.centerLeft,
+                                child: BackButton(),
                               ),
-                            ),
-                          ],
+                              Text(
+                                'ACHIEVEMENTS',
+                                style: TextStyle(
+                                  fontSize: headerFontSize,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white,
+                                  letterSpacing: 1.5,
+                                  shadows: const [
+                                    Shadow(
+                                      color: Colors.black54,
+                                      offset: Offset(2, 2),
+                                      blurRadius: 4,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
-                      SizedBox(
-                        height:
-                            isDesktop
-                                ? 30
-                                : isTablet
-                                ? 20
-                                : 16,
+                      SliverToBoxAdapter(
+                        child: SizedBox(
+                          height:
+                              isDesktop
+                                  ? 30
+                                  : isTablet
+                                  ? 20
+                                  : 16,
+                        ),
                       ),
-
-                      Consumer<AchievementsProvider>(
-                        builder: (context, provider, _) {
-                          return Container(
-                            padding: EdgeInsets.symmetric(
-                              horizontal: 8,
-                              vertical: 4,
-                            ),
-                            decoration: BoxDecoration(
-                              gradient: LinearGradient(
-                                colors: [
-                                  Colors.blueGrey.shade800.withOpacity(0.6),
-                                  Colors.black.withOpacity(0.4),
-                                ],
+                      SliverToBoxAdapter(
+                        child: Consumer<AchievementsProvider>(
+                          builder: (context, provider, _) {
+                            return Container(
+                              padding: EdgeInsets.symmetric(
+                                horizontal: 8,
+                                vertical: 4,
                               ),
-                              borderRadius: BorderRadius.circular(12),
-                              border: Border.all(
-                                color: Colors.white24,
-                                width: 1,
-                              ),
-                            ),
-                            child: DropdownButtonHideUnderline(
-                              child: DropdownButton<String>(
-                                isExpanded: true,
-                                icon: Icon(
-                                  Icons.arrow_drop_down,
-                                  color: Colors.white,
-                                  size: 20,
+                              decoration: BoxDecoration(
+                                gradient: LinearGradient(
+                                  colors: [
+                                    Colors.blueGrey.shade800.withOpacity(0.6),
+                                    Colors.black.withOpacity(0.4),
+                                  ],
                                 ),
-                                dropdownColor: Colors.grey.shade900,
-                                value: provider.selectedCategory,
-                                items:
-                                    provider.categories
-                                        .map(
-                                          (cat) => DropdownMenuItem<String>(
-                                            value: cat,
-                                            child: Text(
-                                              cat,
-                                              style: TextStyle(
-                                                color: Colors.white,
-                                                fontSize: 12,
-                                                fontWeight: FontWeight.w600,
-                                              ),
-                                              overflow: TextOverflow.ellipsis,
-                                              maxLines: 1,
-                                            ),
-                                          ),
-                                        )
-                                        .toList(),
-                                onChanged: (value) {
-                                  if (value != null) {
-                                    provider.setCategory(value);
-                                    _onCategoryChanged(value);
-                                  }
-                                },
-                              ),
-                            ),
-                          );
-                        },
-                      ),
-
-                      SizedBox(
-                        height:
-                            isDesktop
-                                ? 25
-                                : isTablet
-                                ? 18
-                                : 16,
-                      ),
-                      AnimatedBuilder(
-                        animation: _categoryAnimationController,
-                        builder: (context, child) {
-                          return Container(
-                            width: double.infinity,
-                            height:
-                                isDesktop
-                                    ? 200
-                                    : isTablet
-                                    ? 180
-                                    : isMobile
-                                    ? 200
-                                    : isSmallMobile
-                                    ? 180
-                                    : isExtraSmallMobile
-                                    ? 200
-                                    : 180,
-                            margin: EdgeInsets.only(
-                              bottom:
-                                  isDesktop
-                                      ? 25
-                                      : isTablet
-                                      ? 18
-                                      : 16,
-                            ),
-                            child: Stack(
-                              children: [
-                                Container(
-                                  width: double.infinity,
-                                  height: double.infinity,
-                                  decoration: BoxDecoration(
-                                    gradient: LinearGradient(
-                                      colors: [
-                                        Colors.blueGrey.shade800.withOpacity(
-                                          0.7,
-                                        ),
-                                        Colors.black.withOpacity(0.5),
-                                      ],
-                                      begin: Alignment.topLeft,
-                                      end: Alignment.bottomRight,
-                                    ),
-                                    borderRadius: BorderRadius.circular(12),
-                                    border: Border.all(
-                                      color: Colors.white24,
-                                      width: 1,
-                                    ),
-                                  ),
+                                borderRadius: BorderRadius.circular(12),
+                                border: Border.all(
+                                  color: Colors.white24,
+                                  width: 1,
                                 ),
-
-                                Padding(
-                                  padding: EdgeInsets.all(
-                                    isDesktop
-                                        ? 20
-                                        : isTablet
-                                        ? 16
-                                        : 12,
+                              ),
+                              child: DropdownButtonHideUnderline(
+                                child: DropdownButton<String>(
+                                  isExpanded: true,
+                                  icon: Icon(
+                                    Icons.arrow_drop_down,
+                                    color: Colors.white,
+                                    size: 20,
                                   ),
-                                  child: Row(
-                                    children: [
-                                      Expanded(
-                                        flex: 2,
-                                        child: SlideTransition(
-                                          position: _categoryTextAnimation,
-                                          child: Column(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.center,
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              Text(
-                                                _getCategoryTitle(
-                                                  _currentCategory,
-                                                ),
+                                  dropdownColor: Colors.grey.shade900,
+                                  value: provider.selectedCategory,
+                                  items:
+                                      provider.categories
+                                          .map(
+                                            (cat) => DropdownMenuItem<String>(
+                                              value: cat,
+                                              child: Text(
+                                                cat,
                                                 style: TextStyle(
-                                                  fontSize:
-                                                      isDesktop
-                                                          ? 28
-                                                          : isTablet
-                                                          ? 22
-                                                          : 18,
-                                                  fontWeight: FontWeight.bold,
-                                                  color: Colors.amber,
-                                                  letterSpacing: 1.2,
-                                                  shadows: const [
-                                                    Shadow(
-                                                      color: Colors.black54,
-                                                      offset: Offset(2, 2),
-                                                      blurRadius: 4,
-                                                    ),
-                                                  ],
+                                                  color: Colors.white,
+                                                  fontSize: 12,
+                                                  fontWeight: FontWeight.w600,
                                                 ),
-                                              ),
-                                              SizedBox(
-                                                height: isDesktop ? 8 : 6,
-                                              ),
-                                              Text(
-                                                _getCategoryDescription(
-                                                  _currentCategory,
-                                                ),
-                                                style: TextStyle(
-                                                  fontSize:
-                                                      isDesktop
-                                                          ? 16
-                                                          : isTablet
-                                                          ? 14
-                                                          : 12,
-                                                  color: Colors.white70,
-                                                  fontWeight: FontWeight.w500,
-                                                ),
-                                                maxLines: 4,
                                                 overflow: TextOverflow.ellipsis,
+                                                maxLines: 1,
                                               ),
-                                              SizedBox(
-                                                height: isDesktop ? 12 : 8,
-                                              ),
-
-                                              Container(
-                                                padding: EdgeInsets.symmetric(
-                                                  horizontal:
-                                                      isDesktop ? 16 : 12,
-                                                  vertical: isDesktop ? 8 : 6,
-                                                ),
-                                                decoration: BoxDecoration(
-                                                  gradient: LinearGradient(
-                                                    colors: [
-                                                      Colors.amber.shade600,
-                                                      Colors.orange.shade400,
-                                                    ],
+                                            ),
+                                          )
+                                          .toList(),
+                                  onChanged: (value) {
+                                    if (value != null) {
+                                      provider.setCategory(value);
+                                      _onCategoryChanged(value);
+                                    }
+                                  },
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                      SliverToBoxAdapter(
+                        child: SizedBox(
+                          height:
+                              isDesktop
+                                  ? 25
+                                  : isTablet
+                                  ? 18
+                                  : 16,
+                        ),
+                      ),
+                      SliverToBoxAdapter(
+                        child: AnimatedBuilder(
+                          animation: _categoryAnimationController,
+                          builder: (context, child) {
+                            return Container(
+                              width: double.infinity,
+                              height:
+                                  isDesktop
+                                      ? 200
+                                      : isTablet
+                                      ? 180
+                                      : isMobile
+                                      ? 200
+                                      : isSmallMobile
+                                      ? 180
+                                      : isExtraSmallMobile
+                                      ? 200
+                                      : 180,
+                              margin: EdgeInsets.only(
+                                bottom:
+                                    isDesktop
+                                        ? 25
+                                        : isTablet
+                                        ? 18
+                                        : 16,
+                              ),
+                              child: Stack(
+                                children: [
+                                  Container(
+                                    width: double.infinity,
+                                    height: double.infinity,
+                                    decoration: BoxDecoration(
+                                      gradient: LinearGradient(
+                                        colors: [
+                                          Colors.blueGrey.shade800.withOpacity(
+                                            0.7,
+                                          ),
+                                          Colors.black.withOpacity(0.5),
+                                        ],
+                                        begin: Alignment.topLeft,
+                                        end: Alignment.bottomRight,
+                                      ),
+                                      borderRadius: BorderRadius.circular(12),
+                                      border: Border.all(
+                                        color: Colors.white24,
+                                        width: 1,
+                                      ),
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: EdgeInsets.all(
+                                      isDesktop
+                                          ? 20
+                                          : isTablet
+                                          ? 16
+                                          : 12,
+                                    ),
+                                    child: Row(
+                                      children: [
+                                        Expanded(
+                                          flex: 2,
+                                          child: SlideTransition(
+                                            position: _categoryTextAnimation,
+                                            child: Column(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Text(
+                                                  _getCategoryTitle(
+                                                    _currentCategory,
                                                   ),
-                                                  borderRadius:
-                                                      BorderRadius.circular(12),
-                                                  boxShadow: [
-                                                    BoxShadow(
-                                                      color: Colors.amber
-                                                          .withOpacity(0.4),
-                                                      blurRadius: 10,
-                                                      offset: const Offset(
-                                                        0,
-                                                        4,
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
-                                                child: Text(
-                                                  '${_getAchievementsCount(_currentCategory)} ACHIEVEMENTS',
                                                   style: TextStyle(
                                                     fontSize:
                                                         isDesktop
-                                                            ? 14
+                                                            ? 28
                                                             : isTablet
-                                                            ? 12
-                                                            : 10,
+                                                            ? 22
+                                                            : 18,
                                                     fontWeight: FontWeight.bold,
-                                                    color: Colors.white,
-                                                    letterSpacing: 0.5,
+                                                    color: Colors.amber,
+                                                    letterSpacing: 1.2,
+                                                    shadows: const [
+                                                      Shadow(
+                                                        color: Colors.black54,
+                                                        offset: Offset(2, 2),
+                                                        blurRadius: 4,
+                                                      ),
+                                                    ],
                                                   ),
-                                                  maxLines: 2,
+                                                ),
+                                                SizedBox(
+                                                  height: isDesktop ? 8 : 6,
+                                                ),
+                                                Text(
+                                                  _getCategoryDescription(
+                                                    _currentCategory,
+                                                  ),
+                                                  style: TextStyle(
+                                                    fontSize:
+                                                        isDesktop
+                                                            ? 16
+                                                            : isTablet
+                                                            ? 14
+                                                            : 12,
+                                                    color: Colors.white70,
+                                                    fontWeight: FontWeight.w500,
+                                                  ),
+                                                  maxLines: 4,
                                                   overflow:
                                                       TextOverflow.ellipsis,
                                                 ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ),
-
-                                      Expanded(
-                                        flex: 1,
-                                        child: ScaleTransition(
-                                          scale: _categoryImageAnimation,
-                                          child: SizedBox(
-                                            height: double.infinity,
-                                            child: Image.asset(
-                                              _getCategoryImagePath(
-                                                _currentCategory,
-                                              ),
-                                              fit: BoxFit.contain,
-                                              filterQuality: FilterQuality.high,
+                                                SizedBox(
+                                                  height: isDesktop ? 12 : 8,
+                                                ),
+                                                Container(
+                                                  padding: EdgeInsets.symmetric(
+                                                    horizontal:
+                                                        isDesktop ? 16 : 12,
+                                                    vertical: isDesktop ? 8 : 6,
+                                                  ),
+                                                  decoration: BoxDecoration(
+                                                    gradient: LinearGradient(
+                                                      colors: [
+                                                        Colors.amber.shade600,
+                                                        Colors.orange.shade400,
+                                                      ],
+                                                    ),
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                          12,
+                                                        ),
+                                                    boxShadow: [
+                                                      BoxShadow(
+                                                        color: Colors.amber
+                                                            .withOpacity(0.4),
+                                                        blurRadius: 10,
+                                                        offset: const Offset(
+                                                          0,
+                                                          4,
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  child: Text(
+                                                    '${_getAchievementsCount(_currentCategory)} ACHIEVEMENTS',
+                                                    style: TextStyle(
+                                                      fontSize:
+                                                          isDesktop
+                                                              ? 14
+                                                              : isTablet
+                                                              ? 12
+                                                              : 10,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      color: Colors.white,
+                                                      letterSpacing: 0.5,
+                                                    ),
+                                                    maxLines: 2,
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
+                                                  ),
+                                                ),
+                                              ],
                                             ),
                                           ),
                                         ),
-                                      ),
-                                    ],
+                                        Expanded(
+                                          flex: 1,
+                                          child: ScaleTransition(
+                                            scale: _categoryImageAnimation,
+                                            child: SizedBox(
+                                              height: double.infinity,
+                                              child: Image.asset(
+                                                _getCategoryImagePath(
+                                                  _currentCategory,
+                                                ),
+                                                fit: BoxFit.contain,
+                                                filterQuality:
+                                                    FilterQuality.high,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
                                   ),
-                                ),
-                              ],
-                            ),
-                          );
-                        },
-                      ),
-
-                      Consumer<AchievementsProvider>(
-                        builder: (context, provider, _) {
-                          final unlockedCount =
-                              provider.unlockedAchievementsCount;
-                          final totalCount = provider.totalAchievementsCount;
-                          final progressPercentage =
-                              provider.progressPercentage;
-
-                          return Container(
-                            width: double.infinity,
-                            padding: EdgeInsets.all(
-                              isDesktop
-                                  ? 20
-                                  : isTablet
-                                  ? 16
-                                  : 12,
-                            ),
-                            decoration: BoxDecoration(
-                              gradient: LinearGradient(
-                                colors: [
-                                  Colors.blueGrey.shade800.withOpacity(0.6),
-                                  Colors.black.withOpacity(0.4),
                                 ],
-                                begin: Alignment.topLeft,
-                                end: Alignment.bottomRight,
                               ),
-                              borderRadius: BorderRadius.circular(12),
-                              border: Border.all(
-                                color: Colors.white24,
-                                width: 1,
-                              ),
-                            ),
-                            child: Row(
-                              mainAxisAlignment:
-                                  isDesktop
-                                      ? MainAxisAlignment.spaceAround
-                                      : MainAxisAlignment.spaceBetween,
-                              children: [
-                                _buildStatItem(
-                                  totalCount.toString(),
-                                  "Total",
-                                  statValueFontSize,
-                                  statLabelFontSize,
-                                ),
-
-                                _buildStatItem(
-                                  unlockedCount.toString(),
-                                  "Unlocked",
-                                  statValueFontSize,
-                                  statLabelFontSize,
-                                ),
-
-                                _buildStatItem(
-                                  (totalCount - unlockedCount).toString(),
-                                  "Locked",
-                                  statValueFontSize,
-                                  statLabelFontSize,
-                                ),
-
-                                _buildStatItem(
-                                  "${(progressPercentage * 100).toStringAsFixed(0)}%",
-                                  "Progress",
-                                  statValueFontSize,
-                                  statLabelFontSize,
-                                ),
-                              ],
-                            ),
-                          );
-                        },
-                      ),
-                      if (!(isMobile && height > width && width < 400))
-                        SizedBox(
-                          height:
-                              isDesktop
-                                  ? 20
-                                  : isTablet
-                                  ? 16
-                                  : 12,
+                            );
+                          },
                         ),
-
-                      Expanded(
+                      ),
+                      SliverToBoxAdapter(
                         child: Consumer<AchievementsProvider>(
                           builder: (context, provider, _) {
-                            final achievements = provider.currentAchievements;
-                            return GridView.builder(
-                              padding: EdgeInsets.all(gridPadding),
+                            final unlockedCount =
+                                provider.unlockedAchievementsCount;
+                            final totalCount = provider.totalAchievementsCount;
+                            final progressPercentage =
+                                provider.progressPercentage;
+
+                            return Container(
+                              width: double.infinity,
+                              padding: EdgeInsets.all(
+                                isDesktop
+                                    ? 20
+                                    : isTablet
+                                    ? 16
+                                    : 12,
+                              ),
+                              decoration: BoxDecoration(
+                                gradient: LinearGradient(
+                                  colors: [
+                                    Colors.blueGrey.shade800.withOpacity(0.6),
+                                    Colors.black.withOpacity(0.4),
+                                  ],
+                                  begin: Alignment.topLeft,
+                                  end: Alignment.bottomRight,
+                                ),
+                                borderRadius: BorderRadius.circular(12),
+                                border: Border.all(
+                                  color: Colors.white24,
+                                  width: 1,
+                                ),
+                              ),
+                              child: Row(
+                                mainAxisAlignment:
+                                    isDesktop
+                                        ? MainAxisAlignment.spaceAround
+                                        : MainAxisAlignment.spaceBetween,
+                                children: [
+                                  _buildStatItem(
+                                    totalCount.toString(),
+                                    "Total",
+                                    statValueFontSize,
+                                    statLabelFontSize,
+                                  ),
+                                  _buildStatItem(
+                                    unlockedCount.toString(),
+                                    "Unlocked",
+                                    statValueFontSize,
+                                    statLabelFontSize,
+                                  ),
+                                  _buildStatItem(
+                                    (totalCount - unlockedCount).toString(),
+                                    "Locked",
+                                    statValueFontSize,
+                                    statLabelFontSize,
+                                  ),
+                                  _buildStatItem(
+                                    "${(progressPercentage * 100).toStringAsFixed(0)}%",
+                                    "Progress",
+                                    statValueFontSize,
+                                    statLabelFontSize,
+                                  ),
+                                ],
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                      if (!(isMobile && height > width && width < 400))
+                        SliverToBoxAdapter(
+                          child: SizedBox(
+                            height:
+                                isDesktop
+                                    ? 20
+                                    : isTablet
+                                    ? 16
+                                    : 12,
+                          ),
+                        ),
+                      Consumer<AchievementsProvider>(
+                        builder: (context, provider, _) {
+                          final achievements = provider.currentAchievements;
+                          return SliverPadding(
+                            padding: EdgeInsets.all(gridPadding),
+                            sliver: SliverGrid(
                               gridDelegate:
                                   SliverGridDelegateWithFixedCrossAxisCount(
                                     crossAxisCount: crossAxisCount,
@@ -722,8 +726,10 @@ class _AchivementsScreenState extends State<AchivementsScreen>
                                             : 10,
                                     childAspectRatio: childAspectRatio,
                                   ),
-                              itemCount: achievements.length,
-                              itemBuilder: (context, index) {
+                              delegate: SliverChildBuilderDelegate((
+                                context,
+                                index,
+                              ) {
                                 final achv = achievements[index];
                                 final achievementProgress = provider
                                     .getAchievementProgress(
@@ -766,10 +772,10 @@ class _AchivementsScreenState extends State<AchivementsScreen>
                                         achievementDescFontSize,
                                   ),
                                 );
-                              },
-                            );
-                          },
-                        ),
+                              }, childCount: achievements.length),
+                            ),
+                          );
+                        },
                       ),
                     ],
                   ),
