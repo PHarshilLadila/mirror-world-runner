@@ -326,7 +326,9 @@ class _GameScreenState extends State<GameScreen> {
               onPanCancel: _handleDragCancel,
               child: Stack(
                 children: [
-                  GameWidget(game: game!),
+                  GameWidget(
+                    game: game ?? MirrorWorldGame(gameState: gameState),
+                  ),
                   _buildHUD(context, gameState),
                   _buildControlButtons(),
                 ],

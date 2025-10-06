@@ -220,6 +220,24 @@ class _SettingScreenState extends State<SettingScreen>
                   child: Center(
                     child: Container(
                       width: kIsWeb ? 500 : double.infinity,
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          colors: [
+                            Colors.purple.shade900,
+                            Colors.indigo.shade900,
+                            Colors.black87,
+                          ],
+                        ),
+                        borderRadius: BorderRadius.circular(12),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black12,
+                            blurRadius: 50,
+                            offset: Offset(5, 5),
+                            spreadRadius: 10,
+                          ),
+                        ],
+                      ),
                       padding: const EdgeInsets.all(12),
                       child: SingleChildScrollView(
                         child: Column(
@@ -369,7 +387,10 @@ class _SettingScreenState extends State<SettingScreen>
                                 Expanded(
                                   child: HolographicButton(
                                     verticalPadding: 12,
-                                    label: "CANCEL",
+                                    label:
+                                        widget.isSettingScreen
+                                            ? "BACK"
+                                            : "CANCLE",
                                     fontSize: 13,
                                     colors: const [
                                       Colors.deepOrange,
