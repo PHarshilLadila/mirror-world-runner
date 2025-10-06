@@ -36,7 +36,7 @@ Main
 [![Login](https://raw.githubusercontent.com/PHarshilLadila/mirror-world-runner/main/assets/images/demo/login_screen.png)](https://raw.githubusercontent.com/PHarshilLadila/mirror-world-runner/main/assets/images/demo/main_login_screenscreen.png)
 
 Main  
-[![Registraation](https://raw.githubusercontent.com/PHarshilLadila/mirror-world-runner/main/assets/images/demo/register_screen.png.png)](https://raw.githubusercontent.com/PHarshilLadila/mirror-world-runner/main/assets/images/demo/register_screen.png.png)
+[![Registraation](https://raw.githubusercontent.com/PHarshilLadila/mirror-world-runner/main/assets/images/demo/register_screen.png)](https://raw.githubusercontent.com/PHarshilLadila/mirror-world-runner/main/assets/images/demo/register_screen.png)
 
 Main  
 [![Main Screen](https://raw.githubusercontent.com/PHarshilLadila/mirror-world-runner/main/assets/images/demo/main_screen.png)](https://raw.githubusercontent.com/PHarshilLadila/mirror-world-runner/main/assets/images/demo/main_screen.png)
