@@ -25,11 +25,11 @@ class MainMenuScreen extends StatefulWidget {
 
 class _MainMenuScreenState extends State<MainMenuScreen>
     with SingleTickerProviderStateMixin {
-  late Ticker _ticker;
-  final List<Particles> _particles = [];
-  final ValueNotifier<int> _particleNotifier = ValueNotifier<int>(0);
+  late Ticker ticker;
+  final List<Particles> particles = [];
+  final ValueNotifier<int> particleNotifier = ValueNotifier<int>(0);
 
-  Duration _lastElapsed = Duration.zero;
+  Duration lastElapsed = Duration.zero;
 
   final numberOfParticle = kIsWeb ? 60 : 50;
 
@@ -43,25 +43,25 @@ class _MainMenuScreenState extends State<MainMenuScreen>
     });
 
     for (int i = 0; i < numberOfParticle; i++) {
-      _particles.add(Particles());
+      particles.add(Particles());
     }
 
-    _ticker = createTicker((elapsed) {
-      final dt = (elapsed - _lastElapsed).inMicroseconds / 1e6;
-      _lastElapsed = elapsed;
+    ticker = createTicker((elapsed) {
+      final dt = (elapsed - lastElapsed).inMicroseconds / 1e6;
+      lastElapsed = elapsed;
 
-      for (var p in _particles) {
+      for (var p in particles) {
         p.update(dt);
       }
 
-      _particleNotifier.value++;
+      particleNotifier.value++;
     });
-    _ticker.start();
+    ticker.start();
   }
 
   @override
   void dispose() {
-    _ticker.dispose();
+    ticker.dispose();
     super.dispose();
   }
 
@@ -87,10 +87,10 @@ class _MainMenuScreenState extends State<MainMenuScreen>
 
           RepaintBoundary(
             child: ValueListenableBuilder<int>(
-              valueListenable: _particleNotifier,
+              valueListenable: particleNotifier,
               builder: (context, _, __) {
                 return CustomPaint(
-                  painter: ParticlePainter(_particles),
+                  painter: ParticlePainter(particles),
                   size: Size.infinite,
                 );
               },
@@ -242,7 +242,7 @@ class _MainMenuScreenState extends State<MainMenuScreen>
                       debugPrint("HOW TO PLAY");
                       showDialog(
                         context: context,
-                        builder: (context) => _buildHowToPlayDialog(),
+                        builder: (context) => buildHowToPlayDialog(),
                       );
                     },
                   ),
@@ -461,7 +461,7 @@ class _MainMenuScreenState extends State<MainMenuScreen>
     );
   }
 
-  Widget _buildHowToPlayDialog() {
+  Widget buildHowToPlayDialog() {
     return Dialog(
       backgroundColor: Colors.transparent,
       child: Container(

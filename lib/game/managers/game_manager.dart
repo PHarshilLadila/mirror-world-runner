@@ -34,21 +34,21 @@ class GameManager extends Component {
   @override
   void onLoad() {
     super.onLoad();
-    _loadDifficultySettings();
+    loadDifficultySettings();
   }
 
-  Future<void> _loadDifficultySettings() async {
+  Future<void> loadDifficultySettings() async {
     final prefs = await SharedPreferences.getInstance();
     currentDifficulty = prefs.getString('difficulty') ?? "medium";
-    _applyDifficultySettings();
+    applyDifficultySettings();
   }
 
   void setDifficulty(String difficulty) {
     currentDifficulty = difficulty;
-    _applyDifficultySettings();
+    applyDifficultySettings();
   }
 
-  void _applyDifficultySettings() {
+  void applyDifficultySettings() {
     switch (currentDifficulty) {
       case "easy":
         obstacleSpawnInterval = 4.0;
@@ -78,7 +78,7 @@ class GameManager extends Component {
     if (isTimeSlowdownActive) {
       timeSlowdownTimer += dt;
       if (timeSlowdownTimer >= timeSlowdownDuration) {
-        _deactivateTimeSlowdown();
+        deactivateTimeSlowdown();
       }
     }
 
@@ -86,7 +86,7 @@ class GameManager extends Component {
       spawnObstacles();
       obstacleSpawnTimer = 0;
 
-      _increaseDifficultyOverTime();
+      increaseDifficultyOverTime();
     }
 
     if (powerUpSpawnTimer >= powerUpSpawnInterval) {
@@ -99,19 +99,19 @@ class GameManager extends Component {
     if (!isTimeSlowdownActive) {
       isTimeSlowdownActive = true;
       timeSlowdownTimer = 0.0;
-      _applyTimeSlowdownToObstacles();
+      applyTimeSlowdownToObstacles();
     } else {
       timeSlowdownTimer = 0.0;
     }
   }
 
-  void _deactivateTimeSlowdown() {
+  void deactivateTimeSlowdown() {
     isTimeSlowdownActive = false;
     timeSlowdownTimer = 0.0;
-    _resetObstacleSpeeds();
+    resetObstacleSpeeds();
   }
 
-  void _applyTimeSlowdownToObstacles() {
+  void applyTimeSlowdownToObstacles() {
     for (final component in world.children.toList()) {
       if (component is Obstacle) {
         component.setSpeed(component.originalSpeed * timeSlowdownFactor);
@@ -119,7 +119,7 @@ class GameManager extends Component {
     }
   }
 
-  void _resetObstacleSpeeds() {
+  void resetObstacleSpeeds() {
     for (final component in world.children.toList()) {
       if (component is Obstacle) {
         component.resetSpeed();
@@ -127,7 +127,7 @@ class GameManager extends Component {
     }
   }
 
-  void _increaseDifficultyOverTime() {
+  void increaseDifficultyOverTime() {
     double reductionAmount = 0.0;
     double speedIncrease = 0.0;
 
@@ -176,7 +176,7 @@ class GameManager extends Component {
 
     for (int i = 0; i < numberOfObstacles; i++) {
       final normalObstacle = Obstacle(
-        position: Vector2(gameSize.x, _randomYPosition()),
+        position: Vector2(gameSize.x, randomYPosition()),
         size: Vector2(40, 40),
         isForMirroredWorld: false,
         speed:
@@ -188,7 +188,7 @@ class GameManager extends Component {
       world.add(normalObstacle);
 
       final mirroredObstacle = Obstacle(
-        position: Vector2(gameSize.x, _randomYPosition()),
+        position: Vector2(gameSize.x, randomYPosition()),
         size: Vector2(40, 40),
         isForMirroredWorld: true,
         speed:
@@ -206,7 +206,7 @@ class GameManager extends Component {
     final chosen = types[random.nextInt(types.length)];
 
     final powerUp = PowerUp(
-      position: Vector2(gameSize.x, _randomYPosition()),
+      position: Vector2(gameSize.x, randomYPosition()),
       size: Vector2(30, 30),
       type: chosen,
       speed: 150,
@@ -214,7 +214,7 @@ class GameManager extends Component {
     world.add(powerUp);
   }
 
-  double _randomYPosition() {
+  double randomYPosition() {
     return (random.nextDouble() * (gameSize.y - 100)) + 50;
   }
 }

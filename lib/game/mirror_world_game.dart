@@ -28,18 +28,18 @@ class MirrorWorldGame extends FlameGame
 
   late Vector2 gameSize;
 
-  double _scoreTimer = 0;
-  final double _scoreInterval = 0.1;
-  double _targetDx = 0;
-  double _targetDy = 0;
-  double _moveSpeed = 400.0;
+  double scoreTimer = 0;
+  final double scoreInterval = 0.1;
+  double targetDx = 0;
+  double targetDy = 0;
+  double moveSpeed = 400.0;
 
   MirrorWorldGame({
     required this.gameState,
     double initialSpeed = 400.0,
     this.onPowerUpCollected,
   }) {
-    _moveSpeed = initialSpeed;
+    moveSpeed = initialSpeed;
   }
 
   @override
@@ -80,14 +80,12 @@ class MirrorWorldGame extends FlameGame
           if (gameState.lives < 5) {
             gameState.increaseLife();
           }
-          // Notify game screen about heart collection
           onPowerUpCollected?.call('heart');
         } else if (type == PowerUpType.timeSlowdown) {
           gameManager.activateTimeSlowdown();
         } else {
           normalPlayer.activatePowerUp();
           mirroredPlayer.activatePowerUp();
-          // Notify game screen about star collection
           onPowerUpCollected?.call('star');
         }
       },
@@ -96,10 +94,10 @@ class MirrorWorldGame extends FlameGame
   }
 
   void setMovement(double dx, double dy, [double? speed]) {
-    _targetDx = dx;
-    _targetDy = dy;
+    targetDx = dx;
+    targetDy = dy;
     if (speed != null) {
-      _moveSpeed = speed;
+      moveSpeed = speed;
     }
   }
 
@@ -115,33 +113,33 @@ class MirrorWorldGame extends FlameGame
     super.update(dt);
 
     if (!gameState.isPaused && !gameState.isGameOver) {
-      _scoreTimer += dt;
-      if (_scoreTimer >= _scoreInterval) {
+      scoreTimer += dt;
+      if (scoreTimer >= scoreInterval) {
         gameState.incrementScore(1);
-        _scoreTimer = 0;
+        scoreTimer = 0;
       }
 
-      _applySmoothMovement(dt);
+      applySmoothMovement(dt);
 
       normalPlayer.updatePowerUp(dt);
       mirroredPlayer.updatePowerUp(dt);
 
-      _checkCollisions();
+      checkCollisions();
     }
   }
 
-  void _applySmoothMovement(double dt) {
-    if (_targetDx != 0 || _targetDy != 0) {
-      final moveDistance = _moveSpeed * dt;
-      final moveX = _targetDx * moveDistance;
-      final moveY = _targetDy * moveDistance;
+  void applySmoothMovement(double dt) {
+    if (targetDx != 0 || targetDy != 0) {
+      final moveDistance = moveSpeed * dt;
+      final moveX = targetDx * moveDistance;
+      final moveY = targetDy * moveDistance;
 
-      _movePlayer(normalPlayer, moveX, moveY);
-      _movePlayer(mirroredPlayer, moveX, moveY);
+      movePlayer(normalPlayer, moveX, moveY);
+      movePlayer(mirroredPlayer, moveX, moveY);
     }
   }
 
-  void _movePlayer(Player player, double dx, double dy) {
+  void movePlayer(Player player, double dx, double dy) {
     double newX = player.position.x + dx;
     double newY = player.position.y + dy;
 
@@ -156,14 +154,14 @@ class MirrorWorldGame extends FlameGame
     player.position = Vector2(newX, newY);
   }
 
-  void _checkCollisions() {
+  void checkCollisions() {
     for (final component in gameWorld.children.toList()) {
       if (component is Obstacle && !component.isForMirroredWorld) {
-        if (_checkRectCollision(normalPlayer, component)) {
-          _handleCollision(normalPlayer, component);
+        if (checkRectCollision(normalPlayer, component)) {
+          handleCollision(normalPlayer, component);
         }
       } else if (component is PowerUp) {
-        if (_checkRectCollision(normalPlayer, component)) {
+        if (checkRectCollision(normalPlayer, component)) {
           gameManager.onPowerUpCollected(component.type);
           component.removeFromParent();
         }
@@ -172,11 +170,11 @@ class MirrorWorldGame extends FlameGame
 
     for (final component in gameWorld.children.toList()) {
       if (component is Obstacle && component.isForMirroredWorld) {
-        if (_checkRectCollision(mirroredPlayer, component)) {
-          _handleCollision(mirroredPlayer, component);
+        if (checkRectCollision(mirroredPlayer, component)) {
+          handleCollision(mirroredPlayer, component);
         }
       } else if (component is PowerUp) {
-        if (_checkRectCollision(mirroredPlayer, component)) {
+        if (checkRectCollision(mirroredPlayer, component)) {
           gameManager.onPowerUpCollected(component.type);
           component.removeFromParent();
         }
@@ -184,7 +182,7 @@ class MirrorWorldGame extends FlameGame
     }
   }
 
-  void _handleCollision(Player player, Obstacle obstacle) {
+  void handleCollision(Player player, Obstacle obstacle) {
     final collisionCenter = Vector2(
       player.position.x + player.size.x / 2,
       player.position.y + player.size.y / 2,
@@ -200,7 +198,7 @@ class MirrorWorldGame extends FlameGame
 
     FlameAudio.play('bomb.mp3', volume: 0.8);
 
-    _vibrate();
+    vibrate();
 
     if (player.isPoweredUp) {
       player.registerPowerUpHit();
@@ -211,7 +209,7 @@ class MirrorWorldGame extends FlameGame
     obstacle.removeFromParent();
   }
 
-  Future<void> _vibrate() async {
+  Future<void> vibrate() async {
     try {
       if (!kIsWeb) {
         if (await Vibration.hasVibrator()) {
@@ -223,7 +221,7 @@ class MirrorWorldGame extends FlameGame
     }
   }
 
-  bool _checkRectCollision(PositionComponent a, PositionComponent b) {
+  bool checkRectCollision(PositionComponent a, PositionComponent b) {
     return a.position.x < b.position.x + b.size.x &&
         a.position.x + a.size.x > b.position.x &&
         a.position.y < b.position.y + b.size.y &&
@@ -245,7 +243,6 @@ class MirrorWorldGame extends FlameGame
       linePaint,
     );
 
-    // Render time slowdown indicator if active
     if (gameManager.isTimeSlowdownActive) {
       final timeLeft =
           gameManager.timeSlowdownDuration - gameManager.timeSlowdownTimer;

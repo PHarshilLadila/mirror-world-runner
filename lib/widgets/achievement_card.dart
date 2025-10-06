@@ -36,13 +36,13 @@ class AchievementCard extends StatefulWidget {
 
 class _AchievementCardState extends State<AchievementCard>
     with SingleTickerProviderStateMixin {
-  late AnimationController _controller;
-  bool _isFront = true;
+  late AnimationController animationController;
+  bool isFront = true;
 
   @override
   void initState() {
     super.initState();
-    _controller = AnimationController(
+    animationController = AnimationController(
       duration: const Duration(milliseconds: 600),
       vsync: this,
     );
@@ -50,40 +50,40 @@ class _AchievementCardState extends State<AchievementCard>
 
   @override
   void dispose() {
-    _controller.dispose();
+    animationController.dispose();
     super.dispose();
   }
 
-  void _flipCard() {
-    if (_isFront) {
-      _controller.forward();
+  void flipCard() {
+    if (isFront) {
+      animationController.forward();
     } else {
-      _controller.reverse();
+      animationController.reverse();
     }
-    _isFront = !_isFront;
+    isFront = !isFront;
   }
 
-  bool _isHovered = false;
+  bool isHovered = false;
 
   @override
   Widget build(BuildContext context) {
     return MouseRegion(
-      onEnter: (_) => setState(() => _isHovered = true),
-      onExit: (_) => setState(() => _isHovered = false),
+      onEnter: (_) => setState(() => isHovered = true),
+      onExit: (_) => setState(() => isHovered = false),
       child: GestureDetector(
-        onTap: _flipCard,
+        onTap: flipCard,
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 300),
           curve: Curves.easeOutBack,
           alignment: Alignment.center,
           transform:
               Matrix4.identity()
-                ..translate(0.0, _isHovered ? -10.0 : 0.0)
-                ..scale(_isHovered ? 1.005 : 1.0),
+                ..translate(0.0, isHovered ? -10.0 : 0.0)
+                ..scale(isHovered ? 1.005 : 1.0),
           child: AnimatedBuilder(
-            animation: _controller,
+            animation: animationController,
             builder: (context, child) {
-              final angle = _controller.value * 3.14159;
+              final angle = animationController.value * 3.14159;
               final transform =
                   Matrix4.identity()
                     ..setEntry(3, 2, 0.001)
@@ -93,12 +93,12 @@ class _AchievementCardState extends State<AchievementCard>
                 transform: transform,
                 alignment: Alignment.center,
                 child:
-                    _controller.value < 0.5
-                        ? _buildFrontSide()
+                    animationController.value < 0.5
+                        ? frontSide()
                         : Transform(
                           transform: Matrix4.identity()..rotateY(3.14159),
                           alignment: Alignment.center,
-                          child: _buildBackSide(),
+                          child: backSide(),
                         ),
               );
             },
@@ -108,7 +108,7 @@ class _AchievementCardState extends State<AchievementCard>
     );
   }
 
-  Widget _buildFrontSide() {
+  Widget frontSide() {
     return Container(
       decoration: BoxDecoration(
         gradient: LinearGradient(
@@ -287,7 +287,7 @@ class _AchievementCardState extends State<AchievementCard>
     );
   }
 
-  Widget _buildBackSide() {
+  Widget backSide() {
     return Container(
       decoration: BoxDecoration(
         gradient: LinearGradient(
@@ -368,39 +368,6 @@ class _AchievementCardState extends State<AchievementCard>
                 ),
                 SizedBox(height: widget.isDesktop ? 8 : 4),
 
-                // Container(
-                //   height: widget.isDesktop ? 8 : 6,
-                //   width: double.infinity,
-                //   decoration: BoxDecoration(
-                //     color: Colors.white12,
-                //     borderRadius: BorderRadius.circular(4),
-                //   ),
-                //   child: Stack(
-                //     children: [
-                //       AnimatedContainer(
-                //         duration: const Duration(milliseconds: 500),
-                //         width:
-                //             (MediaQuery.of(context).size.width * 0.2) *
-                //             widget.progress,
-                //         decoration: BoxDecoration(
-                //           gradient: LinearGradient(
-                //             colors:
-                //                 widget.isUnlocked
-                //                     ? [
-                //                       Colors.amber.shade400,
-                //                       Colors.orange.shade400,
-                //                     ]
-                //                     : [
-                //                       Colors.blue.shade400,
-                //                       Colors.blue.shade600,
-                //                     ],
-                //           ),
-                //           borderRadius: BorderRadius.circular(4),
-                //         ),
-                //       ),
-                //     ],
-                //   ),
-                // ),
                 ClipRRect(
                   borderRadius: BorderRadius.circular(4),
                   child: ShaderMask(
@@ -498,31 +465,29 @@ class AchievedBadge extends StatefulWidget {
 
 class _AchievedBadgeState extends State<AchievedBadge>
     with SingleTickerProviderStateMixin {
-  late AnimationController _controller;
-  late Animation<double> _scaleAnimation;
+  late AnimationController animationController;
+  late Animation<double> scaleAnimation;
 
   @override
   void initState() {
     super.initState();
 
-    _controller = AnimationController(
+    animationController = AnimationController(
       vsync: this,
       duration: widget.zoomOutDuration,
     );
 
-    _scaleAnimation = Tween<double>(
-      begin: 1.0,
-      end: 0.0,
-    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeIn));
+    scaleAnimation = Tween<double>(begin: 1.0, end: 0.0).animate(
+      CurvedAnimation(parent: animationController, curve: Curves.easeIn),
+    );
 
-    // Start animation automatically
-    _controller.forward();
+    animationController.forward();
   }
 
   @override
   Widget build(BuildContext context) {
     return ScaleTransition(
-      scale: _scaleAnimation,
+      scale: scaleAnimation,
       child: Container(
         padding: EdgeInsets.symmetric(
           horizontal: widget.isDesktop ? 12 : 8,
@@ -548,7 +513,7 @@ class _AchievedBadgeState extends State<AchievedBadge>
 
   @override
   void dispose() {
-    _controller.dispose();
+    animationController.dispose();
     super.dispose();
   }
 }

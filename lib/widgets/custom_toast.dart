@@ -15,7 +15,7 @@ class CustomToast {
     final overlay = Overlay.of(context);
 
     final overlayEntry = OverlayEntry(
-      builder: (context) => _ToastWidget(message: message, type: type),
+      builder: (context) => ToastWidget(message: message, type: type),
     );
 
     overlay.insert(overlayEntry);
@@ -26,51 +26,52 @@ class CustomToast {
   }
 }
 
-class _ToastWidget extends StatefulWidget {
+class ToastWidget extends StatefulWidget {
   final String message;
   final GameToastType type;
 
-  const _ToastWidget({required this.message, required this.type});
+  const ToastWidget({super.key, required this.message, required this.type});
 
   @override
-  State<_ToastWidget> createState() => _ToastWidgetState();
+  State<ToastWidget> createState() => _ToastWidgetState();
 }
 
-class _ToastWidgetState extends State<_ToastWidget>
+class _ToastWidgetState extends State<ToastWidget>
     with SingleTickerProviderStateMixin {
-  late AnimationController _controller;
-  late Animation<Offset> _offsetAnimation;
-  late Animation<double> _fadeAnimation;
+  late AnimationController animationController;
+  late Animation<Offset> offsetAnimation;
+  late Animation<double> fadeAnimation;
 
   @override
   void initState() {
     super.initState();
 
-    _controller = AnimationController(
+    animationController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 500),
     );
 
-    _offsetAnimation = Tween<Offset>(
+    offsetAnimation = Tween<Offset>(
       begin: const Offset(0, 1),
       end: const Offset(0, 0),
-    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOutBack));
+    ).animate(
+      CurvedAnimation(parent: animationController, curve: Curves.easeOutBack),
+    );
 
-    _fadeAnimation = Tween<double>(
-      begin: 0.0,
-      end: 1.0,
-    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeIn));
+    fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(parent: animationController, curve: Curves.easeIn),
+    );
 
-    _controller.forward();
+    animationController.forward();
   }
 
   @override
   void dispose() {
-    _controller.dispose();
+    animationController.dispose();
     super.dispose();
   }
 
-  Color get _backgroundColor {
+  Color get backgroundColor {
     switch (widget.type) {
       case GameToastType.success:
         return Colors.green.shade600.withOpacity(0.9);
@@ -79,7 +80,7 @@ class _ToastWidgetState extends State<_ToastWidget>
     }
   }
 
-  IconData get _icon {
+  IconData get icon {
     switch (widget.type) {
       case GameToastType.success:
         return Icons.check_circle;
@@ -90,7 +91,6 @@ class _ToastWidgetState extends State<_ToastWidget>
 
   @override
   Widget build(BuildContext context) {
-    // Decide width based on platform
     double toastWidth = kIsWeb ? 450 : MediaQuery.of(context).size.width * 0.8;
 
     return Positioned(
@@ -99,9 +99,9 @@ class _ToastWidgetState extends State<_ToastWidget>
       right: 0,
       child: Center(
         child: SlideTransition(
-          position: _offsetAnimation,
+          position: offsetAnimation,
           child: FadeTransition(
-            opacity: _fadeAnimation,
+            opacity: fadeAnimation,
             child: Material(
               color: Colors.transparent,
               child: Container(
@@ -111,7 +111,7 @@ class _ToastWidgetState extends State<_ToastWidget>
                   vertical: 14,
                 ),
                 decoration: BoxDecoration(
-                  color: _backgroundColor,
+                  color: backgroundColor,
                   borderRadius: BorderRadius.circular(12),
                   boxShadow: [
                     BoxShadow(
@@ -124,7 +124,7 @@ class _ToastWidgetState extends State<_ToastWidget>
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Icon(_icon, color: Colors.white, size: 22),
+                    Icon(icon, color: Colors.white, size: 22),
                     const SizedBox(width: 10),
                     Expanded(
                       child: Text(

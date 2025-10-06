@@ -26,22 +26,22 @@ class GameOverScreen extends StatefulWidget {
 class _GameOverScreenState extends State<GameOverScreen>
     with TickerProviderStateMixin {
   int timeTaken = 0;
-  late AnimationController _controller;
-  late Animation<double> _scaleAnimation;
-  late Animation<double> _fadeAnimation;
-  late Animation<Offset> _slideAnimation;
-  late Animation<Offset> _offsetAnimation;
+  late AnimationController animationController;
+  late Animation<double> scaleAnimation;
+  late Animation<double> fadeAnimation;
+  late Animation<Offset> slideAnimation;
+  late Animation<Offset> offsetAnimation;
 
-  final List<Particles> _particles = [];
-  late Ticker _ticker;
+  final List<Particles> particles = [];
+  late Ticker ticker;
   final numberOfParticle = kIsWeb ? 60 : 50;
-  Duration _lastElapsed = Duration.zero;
-  final ValueNotifier<int> _particleNotifier = ValueNotifier<int>(0);
+  Duration lastElapsed = Duration.zero;
+  final ValueNotifier<int> particleNotifier = ValueNotifier<int>(0);
 
-  final AuthService _authService = AuthService();
-  bool _isSaving = false;
+  final AuthService authService = AuthService();
+  bool isSaving = false;
   Map<String, dynamic>? _userData;
-  List<Map<String, dynamic>> _gameHistory = [];
+  List<Map<String, dynamic>> gameHistory = [];
   Map<String, dynamic> _personalBests = {};
 
   @override
@@ -57,54 +57,56 @@ class _GameOverScreenState extends State<GameOverScreen>
     await _loadUserData();
     await _loadGameHistory();
     await _loadPersonalBests();
-    await _saveGameDataToFirebase();
+    await saveGameDataToFirebase();
   }
 
   void _setupAnimations() {
-    _controller = AnimationController(
+    animationController = AnimationController(
       duration: const Duration(milliseconds: 1200),
       vsync: this,
     );
 
-    _scaleAnimation = Tween<double>(
-      begin: 0.5,
-      end: 1.0,
-    ).animate(CurvedAnimation(parent: _controller, curve: Curves.elasticOut));
+    scaleAnimation = Tween<double>(begin: 0.5, end: 1.0).animate(
+      CurvedAnimation(parent: animationController, curve: Curves.elasticOut),
+    );
 
-    _fadeAnimation = Tween<double>(
-      begin: 0.0,
-      end: 1.0,
-    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
+    fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(parent: animationController, curve: Curves.easeInOut),
+    );
 
-    _slideAnimation = Tween<Offset>(
+    slideAnimation = Tween<Offset>(
       begin: const Offset(0, 0.3),
       end: Offset.zero,
-    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOutBack));
+    ).animate(
+      CurvedAnimation(parent: animationController, curve: Curves.easeOutBack),
+    );
 
-    _offsetAnimation = Tween<Offset>(
+    offsetAnimation = Tween<Offset>(
       begin: const Offset(0, -1.0),
       end: Offset.zero,
-    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOutCubic));
+    ).animate(
+      CurvedAnimation(parent: animationController, curve: Curves.easeOutCubic),
+    );
 
-    _controller.forward();
+    animationController.forward();
   }
 
   void _setupParticles() {
     for (int i = 0; i < numberOfParticle; i++) {
-      _particles.add(Particles());
+      particles.add(Particles());
     }
 
-    _ticker = createTicker((elapsed) {
-      final dt = (elapsed - _lastElapsed).inMicroseconds / 1e6;
-      _lastElapsed = elapsed;
+    ticker = createTicker((elapsed) {
+      final dt = (elapsed - lastElapsed).inMicroseconds / 1e6;
+      lastElapsed = elapsed;
 
-      for (var p in _particles) {
+      for (var p in particles) {
         p.update(dt);
       }
 
-      _particleNotifier.value++;
+      particleNotifier.value++;
     });
-    _ticker.start();
+    ticker.start();
   }
 
   Future<void> getTotalTakenTime() async {
@@ -118,7 +120,7 @@ class _GameOverScreenState extends State<GameOverScreen>
   }
 
   Future<void> _loadUserData() async {
-    final userData = await _authService.getCurrentUserData();
+    final userData = await authService.getCurrentUserData();
     if (mounted) {
       setState(() {
         _userData = userData;
@@ -127,16 +129,16 @@ class _GameOverScreenState extends State<GameOverScreen>
   }
 
   Future<void> _loadGameHistory() async {
-    final history = await _authService.getUserGameHistory();
+    final history = await authService.getUserGameHistory();
     if (mounted) {
       setState(() {
-        _gameHistory = history;
+        gameHistory = history;
       });
     }
   }
 
   Future<void> _loadPersonalBests() async {
-    final personalBests = await _authService.getUserPersonalBests();
+    final personalBests = await authService.getUserPersonalBests();
     if (mounted) {
       setState(() {
         _personalBests = personalBests;
@@ -187,22 +189,22 @@ class _GameOverScreenState extends State<GameOverScreen>
   //   }
   // }
 
-  Future<void> _saveGameDataToFirebase() async {
-    if (_isSaving) return;
+  Future<void> saveGameDataToFirebase() async {
+    if (isSaving) return;
 
-    if (mounted) setState(() => _isSaving = true);
+    if (mounted) setState(() => isSaving = true);
 
     try {
       final gameState = Provider.of<GameState>(context, listen: false);
 
-      await _authService.saveGameData(
+      await authService.saveGameData(
         score: gameState.score,
         timeTaken: timeTaken,
         livesLeft: gameState.lives,
         difficultyLevel: gameState.difficultyLevel,
       );
 
-      await _authService.updateMaxSurvivalTime(timeTaken);
+      await authService.updateMaxSurvivalTime(timeTaken);
 
       await _loadUserData();
       await _loadGameHistory();
@@ -226,7 +228,7 @@ class _GameOverScreenState extends State<GameOverScreen>
     } finally {
       if (mounted) {
         setState(() {
-          _isSaving = false;
+          isSaving = false;
         });
       }
     }
@@ -249,8 +251,8 @@ class _GameOverScreenState extends State<GameOverScreen>
 
   @override
   void dispose() {
-    _ticker.dispose();
-    _controller.dispose();
+    ticker.dispose();
+    animationController.dispose();
     super.dispose();
   }
 
@@ -376,7 +378,7 @@ class _GameOverScreenState extends State<GameOverScreen>
   @override
   Widget build(BuildContext context) {
     final gameState = Provider.of<GameState>(context);
-    final uniqueGames = getUniqueGames(_gameHistory);
+    final uniqueGames = getUniqueGames(gameHistory);
 
     return Scaffold(
       backgroundColor: Colors.transparent,
@@ -398,9 +400,9 @@ class _GameOverScreenState extends State<GameOverScreen>
               children: [
                 Center(
                   child: ScaleTransition(
-                    scale: _scaleAnimation,
+                    scale: scaleAnimation,
                     child: FadeTransition(
-                      opacity: _fadeAnimation,
+                      opacity: fadeAnimation,
                       child: Container(
                         width: kIsWeb ? 500 : 380,
                         height: kIsWeb ? 1000 : 1200,
@@ -414,7 +416,7 @@ class _GameOverScreenState extends State<GameOverScreen>
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 SlideTransition(
-                                  position: _slideAnimation,
+                                  position: slideAnimation,
                                   child: Stack(
                                     alignment: Alignment.center,
                                     children: [BackButton()],
@@ -453,7 +455,7 @@ class _GameOverScreenState extends State<GameOverScreen>
                                 const SizedBox(height: 20),
                                 if (_userData != null) ...[
                                   SlideTransition(
-                                    position: _slideAnimation,
+                                    position: slideAnimation,
                                     child: Container(
                                       padding: const EdgeInsets.all(12),
                                       decoration: BoxDecoration(
@@ -464,7 +466,7 @@ class _GameOverScreenState extends State<GameOverScreen>
                                         alignment: Alignment.center,
                                         children: [
                                           SlideTransition(
-                                            position: _offsetAnimation,
+                                            position: offsetAnimation,
                                             child: Center(
                                               child: Image.asset(
                                                 'assets/images/png/winner.png',
@@ -550,7 +552,7 @@ class _GameOverScreenState extends State<GameOverScreen>
                                   const SizedBox(height: 10),
                                 ],
                                 SlideTransition(
-                                  position: _slideAnimation,
+                                  position: slideAnimation,
                                   child: Container(
                                     width: double.infinity,
                                     padding: const EdgeInsets.all(20),
@@ -617,7 +619,7 @@ class _GameOverScreenState extends State<GameOverScreen>
                                 const SizedBox(height: 10),
                                 if (_personalBests.isNotEmpty) ...[
                                   SlideTransition(
-                                    position: _slideAnimation,
+                                    position: slideAnimation,
                                     child: Container(
                                       width: double.infinity,
                                       padding: const EdgeInsets.all(15),
@@ -697,9 +699,9 @@ class _GameOverScreenState extends State<GameOverScreen>
                                   ),
                                   const SizedBox(height: 10),
                                 ],
-                                if (_gameHistory.isNotEmpty) ...[
+                                if (gameHistory.isNotEmpty) ...[
                                   SlideTransition(
-                                    position: _slideAnimation,
+                                    position: slideAnimation,
                                     child: Container(
                                       width: double.infinity,
                                       padding: const EdgeInsets.all(15),
@@ -776,7 +778,7 @@ class _GameOverScreenState extends State<GameOverScreen>
                                   const SizedBox(height: 20),
                                 ],
                                 SlideTransition(
-                                  position: _slideAnimation,
+                                  position: slideAnimation,
                                   child: Column(
                                     children: [
                                       HolographicButton(
@@ -855,7 +857,7 @@ class _GameOverScreenState extends State<GameOverScreen>
                     ),
                   ),
                 ),
-                if (_isSaving) ...[
+                if (isSaving) ...[
                   Container(
                     color: Colors.black.withOpacity(0.5),
                     child: const Center(
@@ -869,10 +871,10 @@ class _GameOverScreenState extends State<GameOverScreen>
           IgnorePointer(
             child: RepaintBoundary(
               child: ValueListenableBuilder<int>(
-                valueListenable: _particleNotifier,
+                valueListenable: particleNotifier,
                 builder: (context, _, __) {
                   return CustomPaint(
-                    painter: ParticlePainter(_particles),
+                    painter: ParticlePainter(particles),
                     size: Size.infinite,
                   );
                 },

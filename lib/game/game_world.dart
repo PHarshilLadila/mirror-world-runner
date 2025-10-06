@@ -7,8 +7,8 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 
 class GameWorld extends Component with HasGameRef {
-  final List<Vector2> _stars = [];
-  final Random _random = Random();
+  final List<Vector2> stars = [];
+  final Random random = Random();
   final dotsNumbers = kIsWeb ? 130 : 80;
 
   @override
@@ -16,10 +16,10 @@ class GameWorld extends Component with HasGameRef {
     super.onLoad();
 
     for (int i = 0; i < dotsNumbers; i++) {
-      _stars.add(
+      stars.add(
         Vector2(
-          _random.nextDouble() * gameRef.size.x,
-          _random.nextDouble() * gameRef.size.y,
+          random.nextDouble() * gameRef.size.x,
+          random.nextDouble() * gameRef.size.y,
         ),
       );
     }
@@ -47,7 +47,7 @@ class GameWorld extends Component with HasGameRef {
     );
 
     final starPaint = Paint()..color = Colors.white.withOpacity(0.7);
-    for (final star in _stars) {
+    for (final star in stars) {
       canvas.drawCircle(Offset(star.x, star.y), 1.5, starPaint);
     }
 

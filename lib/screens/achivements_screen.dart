@@ -19,70 +19,70 @@ class AchivementsScreen extends StatefulWidget {
 
 class _AchivementsScreenState extends State<AchivementsScreen>
     with TickerProviderStateMixin {
-  late Ticker _ticker;
-  final List<Particles> _particles = [];
-  final ValueNotifier<int> _particleNotifier = ValueNotifier<int>(0);
-  Duration _lastElapsed = Duration.zero;
+  late Ticker ticker;
+  final List<Particles> particles = [];
+  final ValueNotifier<int> particleNotifier = ValueNotifier<int>(0);
+  Duration lastElapsed = Duration.zero;
   final numberOfParticle = kIsWeb ? 60 : 50;
 
-  late AnimationController _categoryAnimationController;
-  late Animation<double> _categoryImageAnimation;
-  late Animation<Offset> _categoryTextAnimation;
+  late AnimationController categoryAnimationController;
+  late Animation<double> categoryImageAnimation;
+  late Animation<Offset> categoryTextAnimation;
 
-  String _currentCategory = "Survival Master";
-  bool _isAnimating = false;
-  bool _isInitialized = false;
+  String currentCategory = "Survival Master";
+  bool isAnimating = false;
+  bool isInitialized = false;
 
   @override
   void initState() {
     super.initState();
 
-    _categoryAnimationController = AnimationController(
+    categoryAnimationController = AnimationController(
       duration: const Duration(milliseconds: 1200),
       vsync: this,
     );
 
-    _categoryImageAnimation = Tween<double>(begin: 10.0, end: 1.0).animate(
+    categoryImageAnimation = Tween<double>(begin: 10.0, end: 1.0).animate(
       CurvedAnimation(
-        parent: _categoryAnimationController,
+        parent: categoryAnimationController,
         curve: const Interval(0.0, 0.7, curve: Curves.fastEaseInToSlowEaseOut),
       ),
     );
 
-    _categoryTextAnimation = Tween<Offset>(
+    categoryTextAnimation = Tween<Offset>(
       begin: const Offset(-1.0, 0.0),
       end: Offset.zero,
     ).animate(
       CurvedAnimation(
-        parent: _categoryAnimationController,
+        parent: categoryAnimationController,
         curve: const Interval(0.1, 1.0, curve: Curves.easeOutBack),
       ),
     );
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _initializeAchievements();
-      _startCategoryAnimation();
+      initializeAchievements();
+      startCategoryAnimation();
     });
 
     for (int i = 0; i < numberOfParticle; i++) {
-      _particles.add(Particles());
+      particles.add(Particles());
     }
 
-    _ticker = createTicker((elapsed) {
-      final dt = (elapsed - _lastElapsed).inMicroseconds / 1e6;
-      _lastElapsed = elapsed;
+    ticker = createTicker((elapsed) {
+      final dt = (elapsed - lastElapsed).inMicroseconds / 1e6;
+      lastElapsed = elapsed;
 
-      for (var p in _particles) {
+      for (var p in particles) {
         p.update(dt);
       }
 
-      _particleNotifier.value++;
+      particleNotifier.value++;
     });
-    _ticker.start();
+    ticker.start();
   }
 
-  void _initializeAchievements() async {
-    if (_isInitialized) return;
+  void initializeAchievements() async {
+    if (isInitialized) return;
 
     SharedPreferences preferences = await SharedPreferences.getInstance();
     final userId = preferences.getString("USERID") ?? "";
@@ -96,32 +96,32 @@ class _AchivementsScreenState extends State<AchivementsScreen>
       );
       await achievementsProvider.fetchUserAchievements(userId);
 
-      _isInitialized = true;
+      isInitialized = true;
     } else {
       debugPrint('No user ID found in SharedPreferences');
     }
   }
 
-  void _startCategoryAnimation() {
-    _categoryAnimationController.forward(from: 0.0);
+  void startCategoryAnimation() {
+    categoryAnimationController.forward(from: 0.0);
   }
 
-  void _onCategoryChanged(String newCategory) {
-    if (newCategory != _currentCategory && !_isAnimating) {
+  void onCategoryChanged(String newCategory) {
+    if (newCategory != currentCategory && !isAnimating) {
       setState(() {
-        _currentCategory = newCategory;
-        _isAnimating = true;
+        currentCategory = newCategory;
+        isAnimating = true;
       });
 
-      _categoryAnimationController.forward(from: 0.0).then((_) {
+      categoryAnimationController.forward(from: 0.0).then((_) {
         setState(() {
-          _isAnimating = false;
+          isAnimating = false;
         });
       });
     }
   }
 
-  String _getCategoryImagePath(String category) {
+  String getCategoryImagePath(String category) {
     switch (category) {
       case "Survival Master":
         return 'assets/images/png/survival.png';
@@ -136,7 +136,7 @@ class _AchivementsScreenState extends State<AchivementsScreen>
     }
   }
 
-  String _getCategoryTitle(String category) {
+  String getCategoryTitle(String category) {
     switch (category) {
       case "Survival Master":
         return "SURVIVAL MASTER";
@@ -151,7 +151,7 @@ class _AchivementsScreenState extends State<AchivementsScreen>
     }
   }
 
-  String _getCategoryDescription(String category) {
+  String getCategoryDescription(String category) {
     switch (category) {
       case "Survival Master":
         return "Prove your endurance by surviving against all odds";
@@ -168,8 +168,8 @@ class _AchivementsScreenState extends State<AchivementsScreen>
 
   @override
   void dispose() {
-    _ticker.dispose();
-    _categoryAnimationController.dispose();
+    ticker.dispose();
+    categoryAnimationController.dispose();
     super.dispose();
   }
 
@@ -304,10 +304,10 @@ class _AchivementsScreenState extends State<AchivementsScreen>
               ),
               RepaintBoundary(
                 child: ValueListenableBuilder<int>(
-                  valueListenable: _particleNotifier,
+                  valueListenable: particleNotifier,
                   builder: (context, _, __) {
                     return CustomPaint(
-                      painter: ParticlePainter(_particles),
+                      painter: ParticlePainter(particles),
                       size: Size.infinite,
                     );
                   },
@@ -410,7 +410,7 @@ class _AchivementsScreenState extends State<AchivementsScreen>
                                   onChanged: (value) {
                                     if (value != null) {
                                       provider.setCategory(value);
-                                      _onCategoryChanged(value);
+                                      onCategoryChanged(value);
                                     }
                                   },
                                 ),
@@ -431,7 +431,7 @@ class _AchivementsScreenState extends State<AchivementsScreen>
                       ),
                       SliverToBoxAdapter(
                         child: AnimatedBuilder(
-                          animation: _categoryAnimationController,
+                          animation: categoryAnimationController,
                           builder: (context, child) {
                             return Container(
                               width: double.infinity,
@@ -491,7 +491,7 @@ class _AchivementsScreenState extends State<AchivementsScreen>
                                         Expanded(
                                           flex: 2,
                                           child: SlideTransition(
-                                            position: _categoryTextAnimation,
+                                            position: categoryTextAnimation,
                                             child: Column(
                                               mainAxisAlignment:
                                                   MainAxisAlignment.center,
@@ -499,8 +499,8 @@ class _AchivementsScreenState extends State<AchivementsScreen>
                                                   CrossAxisAlignment.start,
                                               children: [
                                                 Text(
-                                                  _getCategoryTitle(
-                                                    _currentCategory,
+                                                  getCategoryTitle(
+                                                    currentCategory,
                                                   ),
                                                   style: TextStyle(
                                                     fontSize:
@@ -525,8 +525,8 @@ class _AchivementsScreenState extends State<AchivementsScreen>
                                                   height: isDesktop ? 8 : 6,
                                                 ),
                                                 Text(
-                                                  _getCategoryDescription(
-                                                    _currentCategory,
+                                                  getCategoryDescription(
+                                                    currentCategory,
                                                   ),
                                                   style: TextStyle(
                                                     fontSize:
@@ -575,7 +575,7 @@ class _AchivementsScreenState extends State<AchivementsScreen>
                                                     ],
                                                   ),
                                                   child: Text(
-                                                    '${_getAchievementsCount(_currentCategory)} ACHIEVEMENTS',
+                                                    '${getAchievementsCount(currentCategory)} ACHIEVEMENTS',
                                                     style: TextStyle(
                                                       fontSize:
                                                           isDesktop
@@ -600,12 +600,12 @@ class _AchivementsScreenState extends State<AchivementsScreen>
                                         Expanded(
                                           flex: 1,
                                           child: ScaleTransition(
-                                            scale: _categoryImageAnimation,
+                                            scale: categoryImageAnimation,
                                             child: SizedBox(
                                               height: double.infinity,
                                               child: Image.asset(
-                                                _getCategoryImagePath(
-                                                  _currentCategory,
+                                                getCategoryImagePath(
+                                                  currentCategory,
                                                 ),
                                                 fit: BoxFit.contain,
                                                 filterQuality:
@@ -662,25 +662,25 @@ class _AchivementsScreenState extends State<AchivementsScreen>
                                         ? MainAxisAlignment.spaceAround
                                         : MainAxisAlignment.spaceBetween,
                                 children: [
-                                  _buildStatItem(
+                                  buildStatItem(
                                     totalCount.toString(),
                                     "Total",
                                     statValueFontSize,
                                     statLabelFontSize,
                                   ),
-                                  _buildStatItem(
+                                  buildStatItem(
                                     unlockedCount.toString(),
                                     "Unlocked",
                                     statValueFontSize,
                                     statLabelFontSize,
                                   ),
-                                  _buildStatItem(
+                                  buildStatItem(
                                     (totalCount - unlockedCount).toString(),
                                     "Locked",
                                     statValueFontSize,
                                     statLabelFontSize,
                                   ),
-                                  _buildStatItem(
+                                  buildStatItem(
                                     "${(progressPercentage * 100).toStringAsFixed(0)}%",
                                     "Progress",
                                     statValueFontSize,
@@ -788,7 +788,7 @@ class _AchivementsScreenState extends State<AchivementsScreen>
     );
   }
 
-  int _getAchievementsCount(String category) {
+  int getAchievementsCount(String category) {
     switch (category) {
       case "Survival Master":
         return 5;
@@ -803,7 +803,7 @@ class _AchivementsScreenState extends State<AchivementsScreen>
     }
   }
 
-  Widget _buildStatItem(
+  Widget buildStatItem(
     String value,
     String label,
     double valueSize,

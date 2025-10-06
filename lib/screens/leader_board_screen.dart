@@ -5,6 +5,7 @@ import 'dart:developer';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:mirror_world_runner/widgets/leader_board_card.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:mirror_world_runner/service/auth_service.dart';
@@ -21,12 +22,12 @@ class LeaderboardScreen extends StatefulWidget {
 
 class _LeaderboardScreenState extends State<LeaderboardScreen>
     with SingleTickerProviderStateMixin {
-  final AuthService _authService = AuthService();
-  final List<Particles> _particles = [];
-  late Ticker _ticker;
+  final AuthService authService = AuthService();
+  final List<Particles> particles = [];
+  late Ticker ticker;
   final numberOfParticle = kIsWeb ? 50 : 40;
-  Duration _lastElapsed = Duration.zero;
-  final ValueNotifier<int> _particleNotifier = ValueNotifier<int>(0);
+  Duration lastElapsed = Duration.zero;
+  final ValueNotifier<int> particleNotifier = ValueNotifier<int>(0);
 
   List<Map<String, dynamic>> _leaderboard = [];
   bool _isLoading = true;
@@ -40,8 +41,8 @@ class _LeaderboardScreenState extends State<LeaderboardScreen>
   void initState() {
     super.initState();
     getUserIdFromPreferences();
-    _setupParticles();
-    _loadLeaderboard();
+    setupParticles();
+    loadLeaderboard();
   }
 
   Future<void> getUserIdFromPreferences() async {
@@ -56,36 +57,36 @@ class _LeaderboardScreenState extends State<LeaderboardScreen>
     log("[leaderboard.dart] User UID => $result");
   }
 
-  void _setupParticles() {
+  void setupParticles() {
     for (int i = 0; i < numberOfParticle; i++) {
-      _particles.add(Particles());
+      particles.add(Particles());
     }
 
-    _ticker = createTicker((elapsed) {
-      final dt = (elapsed - _lastElapsed).inMicroseconds / 1e6;
-      _lastElapsed = elapsed;
+    ticker = createTicker((elapsed) {
+      final dt = (elapsed - lastElapsed).inMicroseconds / 1e6;
+      lastElapsed = elapsed;
 
-      for (var p in _particles) {
+      for (var p in particles) {
         p.update(dt);
       }
 
-      _particleNotifier.value++;
+      particleNotifier.value++;
     });
-    _ticker.start();
+    ticker.start();
   }
 
-  Future<void> _loadLeaderboard() async {
+  Future<void> loadLeaderboard() async {
     setState(() {
       _isLoading = true;
     });
 
     try {
-      final leaderboard = await _authService.getLeaderboard(limit: 20);
+      final leaderboard = await authService.getLeaderboard(limit: 20);
       setState(() {
         _leaderboard = leaderboard;
       });
     } catch (e) {
-      debugPrint("_loadLeaderboard error: $e");
+      debugPrint("loadLeaderboard error: $e");
     } finally {
       setState(() {
         _isLoading = false;
@@ -95,7 +96,7 @@ class _LeaderboardScreenState extends State<LeaderboardScreen>
 
   @override
   void dispose() {
-    _ticker.dispose();
+    ticker.dispose();
     super.dispose();
   }
 
@@ -121,10 +122,10 @@ class _LeaderboardScreenState extends State<LeaderboardScreen>
           ),
           RepaintBoundary(
             child: ValueListenableBuilder<int>(
-              valueListenable: _particleNotifier,
+              valueListenable: particleNotifier,
               builder: (context, _, __) {
                 return CustomPaint(
-                  painter: ParticlePainter(_particles),
+                  painter: ParticlePainter(particles),
                   size: Size.infinite,
                 );
               },
@@ -187,7 +188,7 @@ class _LeaderboardScreenState extends State<LeaderboardScreen>
                                 final playerUid = player['userId']?.toString();
                                 final isCurrentPlayer = (playerUid == userUID);
 
-                                return _buildLeaderboardItem(
+                                return buildLeaderboardItem(
                                   index: index,
                                   player: player,
                                   rank: index + 1,
@@ -205,7 +206,7 @@ class _LeaderboardScreenState extends State<LeaderboardScreen>
     );
   }
 
-  Widget _buildLeaderboardItem({
+  Widget buildLeaderboardItem({
     required int index,
     required Map<String, dynamic> player,
     required int rank,
@@ -239,98 +240,6 @@ class _LeaderboardScreenState extends State<LeaderboardScreen>
       rankColor: rankColor,
       rankIcon: rankIcon,
       isCurrentPlayer: isCurrentPlayer,
-    );
-  }
-}
-
-class LeaderboardCard extends StatefulWidget {
-  final int index;
-  final int rank;
-  final Map<String, dynamic> player;
-  final Color rankColor;
-  final IconData rankIcon;
-  final bool isCurrentPlayer;
-
-  const LeaderboardCard({
-    super.key,
-    required this.index,
-    required this.rank,
-    required this.player,
-    required this.rankColor,
-    required this.rankIcon,
-    required this.isCurrentPlayer,
-  });
-
-  @override
-  State<LeaderboardCard> createState() => _LeaderboardCardState();
-}
-
-class _LeaderboardCardState extends State<LeaderboardCard>
-    with SingleTickerProviderStateMixin {
-  bool _isHovered = false;
-
-  @override
-  Widget build(BuildContext context) {
-    return MouseRegion(
-      onEnter: (_) => setState(() => _isHovered = true),
-      onExit: (_) => setState(() => _isHovered = false),
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 300),
-        curve: Curves.easeOutBack,
-        alignment: Alignment.center,
-        transform:
-            Matrix4.identity()
-              ..translate(0.0, _isHovered ? -10 : 0.0)
-              ..scale(_isHovered ? 1.001 : 1.0),
-        child: Card(
-          color:
-              widget.isCurrentPlayer
-                  ? Colors.amber.withOpacity(0.3)
-                  : Colors.white.withOpacity(0.1),
-          margin: EdgeInsets.only(top: _isHovered ? 22 : 5),
-          child: ListTile(
-            leading: CircleAvatar(
-              backgroundColor: widget.rankColor.withOpacity(0.2),
-              child:
-                  widget.rank <= 3
-                      ? Icon(widget.rankIcon, color: widget.rankColor)
-                      : Text(
-                        "${widget.rank}",
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 14,
-                        ),
-                      ),
-            ),
-            title: Text(
-              widget.isCurrentPlayer
-                  ? "You(${widget.player['userName'] ?? 'Unknown'})"
-                  : widget.player['userName'] ?? 'Unknown',
-              style: TextStyle(
-                color: Colors.white,
-                fontWeight:
-                    widget.rank <= 3 ? FontWeight.bold : FontWeight.normal,
-              ),
-            ),
-            subtitle: Padding(
-              padding: EdgeInsets.only(top: 8.0),
-              child: Text(
-                'Games: ${widget.player['totalGamesPlayed'] ?? 0}',
-                style: const TextStyle(color: Colors.white70),
-              ),
-            ),
-            trailing: Text(
-              '${widget.player['highestScore'] ?? 0}',
-              style: TextStyle(
-                color: widget.rankColor,
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
-        ),
-      ),
     );
   }
 }

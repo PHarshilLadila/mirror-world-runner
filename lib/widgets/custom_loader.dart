@@ -16,43 +16,43 @@ class GameLoadingWidget extends StatefulWidget {
 
 class _GameLoadingWidgetState extends State<GameLoadingWidget>
     with TickerProviderStateMixin {
-  late AnimationController _rotationController;
-  late Ticker _particleTicker;
-  final List<_LoadingParticle> _particles = [];
-  Duration _lastElapsed = Duration.zero;
-  final int _particleCount = 30;
+  late AnimationController rotationController;
+  late Ticker particleTicker;
+  final List<_LoadingParticle> particles = [];
+  Duration lastElapsed = Duration.zero;
+  final int particleCount = 30;
 
   @override
   void initState() {
     super.initState();
 
-    for (int i = 0; i < _particleCount; i++) {
-      _particles.add(_LoadingParticle());
+    for (int i = 0; i < particleCount; i++) {
+      particles.add(_LoadingParticle());
     }
 
-    _rotationController = AnimationController(
+    rotationController = AnimationController(
       vsync: this,
       duration: const Duration(seconds: 2),
     )..repeat();
 
-    _particleTicker = createTicker((elapsed) {
-      final dt = (elapsed - _lastElapsed).inMicroseconds / 1e6;
-      _lastElapsed = elapsed;
+    particleTicker = createTicker((elapsed) {
+      final dt = (elapsed - lastElapsed).inMicroseconds / 1e6;
+      lastElapsed = elapsed;
 
-      for (var p in _particles) {
+      for (var p in particles) {
         p.update(dt, widget.width, widget.height);
       }
 
       if (mounted) setState(() {});
     });
 
-    _particleTicker.start();
+    particleTicker.start();
   }
 
   @override
   void dispose() {
-    _rotationController.dispose();
-    _particleTicker.dispose();
+    rotationController.dispose();
+    particleTicker.dispose();
     super.dispose();
   }
 
@@ -66,11 +66,11 @@ class _GameLoadingWidgetState extends State<GameLoadingWidget>
         children: [
           CustomPaint(
             size: Size(widget.width, widget.height),
-            painter: _ParticlePainter(_particles),
+            painter: _ParticlePainter(particles),
           ),
 
           RotationTransition(
-            turns: _rotationController,
+            turns: rotationController,
             child: Container(
               width: widget.width * 0.4,
               height: widget.width * 0.4,

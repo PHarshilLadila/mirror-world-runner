@@ -11,17 +11,17 @@ class AnimatedButton extends StatefulWidget {
 }
 
 class _AnimatedButtonState extends State<AnimatedButton> {
-  bool _isPressed = false;
+  bool isPressed = false;
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTapDown: (_) => setState(() => _isPressed = true),
-      onTapUp: (_) => setState(() => _isPressed = false),
-      onTapCancel: () => setState(() => _isPressed = false),
+      onTapDown: (_) => setState(() => isPressed = true),
+      onTapUp: (_) => setState(() => isPressed = false),
+      onTapCancel: () => setState(() => isPressed = false),
       onTap: widget.onTap,
       child: Transform.scale(
-        scale: _isPressed ? 0.95 : 1.0,
+        scale: isPressed ? 0.95 : 1.0,
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 100),
           child: widget.child,

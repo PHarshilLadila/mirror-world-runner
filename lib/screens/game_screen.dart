@@ -27,92 +27,88 @@ class _GameScreenState extends State<GameScreen> {
   MirrorWorldGame? game;
   late FocusNode focusNode;
 
-  final Map<LogicalKeyboardKey, bool> _keyStates = {};
-  double _moveSpeed = 400.0;
+  final Map<LogicalKeyboardKey, bool> keyStates = {};
+  double moveSpeed = 400.0;
 
-  Offset? _dragStartPosition;
-  bool _isDragging = false;
+  Offset? dragStartPosition;
+  bool isDragging = false;
 
-  Timer? _timer;
-  int _elapsedSeconds = 0;
-  int _currentGameTime = 0;
+  Timer? timer;
+  int elapsedSeconds = 0;
+  int currentGameTime = 0;
 
-  // Power-up tracking for Power Collector achievements
-  int _starPowerUpsCollected = 0;
-  int _heartPowerUpsCollected = 0;
-  int _starActivations = 0;
-  bool _reachedMaxLives = false;
-  int _consecutivePowerUps = 0;
-  int _maxConsecutivePowerUps = 0;
+  int starPowerUpsCollected = 0;
+  int heartPowerUpsCollected = 0;
+  int starActivations = 0;
+  bool reachedMaxLives = false;
+  int consecutivePowerUps = 0;
+  int maxConsecutivePowerUps = 0;
   bool lastCollectionWasPowerUp = false;
-  Timer? _consecutiveTimer;
+  Timer? consecutiveTimer;
 
   @override
   void initState() {
     super.initState();
     focusNode = FocusNode();
-    _loadSpeedSetting();
+    loadSpeedSetting();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       FocusScope.of(context).requestFocus(focusNode);
     });
   }
 
-  Future<void> _loadSpeedSetting() async {
+  Future<void> loadSpeedSetting() async {
     final prefs = await SharedPreferences.getInstance();
     setState(() {
       final settingValue = prefs.getDouble('movementSpeed') ?? 5.0;
-      _moveSpeed = _convertSettingToGameSpeed(settingValue);
+      moveSpeed = convertSettingToGameSpeed(settingValue);
 
       final gameState = Provider.of<GameState>(context, listen: false);
       game = MirrorWorldGame(
         gameState: gameState,
-        initialSpeed: _moveSpeed,
-        onPowerUpCollected: _handlePowerUpCollected,
+        initialSpeed: moveSpeed,
+        onPowerUpCollected: handlePowerUpCollected,
       );
 
-      _startTimer(gameState);
+      startTimer(gameState);
     });
   }
 
-  void _handlePowerUpCollected(String type) {
+  void handlePowerUpCollected(String type) {
     setState(() {
       if (type == 'star') {
-        _starPowerUpsCollected++;
-        _starActivations++;
-        _consecutivePowerUps++;
+        starPowerUpsCollected++;
+        starActivations++;
+        consecutivePowerUps++;
         lastCollectionWasPowerUp = true;
 
-        debugPrint('Star collected! Total stars: $_starPowerUpsCollected');
-        debugPrint('Star activations: $_starActivations');
-        debugPrint('Consecutive power-ups: $_consecutivePowerUps');
+        debugPrint('Star collected! Total stars: $starPowerUpsCollected');
+        debugPrint('Star activations: $starActivations');
+        debugPrint('Consecutive power-ups: $consecutivePowerUps');
       } else if (type == 'heart') {
-        _heartPowerUpsCollected++;
-        _consecutivePowerUps++;
+        heartPowerUpsCollected++;
+        consecutivePowerUps++;
         lastCollectionWasPowerUp = true;
 
-        debugPrint('Heart collected! Total hearts: $_heartPowerUpsCollected');
-        debugPrint('Consecutive power-ups: $_consecutivePowerUps');
+        debugPrint('Heart collected! Total hearts: $heartPowerUpsCollected');
+        debugPrint('Consecutive power-ups: $consecutivePowerUps');
       }
 
-      // Update max consecutive power-ups
-      if (_consecutivePowerUps > _maxConsecutivePowerUps) {
-        _maxConsecutivePowerUps = _consecutivePowerUps;
-        debugPrint('New max consecutive: $_maxConsecutivePowerUps');
+      if (consecutivePowerUps > maxConsecutivePowerUps) {
+        maxConsecutivePowerUps = consecutivePowerUps;
+        debugPrint('New max consecutive: $maxConsecutivePowerUps');
       }
 
-      // Check if max lives reached
       final gameState = Provider.of<GameState>(context, listen: false);
       if (gameState.lives >= 5) {
-        _reachedMaxLives = true;
+        reachedMaxLives = true;
         debugPrint('Max lives reached!');
       }
 
-      // Reset the consecutive timer
-      _consecutiveTimer?.cancel();
-      _consecutiveTimer = Timer(const Duration(seconds: 3), () {
+      consecutiveTimer?.cancel();
+      consecutiveTimer = Timer(const Duration(seconds: 3), () {
         setState(() {
-          _consecutivePowerUps = 0;
+          consecutivePowerUps = 0;
           lastCollectionWasPowerUp = false;
           debugPrint('Consecutive counter reset');
         });
@@ -120,61 +116,57 @@ class _GameScreenState extends State<GameScreen> {
     });
   }
 
-  void _startTimer(GameState gameState) {
-    _elapsedSeconds = 0;
-    _currentGameTime = 0;
+  void startTimer(GameState gameState) {
+    elapsedSeconds = 0;
+    currentGameTime = 0;
 
-    _timer = Timer.periodic(const Duration(seconds: 1), (timer) async {
+    timer = Timer.periodic(const Duration(seconds: 1), (timer) async {
       if (!gameState.isPaused && !gameState.isGameOver) {
         setState(() {
-          _elapsedSeconds++;
-          _currentGameTime = _elapsedSeconds;
+          elapsedSeconds++;
+          currentGameTime = elapsedSeconds;
         });
       }
 
       if (gameState.isGameOver) {
         final prefs = await SharedPreferences.getInstance();
-        await prefs.setInt('lastGameTimeSeconds', _currentGameTime);
+        await prefs.setInt('lastGameTimeSeconds', currentGameTime);
 
-        // Save all game data with achievement tracking
-        await _saveGameDataWithAchievements(gameState);
+        await saveGameDataWithAchievements(gameState);
 
         timer.cancel();
       }
     });
   }
 
-  Future<void> _saveGameDataWithAchievements(GameState gameState) async {
+  Future<void> saveGameDataWithAchievements(GameState gameState) async {
     try {
       final authService = AuthService();
 
       debugPrint('=== SAVING GAME DATA ===');
       debugPrint('Score: ${gameState.score}');
-      debugPrint('Time: $_currentGameTime seconds');
+      debugPrint('Time: $currentGameTime seconds');
       debugPrint('Lives left: ${gameState.lives}');
-      debugPrint('Star power-ups: $_starPowerUpsCollected');
-      debugPrint('Heart power-ups: $_heartPowerUpsCollected');
-      debugPrint('Star activations: $_starActivations');
-      debugPrint('Reached max lives: $_reachedMaxLives');
-      debugPrint('Max consecutive power-ups: $_maxConsecutivePowerUps');
+      debugPrint('Star power-ups: $starPowerUpsCollected');
+      debugPrint('Heart power-ups: $heartPowerUpsCollected');
+      debugPrint('Star activations: $starActivations');
+      debugPrint('Reached max lives: $reachedMaxLives');
+      debugPrint('Max consecutive power-ups: $maxConsecutivePowerUps');
 
-      // Save game data with Power Collector tracking
       await authService.saveGameData(
         score: gameState.score,
-        timeTaken: _currentGameTime,
+        timeTaken: currentGameTime,
         livesLeft: gameState.lives,
         difficultyLevel: gameState.difficultyLevel,
-        starPowerUpsCollected: _starPowerUpsCollected,
-        heartPowerUpsCollected: _heartPowerUpsCollected,
-        starActivations: _starActivations,
-        reachedMaxLives: _reachedMaxLives,
-        consecutivePowerUps: _maxConsecutivePowerUps,
+        starPowerUpsCollected: starPowerUpsCollected,
+        heartPowerUpsCollected: heartPowerUpsCollected,
+        starActivations: starActivations,
+        reachedMaxLives: reachedMaxLives,
+        consecutivePowerUps: maxConsecutivePowerUps,
       );
 
-      // Update max survival time for Survival Master achievements
-      await authService.updateMaxSurvivalTime(_currentGameTime);
+      await authService.updateMaxSurvivalTime(currentGameTime);
 
-      // Update Addicted Runner achievements based on current time
       await authService.updateAddictedRunnerAchievements();
 
       debugPrint('=== GAME DATA SAVED SUCCESSFULLY ===');
@@ -183,44 +175,44 @@ class _GameScreenState extends State<GameScreen> {
     }
   }
 
-  double _convertSettingToGameSpeed(double settingValue) {
+  double convertSettingToGameSpeed(double settingValue) {
     return settingValue * 80.0;
   }
 
-  void _handleSpeedChanged(double newSpeed) {
+  void handleSpeedChanged(double newSpeed) {
     setState(() {
-      _moveSpeed = _convertSettingToGameSpeed(newSpeed);
+      moveSpeed = convertSettingToGameSpeed(newSpeed);
       if (game != null) {
-        game!.setMovement(0, 0, _moveSpeed);
+        game!.setMovement(0, 0, moveSpeed);
       }
     });
   }
 
-  void _showSettings() {
+  void showSettings() {
     showDialog(
       context: context,
-      builder: (context) => SettingScreen(onSpeedChanged: _handleSpeedChanged),
+      builder: (context) => SettingScreen(onSpeedChanged: handleSpeedChanged),
     );
   }
 
   @override
   void dispose() {
     focusNode.dispose();
-    _timer?.cancel();
-    _consecutiveTimer?.cancel();
+    timer?.cancel();
+    consecutiveTimer?.cancel();
     super.dispose();
   }
 
-  void _handleDragStart(DragStartDetails details) {
-    _dragStartPosition = details.localPosition;
-    _isDragging = true;
+  void handleDragStart(DragStartDetails details) {
+    dragStartPosition = details.localPosition;
+    isDragging = true;
   }
 
-  void _handleDragUpdate(DragUpdateDetails details) {
-    if (!_isDragging || _dragStartPosition == null) return;
+  void handleDragUpdate(DragUpdateDetails details) {
+    if (!isDragging || dragStartPosition == null) return;
 
     final currentPosition = details.localPosition;
-    final dragVector = currentPosition - _dragStartPosition!;
+    final dragVector = currentPosition - dragStartPosition!;
     final dragDistance = dragVector.distance;
 
     if (dragDistance < 10) {
@@ -231,35 +223,35 @@ class _GameScreenState extends State<GameScreen> {
     double dx = dragVector.dx / math.max(dragDistance, 1);
     double dy = dragVector.dy / math.max(dragDistance, 1);
 
-    game!.setMovement(dx, dy, _moveSpeed);
+    game!.setMovement(dx, dy, moveSpeed);
   }
 
-  void _handleDragEnd(DragEndDetails details) {
-    _isDragging = false;
-    _dragStartPosition = null;
+  void handleDragEnd(DragEndDetails details) {
+    isDragging = false;
+    dragStartPosition = null;
     game!.setMovement(0, 0, 0);
   }
 
-  void _handleDragCancel() {
-    _isDragging = false;
-    _dragStartPosition = null;
+  void handleDragCancel() {
+    isDragging = false;
+    dragStartPosition = null;
     game!.setMovement(0, 0, 0);
   }
 
-  void _handleKeyEvent(RawKeyEvent event) {
+  void handleKeyEvent(RawKeyEvent event) {
     final key = event.logicalKey;
     final isKeyDown = event is RawKeyDownEvent;
 
-    if (isKeyDown != _keyStates[key]) {
-      _keyStates[key] = isKeyDown;
+    if (isKeyDown != keyStates[key]) {
+      keyStates[key] = isKeyDown;
 
       double dx = 0;
       double dy = 0;
 
-      if (_keyStates[LogicalKeyboardKey.arrowUp] == true) dy -= 1;
-      if (_keyStates[LogicalKeyboardKey.arrowDown] == true) dy += 1;
-      if (_keyStates[LogicalKeyboardKey.arrowLeft] == true) dx -= 1;
-      if (_keyStates[LogicalKeyboardKey.arrowRight] == true) dx += 1;
+      if (keyStates[LogicalKeyboardKey.arrowUp] == true) dy -= 1;
+      if (keyStates[LogicalKeyboardKey.arrowDown] == true) dy += 1;
+      if (keyStates[LogicalKeyboardKey.arrowLeft] == true) dx -= 1;
+      if (keyStates[LogicalKeyboardKey.arrowRight] == true) dx += 1;
 
       if (dx != 0 && dy != 0) {
         final length = math.sqrt(dx * dx + dy * dy);
@@ -268,7 +260,7 @@ class _GameScreenState extends State<GameScreen> {
       }
 
       if (dx != 0 || dy != 0) {
-        game!.setMovement(dx, dy, _moveSpeed);
+        game!.setMovement(dx, dy, moveSpeed);
       } else {
         game!.setMovement(0, 0, 0);
       }
@@ -304,7 +296,7 @@ class _GameScreenState extends State<GameScreen> {
         if (gameState.isGameOver) {
           WidgetsBinding.instance.addPostFrameCallback((_) async {
             final prefs = await SharedPreferences.getInstance();
-            await prefs.setInt('lastGameTimeSeconds', _currentGameTime);
+            await prefs.setInt('lastGameTimeSeconds', currentGameTime);
 
             showDialog(
               context: context,
@@ -317,20 +309,20 @@ class _GameScreenState extends State<GameScreen> {
         return Scaffold(
           body: RawKeyboardListener(
             focusNode: focusNode,
-            onKey: _handleKeyEvent,
+            onKey: handleKeyEvent,
             child: GestureDetector(
               behavior: HitTestBehavior.translucent,
-              onPanStart: _handleDragStart,
-              onPanUpdate: _handleDragUpdate,
-              onPanEnd: _handleDragEnd,
-              onPanCancel: _handleDragCancel,
+              onPanStart: handleDragStart,
+              onPanUpdate: handleDragUpdate,
+              onPanEnd: handleDragEnd,
+              onPanCancel: handleDragCancel,
               child: Stack(
                 children: [
                   GameWidget(
                     game: game ?? MirrorWorldGame(gameState: gameState),
                   ),
-                  _buildHUD(context, gameState),
-                  _buildControlButtons(),
+                  buildHUD(context, gameState),
+                  buildControlButtons(),
                 ],
               ),
             ),
@@ -340,7 +332,7 @@ class _GameScreenState extends State<GameScreen> {
     );
   }
 
-  Widget _buildHUD(BuildContext context, GameState gameState) {
+  Widget buildHUD(BuildContext context, GameState gameState) {
     return Positioned(
       top: 40,
       left: 20,
@@ -362,7 +354,7 @@ class _GameScreenState extends State<GameScreen> {
               ),
               SizedBox(height: 8),
               Text(
-                'Time: ${takenTimeFormate(_currentGameTime)}',
+                'Time: ${takenTimeFormate(currentGameTime)}',
                 style: const TextStyle(
                   color: Colors.white,
                   fontSize: 14,
@@ -390,7 +382,7 @@ class _GameScreenState extends State<GameScreen> {
                     color: Colors.white,
                     size: 30,
                   ),
-                  onPressed: _showSettings,
+                  onPressed: showSettings,
                 ),
               ],
             ),
@@ -399,7 +391,7 @@ class _GameScreenState extends State<GameScreen> {
     );
   }
 
-  Widget _buildControlButtons() {
+  Widget buildControlButtons() {
     return Consumer<GameState>(
       builder: (context, gameState, child) {
         if (gameState.isGameOver || gameState.isPaused) {
@@ -414,7 +406,7 @@ class _GameScreenState extends State<GameScreen> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               GestureDetector(
-                onTapDown: (_) => game!.setMovement(0, -1, _moveSpeed),
+                onTapDown: (_) => game!.setMovement(0, -1, moveSpeed),
                 onTapUp: (_) => game!.setMovement(0, 0, 0),
                 child: Container(
                   decoration: BoxDecoration(
@@ -431,7 +423,7 @@ class _GameScreenState extends State<GameScreen> {
               ),
               const SizedBox(width: 20),
               GestureDetector(
-                onTapDown: (_) => game!.setMovement(0, 1, _moveSpeed),
+                onTapDown: (_) => game!.setMovement(0, 1, moveSpeed),
                 onTapUp: (_) => game!.setMovement(0, 0, 0),
                 child: Container(
                   decoration: BoxDecoration(
@@ -448,7 +440,7 @@ class _GameScreenState extends State<GameScreen> {
               ),
               const SizedBox(width: 40),
               GestureDetector(
-                onTapDown: (_) => game!.setMovement(-1, 0, _moveSpeed),
+                onTapDown: (_) => game!.setMovement(-1, 0, moveSpeed),
                 onTapUp: (_) => game!.setMovement(0, 0, 0),
                 child: Container(
                   decoration: BoxDecoration(
@@ -465,7 +457,7 @@ class _GameScreenState extends State<GameScreen> {
               ),
               const SizedBox(width: 20),
               GestureDetector(
-                onTapDown: (_) => game!.setMovement(1, 0, _moveSpeed),
+                onTapDown: (_) => game!.setMovement(1, 0, moveSpeed),
                 onTapUp: (_) => game!.setMovement(0, 0, 0),
                 child: Container(
                   decoration: BoxDecoration(

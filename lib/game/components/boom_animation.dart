@@ -6,8 +6,8 @@ import 'package:flutter/material.dart';
 class BoomAnimation extends PositionComponent {
   final double maxRadius;
   final Color color;
-  double _currentRadius = 0;
-  final double _expansionSpeed = 200.0;
+  double currentRadius = 0;
+  final double expansionSpeed = 200.0;
 
   BoomAnimation({
     required Vector2 position,
@@ -18,9 +18,9 @@ class BoomAnimation extends PositionComponent {
   @override
   void update(double dt) {
     super.update(dt);
-    _currentRadius += _expansionSpeed * dt;
+    currentRadius += expansionSpeed * dt;
 
-    if (_currentRadius >= maxRadius) {
+    if (currentRadius >= maxRadius) {
       removeFromParent();
     }
   }
@@ -29,8 +29,8 @@ class BoomAnimation extends PositionComponent {
   void render(Canvas canvas) {
     super.render(canvas);
 
-    if (_currentRadius <= maxRadius) {
-      final progress = _currentRadius / maxRadius;
+    if (currentRadius <= maxRadius) {
+      final progress = currentRadius / maxRadius;
 
       final outerOpacity = (1.0 - progress).clamp(0.0, 1.0);
       final paint =
@@ -39,7 +39,7 @@ class BoomAnimation extends PositionComponent {
             ..style = PaintingStyle.stroke
             ..strokeWidth = 3.0;
 
-      canvas.drawCircle(Offset(size.x / 2, size.y / 2), _currentRadius, paint);
+      canvas.drawCircle(Offset(size.x / 2, size.y / 2), currentRadius, paint);
 
       final innerOpacity = (0.8 - progress).clamp(0.0, 0.8);
       final innerPaint =
@@ -49,7 +49,7 @@ class BoomAnimation extends PositionComponent {
 
       canvas.drawCircle(
         Offset(size.x / 2, size.y / 2),
-        _currentRadius * 0.5,
+        currentRadius * 0.5,
         innerPaint,
       );
     }

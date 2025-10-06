@@ -39,44 +39,44 @@ class _SettingScreenState extends State<SettingScreen>
   String difficulty = "medium";
   bool enableSound = true;
   bool enableNotifications = true;
-  late Ticker _ticker;
+  late Ticker ticker;
   final numberOfParticle = kIsWeb ? 80 : 60;
-  Duration _lastElapsed = Duration.zero;
-  final ValueNotifier<int> _particleNotifier = ValueNotifier<int>(0);
+  Duration lastElapsed = Duration.zero;
+  final ValueNotifier<int> particleNotifier = ValueNotifier<int>(0);
 
-  final List<Particles> _particles = [];
+  final List<Particles> particles = [];
 
   @override
   void initState() {
     super.initState();
 
     for (int i = 0; i < numberOfParticle; i++) {
-      _particles.add(Particles());
+      particles.add(Particles());
     }
 
-    _ticker = createTicker((elapsed) {
-      final dt = (elapsed - _lastElapsed).inMicroseconds / 1e6;
-      _lastElapsed = elapsed;
+    ticker = createTicker((elapsed) {
+      final dt = (elapsed - lastElapsed).inMicroseconds / 1e6;
+      lastElapsed = elapsed;
 
-      for (var p in _particles) {
+      for (var p in particles) {
         p.update(dt);
       }
 
-      _particleNotifier.value++;
+      particleNotifier.value++;
     });
-    _ticker.start();
+    ticker.start();
 
-    _loadSettingsFromSharedpreference();
+    loadSettingsFromSharedpreference();
   }
 
   @override
   void dispose() {
-    _ticker.dispose();
-    _particleNotifier.dispose();
+    ticker.dispose();
+    particleNotifier.dispose();
     super.dispose();
   }
 
-  Future<void> _loadSettingsFromSharedpreference() async {
+  Future<void> loadSettingsFromSharedpreference() async {
     final prefs = await SharedPreferences.getInstance();
     setState(() {
       movementSpeed = prefs.getDouble('movementSpeed') ?? 5.0;
@@ -87,7 +87,7 @@ class _SettingScreenState extends State<SettingScreen>
     });
   }
 
-  Future<void> _saveSettingsInToSharedpreference() async {
+  Future<void> saveSettingsInToSharedpreference() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setDouble('movementSpeed', movementSpeed);
     await prefs.setDouble('soundVolume', soundVolume);
@@ -96,11 +96,11 @@ class _SettingScreenState extends State<SettingScreen>
     await prefs.setBool('enableNotifications', enableNotifications);
   }
 
-  void _applySettings() {
-    _saveSettingsInToSharedpreference();
+  void applySettings() {
+    saveSettingsInToSharedpreference();
 
     final gameState = Provider.of<GameState>(context, listen: false);
-    gameState.setDifficultyLevel(_getDifficultyLevelFromString(difficulty));
+    gameState.setDifficultyLevel(getDifficultyLevelFromString(difficulty));
 
     if (widget.onSpeedChanged != null) {
       widget.onSpeedChanged!(movementSpeed);
@@ -111,7 +111,7 @@ class _SettingScreenState extends State<SettingScreen>
     Navigator.pop(context);
   }
 
-  int _getDifficultyLevelFromString(String diff) {
+  int getDifficultyLevelFromString(String diff) {
     switch (diff) {
       case "easy":
         return 1;
@@ -176,10 +176,10 @@ class _SettingScreenState extends State<SettingScreen>
           IgnorePointer(
             child: RepaintBoundary(
               child: ValueListenableBuilder<int>(
-                valueListenable: _particleNotifier,
+                valueListenable: particleNotifier,
                 builder: (context, _, __) {
                   return CustomPaint(
-                    painter: ParticlePainter(_particles),
+                    painter: ParticlePainter(particles),
                     size: Size.infinite,
                   );
                 },
@@ -322,7 +322,7 @@ class _SettingScreenState extends State<SettingScreen>
 
                             const SizedBox(height: 20),
 
-                            _buildDifficultySection(),
+                            difficultySection(),
 
                             widget.isSettingScreen
                                 ? const SizedBox(height: 20)
@@ -409,7 +409,7 @@ class _SettingScreenState extends State<SettingScreen>
                                       Color(0xFF56ab2f),
                                       Color(0xFF56ab2f),
                                     ],
-                                    onTap: _applySettings,
+                                    onTap: applySettings,
                                   ),
                                 ),
                               ],
@@ -429,7 +429,7 @@ class _SettingScreenState extends State<SettingScreen>
     );
   }
 
-  Widget _buildDifficultySection() {
+  Widget difficultySection() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [

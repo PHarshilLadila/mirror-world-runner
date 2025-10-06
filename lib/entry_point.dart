@@ -1,8 +1,11 @@
+// ignore_for_file: deprecated_member_use
+
 import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mirror_world_runner/auth/login_screen.dart';
 import 'package:mirror_world_runner/screens/main_menu.dart';
+import 'package:mirror_world_runner/widgets/custom_loader.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class EntryPoint extends StatefulWidget {
@@ -56,7 +59,16 @@ class _EntryPointState extends State<EntryPoint> {
       ),
       home:
           isLoading
-              ? const Scaffold(body: Center(child: CircularProgressIndicator()))
+              ? Scaffold(
+                body: Center(
+                  child: Container(
+                    color: Colors.black.withOpacity(0.5),
+                    child: const Center(
+                      child: GameLoadingWidget(width: 100, height: 100),
+                    ),
+                  ),
+                ),
+              )
               : (userUID?.isEmpty ?? true)
               ? const LoginScreen()
               : const MainMenuScreen(),

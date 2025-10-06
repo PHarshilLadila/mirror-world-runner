@@ -50,8 +50,8 @@ class Particles {
 }
 
 class Random {
-  static final _random = math.Random();
+  static final random = math.Random();
 
-  static double nextDouble() => _random.nextDouble();
-  static int nextInt(int max) => _random.nextInt(max);
+  static double nextDouble() => random.nextDouble();
+  static int nextInt(int max) => random.nextInt(max);
 }

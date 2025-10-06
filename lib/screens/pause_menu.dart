@@ -1,6 +1,8 @@
 // ignore_for_file: deprecated_member_use
 
 import 'package:flutter/material.dart';
+import 'package:mirror_world_runner/widgets/backgroung_painter.dart';
+import 'package:mirror_world_runner/widgets/corner_painter.dart';
 import 'package:mirror_world_runner/widgets/particles.dart';
 import 'package:provider/provider.dart';
 import 'package:mirror_world_runner/providers/game_state.dart';
@@ -15,37 +17,35 @@ class PauseMenu extends StatefulWidget {
 
 class _PauseMenuState extends State<PauseMenu>
     with SingleTickerProviderStateMixin {
-  late AnimationController _controller;
-  late Animation<double> _scaleAnimation;
-  late Animation<double> _fadeAnimation;
+  late AnimationController animationController;
+  late Animation<double> scaleAnimation;
+  late Animation<double> fadeAnimation;
 
-  final List<Particles> _particles = [];
+  final List<Particles> particles = [];
 
   @override
   void initState() {
     super.initState();
 
-    _controller = AnimationController(
+    animationController = AnimationController(
       duration: const Duration(milliseconds: 600),
       vsync: this,
     );
 
-    _scaleAnimation = Tween<double>(
-      begin: 0.7,
-      end: 1.0,
-    ).animate(CurvedAnimation(parent: _controller, curve: Curves.elasticOut));
+    scaleAnimation = Tween<double>(begin: 0.7, end: 1.0).animate(
+      CurvedAnimation(parent: animationController, curve: Curves.elasticOut),
+    );
 
-    _fadeAnimation = Tween<double>(
-      begin: 0.0,
-      end: 1.0,
-    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
+    fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(parent: animationController, curve: Curves.easeInOut),
+    );
 
-    _controller.forward();
+    animationController.forward();
   }
 
   @override
   void dispose() {
-    _controller.dispose();
+    animationController.dispose();
     super.dispose();
   }
 
@@ -54,9 +54,9 @@ class _PauseMenuState extends State<PauseMenu>
     return Dialog(
       backgroundColor: Colors.transparent,
       child: ScaleTransition(
-        scale: _scaleAnimation,
+        scale: scaleAnimation,
         child: FadeTransition(
-          opacity: _fadeAnimation,
+          opacity: fadeAnimation,
           child: Container(
             width: 380,
             height: 350,
@@ -73,9 +73,9 @@ class _PauseMenuState extends State<PauseMenu>
             ),
             child: Stack(
               children: [
-                _buildBackground(),
+                background(),
 
-                ..._particles.map(
+                ...particles.map(
                   (particle) => Positioned(
                     left: particle.x,
                     top: particle.y,
@@ -113,17 +113,17 @@ class _PauseMenuState extends State<PauseMenu>
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      _buildAnimatedTitle(),
+                      animatedTitle(),
                       const SizedBox(height: 40),
 
-                      _buildGradientButton(
+                      gradientButton(
                         label: 'Resume Game',
                         gradient: const LinearGradient(
                           colors: [Color(0xFF00B4DB), Color(0xFF0083B0)],
                         ),
                         icon: Icons.play_arrow_rounded,
                         onTap: () {
-                          _controller.reverse().then((_) {
+                          animationController.reverse().then((_) {
                             Provider.of<GameState>(
                               context,
                               listen: false,
@@ -134,14 +134,14 @@ class _PauseMenuState extends State<PauseMenu>
                       ),
                       const SizedBox(height: 20),
 
-                      _buildGradientButton(
+                      gradientButton(
                         label: 'Main Menu',
                         gradient: const LinearGradient(
                           colors: [Color(0xFFFF416C), Color(0xFFFF4B2B)],
                         ),
                         icon: Icons.home_rounded,
                         onTap: () {
-                          _controller.reverse().then((_) {
+                          animationController.reverse().then((_) {
                             Navigator.pushAndRemoveUntil(
                               context,
                               MaterialPageRoute(
@@ -156,10 +156,10 @@ class _PauseMenuState extends State<PauseMenu>
                   ),
                 ),
 
-                _buildCornerDecoration(Alignment.topLeft),
-                _buildCornerDecoration(Alignment.topRight),
-                _buildCornerDecoration(Alignment.bottomLeft),
-                _buildCornerDecoration(Alignment.bottomRight),
+                cornerDecoration(Alignment.topLeft),
+                cornerDecoration(Alignment.topRight),
+                cornerDecoration(Alignment.bottomLeft),
+                cornerDecoration(Alignment.bottomRight),
               ],
             ),
           ),
@@ -168,7 +168,7 @@ class _PauseMenuState extends State<PauseMenu>
     );
   }
 
-  Widget _buildBackground() {
+  Widget background() {
     return Container(
       width: 380,
       height: 350,
@@ -179,11 +179,11 @@ class _PauseMenuState extends State<PauseMenu>
         ),
         borderRadius: BorderRadius.circular(20),
       ),
-      child: CustomPaint(painter: _BackgroundPainter()),
+      child: CustomPaint(painter: BackgroundPainter()),
     );
   }
 
-  Widget _buildAnimatedTitle() {
+  Widget animatedTitle() {
     return ShaderMask(
       shaderCallback: (bounds) {
         return const LinearGradient(
@@ -193,10 +193,10 @@ class _PauseMenuState extends State<PauseMenu>
         ).createShader(bounds);
       },
       child: AnimatedBuilder(
-        animation: _controller,
+        animation: animationController,
         builder: (context, child) {
           return Transform.translate(
-            offset: Offset(0, 10 - (_controller.value * 10)),
+            offset: Offset(0, 10 - (animationController.value * 10)),
             child: Text(
               'GAME PAUSED',
               style: TextStyle(
@@ -223,7 +223,7 @@ class _PauseMenuState extends State<PauseMenu>
     );
   }
 
-  Widget _buildGradientButton({
+  Widget gradientButton({
     required String label,
     required Gradient gradient,
     required IconData icon,
@@ -270,79 +270,10 @@ class _PauseMenuState extends State<PauseMenu>
     );
   }
 
-  Widget _buildCornerDecoration(Alignment alignment) {
+  Widget cornerDecoration(Alignment alignment) {
     return Align(
       alignment: alignment,
-      child: CustomPaint(painter: _CornerPainter(alignment: alignment)),
+      child: CustomPaint(painter: CornerPainter(alignment: alignment)),
     );
   }
-}
-
-class _BackgroundPainter extends CustomPainter {
-  @override
-  void paint(Canvas canvas, Size size) {
-    final paint =
-        Paint()
-          ..shader = LinearGradient(
-            colors: [
-              Colors.blueAccent.withOpacity(0.05),
-              Colors.cyanAccent.withOpacity(0.03),
-            ],
-          ).createShader(Rect.fromLTWH(0, 0, size.width, size.height));
-
-    final path = Path();
-    for (double i = 0; i < size.width; i += 40) {
-      for (double j = 0; j < size.height; j += 40) {
-        path.addOval(Rect.fromCircle(center: Offset(i, j), radius: 1));
-      }
-    }
-    canvas.drawPath(path, paint);
-  }
-
-  @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
-}
-
-class _CornerPainter extends CustomPainter {
-  final Alignment alignment;
-
-  _CornerPainter({required this.alignment});
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final paint =
-        Paint()
-          ..color = Colors.blueAccent.withOpacity(0.5)
-          ..style = PaintingStyle.stroke
-          ..strokeWidth = 1.5;
-
-    final path = Path();
-
-    if (alignment == Alignment.topLeft) {
-      path.moveTo(10, 10);
-      path.lineTo(30, 10);
-      path.moveTo(10, 10);
-      path.lineTo(10, 30);
-    } else if (alignment == Alignment.topRight) {
-      path.moveTo(size.width - 10, 10);
-      path.lineTo(size.width - 30, 10);
-      path.moveTo(size.width - 10, 10);
-      path.lineTo(size.width - 10, 30);
-    } else if (alignment == Alignment.bottomLeft) {
-      path.moveTo(10, size.height - 10);
-      path.lineTo(30, size.height - 10);
-      path.moveTo(10, size.height - 10);
-      path.lineTo(10, size.height - 30);
-    } else if (alignment == Alignment.bottomRight) {
-      path.moveTo(size.width - 10, size.height - 10);
-      path.lineTo(size.width - 30, size.height - 10);
-      path.moveTo(size.width - 10, size.height - 10);
-      path.lineTo(size.width - 10, size.height - 30);
-    }
-
-    canvas.drawPath(path, paint);
-  }
-
-  @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }

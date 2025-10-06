@@ -61,7 +61,7 @@ class AuthService {
 
       preferences.setString(userIdForPreference, user.uid);
     } catch (e) {
-      log("[AuthService] Register error: ${_extractMessage(e)}");
+      log("[AuthService] Register error: ${extractMessage(e)}");
       rethrow;
     }
   }
@@ -82,7 +82,7 @@ class AuthService {
           preferences.setString(userIdForPreference, auth.currentUser!.uid);
           return;
         } catch (e) {
-          log("[AuthService] Email login failed: ${_extractMessage(e)}");
+          log("[AuthService] Email login failed: ${extractMessage(e)}");
         }
       }
 
@@ -101,7 +101,7 @@ class AuthService {
       await auth.signInWithEmailAndPassword(email: email, password: password);
       preferences.setString(userIdForPreference, auth.currentUser!.uid);
     } catch (e) {
-      log("[AuthService] Login error: ${_extractMessage(e)}");
+      log("[AuthService] Login error: ${extractMessage(e)}");
       rethrow;
     }
   }
@@ -124,7 +124,7 @@ class AuthService {
 
       return doc.data();
     } catch (e) {
-      log("[AuthService] getCurrentUserData error: ${_extractMessage(e)}");
+      log("[AuthService] getCurrentUserData error: ${extractMessage(e)}");
       return null;
     }
   }
@@ -241,7 +241,7 @@ class AuthService {
       // Update Addicted Runner achievements after saving game data
       await updateAddictedRunnerAchievements();
     } catch (e) {
-      log("[AuthService] saveGameData error: ${_extractMessage(e)}");
+      log("[AuthService] saveGameData error: ${extractMessage(e)}");
     }
   }
 
@@ -403,7 +403,7 @@ class AuthService {
         return {'id': doc.id, ...data, 'playedAt': data['playedAt']?.toDate()};
       }).toList();
     } catch (e) {
-      log("[AuthService] getUserGameHistory error: ${_extractMessage(e)}");
+      log("[AuthService] getUserGameHistory error: ${extractMessage(e)}");
       return [];
     }
   }
@@ -427,7 +427,7 @@ class AuthService {
         };
       }).toList();
     } catch (e) {
-      log("[AuthService] getLeaderboard error: ${_extractMessage(e)}");
+      log("[AuthService] getLeaderboard error: ${extractMessage(e)}");
       return [];
     }
   }
@@ -467,7 +467,7 @@ class AuthService {
         'bestGame': bestGame,
       };
     } catch (e) {
-      log("[AuthService] getUserPersonalBests error: ${_extractMessage(e)}");
+      log("[AuthService] getUserPersonalBests error: ${extractMessage(e)}");
       return {};
     }
   }
@@ -494,7 +494,7 @@ class AuthService {
     }
   }
 
-  String _extractMessage(Object e) {
+  String extractMessage(Object e) {
     if (e is FirebaseAuthException) return e.message ?? "An error occurred";
     if (e is String) return e;
     return e.toString();
