@@ -33,6 +33,12 @@ Play the web build here:
 (Recommended: desktop for arrow-key control, mobile/tablet for touch/drag controls.)
 
 Main  
+[![Login](https://raw.githubusercontent.com/PHarshilLadila/mirror-world-runner/main/assets/images/demo/login_screen.png)](https://raw.githubusercontent.com/PHarshilLadila/mirror-world-runner/main/assets/images/demo/main_login_screenscreen.png)
+
+Main  
+[![Registraation](https://raw.githubusercontent.com/PHarshilLadila/mirror-world-runner/main/assets/images/demo/register_screen.png.png)](https://raw.githubusercontent.com/PHarshilLadila/mirror-world-runner/main/assets/images/demo/register_screen.png.png)
+
+Main  
 [![Main Screen](https://raw.githubusercontent.com/PHarshilLadila/mirror-world-runner/main/assets/images/demo/main_screen.png)](https://raw.githubusercontent.com/PHarshilLadila/mirror-world-runner/main/assets/images/demo/main_screen.png)
 
 Game  
@@ -45,7 +51,7 @@ Information
 [![Information Screen](https://raw.githubusercontent.com/PHarshilLadila/mirror-world-runner/main/assets/images/demo/information.png)](https://raw.githubusercontent.com/PHarshilLadila/mirror-world-runner/main/assets/images/demo/information.png)
 
 Leader Board  
-[![Information Screen](https://raw.githubusercontent.com/PHarshilLadila/mirror-world-runner/main/assets/images/demo/leader_board.png)](https://raw.githubusercontent.com/PHarshilLadila/mirror-world-runner/main/assets/images/demo/leader_board.png)
+[![Leader Board Screen](https://raw.githubusercontent.com/PHarshilLadila/mirror-world-runner/main/assets/images/demo/leader_board.png)](https://raw.githubusercontent.com/PHarshilLadila/mirror-world-runner/main/assets/images/demo/leader_board.png)
 
 Settings  
 [![Settings Screen](https://raw.githubusercontent.com/PHarshilLadila/mirror-world-runner/main/assets/images/demo/setting_screen.png)](https://raw.githubusercontent.com/PHarshilLadila/mirror-world-runner/main/assets/images/demo/setting_screen.png)
