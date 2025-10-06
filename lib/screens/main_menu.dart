@@ -331,6 +331,7 @@ class _MainMenuScreenState extends State<MainMenuScreen>
     return Dialog(
       backgroundColor: Colors.transparent,
       child: Container(
+        width: kIsWeb ? 400 : double.infinity,
         decoration: BoxDecoration(
           gradient: LinearGradient(
             colors: [
@@ -376,68 +377,77 @@ class _MainMenuScreenState extends State<MainMenuScreen>
                 textAlign: TextAlign.center,
               ),
               Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  AnimatedButton(
-                    onTap: () async {
-                      debugPrint("Log Out Cancle");
-                      Navigator.pop(context);
-                    },
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                        vertical: 12,
-                        horizontal: 30,
-                      ),
-                      decoration: BoxDecoration(
-                        gradient: const LinearGradient(
-                          colors: [Colors.redAccent, Colors.red],
+                  Expanded(
+                    child: AnimatedButton(
+                      onTap: () async {
+                        debugPrint("Log Out Cancle");
+                        Navigator.pop(context);
+                      },
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                          vertical: 12,
+                          horizontal: 30,
                         ),
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: const Text(
-                        'No',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16,
+                        decoration: BoxDecoration(
+                          gradient: const LinearGradient(
+                            colors: [Colors.redAccent, Colors.red],
+                          ),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Center(
+                          child: const Text(
+                            'No',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 14,
+                            ),
+                          ),
                         ),
                       ),
                     ),
                   ),
-                  AnimatedButton(
-                    onTap: () async {
-                      debugPrint("Log Out");
-                      final authProvider = Provider.of<AuthProvider>(
-                        context,
-                        listen: false,
-                      );
-                      await authProvider.logout();
+                  SizedBox(width: 12),
+                  Expanded(
+                    child: AnimatedButton(
+                      onTap: () async {
+                        debugPrint("Log Out");
+                        final authProvider = Provider.of<AuthProvider>(
+                          context,
+                          listen: false,
+                        );
+                        await authProvider.logout();
 
-                      Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const LoginScreen(),
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const LoginScreen(),
+                          ),
+                        );
+                        debugPrint("Log Out Done");
+                      },
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                          vertical: 12,
+                          horizontal: 30,
                         ),
-                      );
-                      debugPrint("Log Out Done");
-                    },
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                        vertical: 12,
-                        horizontal: 30,
-                      ),
-                      decoration: BoxDecoration(
-                        gradient: const LinearGradient(
-                          colors: [Colors.green, Colors.lightGreenAccent],
+                        decoration: BoxDecoration(
+                          gradient: const LinearGradient(
+                            colors: [Colors.green, Colors.lightGreenAccent],
+                          ),
+                          borderRadius: BorderRadius.circular(12),
                         ),
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: const Text(
-                        'Yes',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16,
+                        child: Center(
+                          child: const Text(
+                            'Yes',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 14,
+                            ),
+                          ),
                         ),
                       ),
                     ),
