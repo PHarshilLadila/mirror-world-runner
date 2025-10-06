@@ -12,13 +12,13 @@ Mirror World Runner is an endless runner where you control **two characters at o
 
 Key features:
 
-* 🌟 Control both characters at the same time
-* 🎯 Synchronized but mirrored obstacle challenges
-* ⚡ Power-ups: collect star-shaped items to gain 3 obstacle-avoid chances for 5 seconds
-* ❤️ Lives: collect heart-shaped items to increase lives (max 5 if none left)
-* 👆 Drag anywhere to move both players simultaneously
-* 🎮 Arrow keys for precise control (desktopapp and web app)
-* ❤️ Simple, addictive survival gameplay
+- 🌟 Control both characters at the same time
+- 🎯 Synchronized but mirrored obstacle challenges
+- ⚡ Power-ups: collect star-shaped items to gain 3 obstacle-avoid chances for 5 seconds
+- ❤️ Lives: collect heart-shaped items to increase lives (max 5 if none left)
+- 👆 Drag anywhere to move both players simultaneously
+- 🎮 Arrow keys for precise control (desktopapp and web app)
+- ❤️ Simple, addictive survival gameplay
 
 This project is implemented using **Flutter** and the **Flame game engine**, and is built to run on **Flutter Web** and as a **mobile Flutter app**.
 
@@ -32,38 +32,44 @@ Play the web build here:
 
 (Recommended: desktop for arrow-key control, mobile/tablet for touch/drag controls.)
 
-Main Screen  
-[![Main Screen Demo](https://raw.githubusercontent.com/PHarshilLadila/mirror-world-runner/main/assets/images/demo/main_screen.png)](https://raw.githubusercontent.com/PHarshilLadila/mirror-world-runner/main/assets/images/demo/main_screen.png)
+Main  
+[![Main Screen](https://raw.githubusercontent.com/PHarshilLadila/mirror-world-runner/main/assets/images/demo/main_screen.png)](https://raw.githubusercontent.com/PHarshilLadila/mirror-world-runner/main/assets/images/demo/main_screen.png)
 
-Game Screen  
-[![Game Screen Demo](https://raw.githubusercontent.com/PHarshilLadila/mirror-world-runner/main/assets/images/demo/game_screen.png)](https://raw.githubusercontent.com/PHarshilLadila/mirror-world-runner/main/assets/images/demo/game_screen.png)
+Game  
+[![Game Screen](https://raw.githubusercontent.com/PHarshilLadila/mirror-world-runner/main/assets/images/demo/game_screen.png)](https://raw.githubusercontent.com/PHarshilLadila/mirror-world-runner/main/assets/images/demo/game_screen.png)
 
-Game Over Screen
+Game Over
 [![Game Over Screen](https://raw.githubusercontent.com/PHarshilLadila/mirror-world-runner/main/assets/images/demo/game_over.png)](https://raw.githubusercontent.com/PHarshilLadila/mirror-world-runner/main/assets/images/demo/game_over.png)
 
-Settings Screen  
-[![Settings Screen Demo](https://raw.githubusercontent.com/PHarshilLadila/mirror-world-runner/main/assets/images/demo/setting_screen.png)](https://raw.githubusercontent.com/PHarshilLadila/mirror-world-runner/main/assets/images/demo/setting_screen.png)
+Information
+[![Information Screen](https://raw.githubusercontent.com/PHarshilLadila/mirror-world-runner/main/assets/images/demo/information.png)](https://raw.githubusercontent.com/PHarshilLadila/mirror-world-runner/main/assets/images/demo/information.png)
 
-Information Screen  
-[![Information Screen Demo](https://raw.githubusercontent.com/PHarshilLadila/mirror-world-runner/main/assets/images/demo/information.png)](https://raw.githubusercontent.com/PHarshilLadila/mirror-world-runner/main/assets/images/demo/information.png)
+Leader Board  
+[![Information Screen](https://raw.githubusercontent.com/PHarshilLadila/mirror-world-runner/main/assets/images/demo/leader_board.png)](https://raw.githubusercontent.com/PHarshilLadila/mirror-world-runner/main/assets/images/demo/leader_board.png)
+
+Settings  
+[![Settings Screen](https://raw.githubusercontent.com/PHarshilLadila/mirror-world-runner/main/assets/images/demo/setting_screen.png)](https://raw.githubusercontent.com/PHarshilLadila/mirror-world-runner/main/assets/images/demo/setting_screen.png)
+
+Achievements  
+[![Achievements Screen](https://raw.githubusercontent.com/PHarshilLadila/mirror-world-runner/main/assets/images/demo/achievement_screen.png)](https://raw.githubusercontent.com/PHarshilLadila/mirror-world-runner/main/assets/images/demo/achievement_screen.png)
 
 ---
 
 ## Gameplay / Controls
 
-* **Drag (touch / mouse)** anywhere on the screen to move both characters left/right.
-* **Arrow keys** (←/→) provide precise left/right movement on desktop.
-* Avoid obstacles in each world — collisions on either side can end the run.
-* Collect power-ups to gain temporary advantages (invincibility, score multipliers, speed boosts, etc.).
+- **Drag (touch / mouse)** anywhere on the screen to move both characters left/right.
+- **Arrow keys** (←/→) provide precise left/right movement on desktop.
+- Avoid obstacles in each world — collisions on either side can end the run.
+- Collect power-ups to gain temporary advantages (invincibility, score multipliers, speed boosts, etc.).
 
 ---
 
 ## Requirements
 
-* Flutter (stable channel) — tested with recent stable releases
-* Dart SDK (bundled with Flutter)
-* A modern browser for web builds (Chrome, Edge, Firefox)
-* For mobile: Android SDK / Xcode (to build and run on devices)
+- Flutter (stable channel) — tested with recent stable releases
+- Dart SDK (bundled with Flutter)
+- A modern browser for web builds (Chrome, Edge, Firefox)
+- For mobile: Android SDK / Xcode (to build and run on devices)
 
 Check your local `flutter --version` and update Flutter if needed.
 
@@ -100,9 +106,9 @@ The app will build and install to the connected device/emulator.
 
 ## Configuration & Customization
 
-* Assets: Replace images/audio inside `assets/` and update paths in `pubspec.yaml`.
-* Difficulty & tuning: Gameplay parameters (obstacle spawn rate, player speed, etc.) are centralized in the game's configuration files — tweak them to adjust difficulty.
-* Controls: Input handling is modular; you can add swipe gestures, virtual buttons, or gamepad support if desired.
+- Assets: Replace images/audio inside `assets/` and update paths in `pubspec.yaml`.
+- Difficulty & tuning: Gameplay parameters (obstacle spawn rate, player speed, etc.) are centralized in the game's configuration files — tweak them to adjust difficulty.
+- Controls: Input handling is modular; you can add swipe gestures, virtual buttons, or gamepad support if desired.
 
 ---
 
@@ -110,11 +116,11 @@ The app will build and install to the connected device/emulator.
 
 (These are commonly used in Flame + Flutter games — verify exact versions in `pubspec.yaml`)
 
-* `flame` — game engine
-* `flutter` — UI framework
-* `shared_preferences` — save high scores and settings
-* `flame_audio` — sound effects & music
-* `provider` — state management
+- `flame` — game engine
+- `flutter` — UI framework
+- `shared_preferences` — save high scores and settings
+- `flame_audio` — sound effects & music
+- `provider` — state management
 
 ---
 
