@@ -1,3 +1,5 @@
+// // ignore_for_file: deprecated_member_use
+
 // import 'package:flame/components.dart';
 // import 'package:flame/game.dart';
 // import 'package:flame/input.dart';
@@ -74,6 +76,8 @@
 //           if (gameState.lives < 5) {
 //             gameState.increaseLife();
 //           }
+//         } else if (type == PowerUpType.timeSlowdown) {
+//           gameManager.activateTimeSlowdown();
 //         } else {
 //           normalPlayer.activatePowerUp();
 //           mirroredPlayer.activatePowerUp();
@@ -232,6 +236,50 @@
 //       Offset(size.x / 2, size.y),
 //       linePaint,
 //     );
+
+//     // Render time slowdown indicator if active
+//     if (gameManager.isTimeSlowdownActive) {
+//       final timeLeft =
+//           gameManager.timeSlowdownDuration - gameManager.timeSlowdownTimer;
+//       final indicatorPaint =
+//           Paint()
+//             ..color = Colors.cyan.withOpacity(0.3)
+//             ..style = PaintingStyle.fill;
+
+//       canvas.drawRect(Rect.fromLTWH(10, 10, 200, 20), indicatorPaint);
+
+//       final borderPaint =
+//           Paint()
+//             ..color = Colors.cyan
+//             ..style = PaintingStyle.stroke
+//             ..strokeWidth = 2;
+
+//       canvas.drawRect(Rect.fromLTWH(10, 10, 200, 20), borderPaint);
+
+//       final progressWidth = 200 * (timeLeft / gameManager.timeSlowdownDuration);
+//       final progressPaint = Paint()..color = Colors.cyan;
+
+//       canvas.drawRect(Rect.fromLTWH(10, 10, progressWidth, 20), progressPaint);
+
+//       final textStyle = TextStyle(
+//         color: Colors.white,
+//         fontSize: 12,
+//         fontWeight: FontWeight.bold,
+//       );
+
+//       final textSpan = TextSpan(
+//         text: 'SLOW TIME: ${timeLeft.toStringAsFixed(1)}s',
+//         style: textStyle,
+//       );
+
+//       final textPainter = TextPainter(
+//         text: textSpan,
+//         textDirection: TextDirection.ltr,
+//       );
+
+//       textPainter.layout();
+//       textPainter.paint(canvas, Offset(15, 12));
+//     }
 //   }
 // }
 
@@ -256,6 +304,7 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 class MirrorWorldGame extends FlameGame
     with HasCollisionDetection, TapDetector {
   final GameState gameState;
+  final Function(String)? onPowerUpCollected;
   late GameWorld gameWorld;
   late Player normalPlayer;
   late Player mirroredPlayer;
@@ -270,9 +319,12 @@ class MirrorWorldGame extends FlameGame
   double _targetDy = 0;
   double _moveSpeed = 400.0;
 
-  MirrorWorldGame({required this.gameState, double initialSpeed = 400.0}) {
+  MirrorWorldGame({
+    required this.gameState,
+    double initialSpeed = 400.0,
+    this.onPowerUpCollected,
+  }) {
     _moveSpeed = initialSpeed;
-    // pauseWhenBackgrounded = false;
   }
 
   @override
@@ -313,11 +365,15 @@ class MirrorWorldGame extends FlameGame
           if (gameState.lives < 5) {
             gameState.increaseLife();
           }
+          // Notify game screen about heart collection
+          onPowerUpCollected?.call('heart');
         } else if (type == PowerUpType.timeSlowdown) {
           gameManager.activateTimeSlowdown();
         } else {
           normalPlayer.activatePowerUp();
           mirroredPlayer.activatePowerUp();
+          // Notify game screen about star collection
+          onPowerUpCollected?.call('star');
         }
       },
     );
@@ -443,7 +499,7 @@ class MirrorWorldGame extends FlameGame
   Future<void> _vibrate() async {
     try {
       if (!kIsWeb) {
-        if (await Vibration.hasVibrator()) {
+        if (await Vibration.hasVibrator() ?? false) {
           Vibration.vibrate(duration: 100);
         }
       }

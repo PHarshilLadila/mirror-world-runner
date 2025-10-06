@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:mirror_world_runner/service/auth_service.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthProvider extends ChangeNotifier {
   final AuthService _authService = AuthService();
@@ -43,7 +44,15 @@ class AuthProvider extends ChangeNotifier {
 
   Future<void> logout() async {
     _setLoading(true);
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    Set<String> keys = preferences.getKeys();
+
     try {
+      debugPrint("Keys in SharedPreferences before clearing:");
+      for (var key in keys) {
+        debugPrint(key);
+      }
+      await preferences.clear();
       await _authService.logout();
       _currentUser = null;
       notifyListeners();

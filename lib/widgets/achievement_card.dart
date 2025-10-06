@@ -197,6 +197,31 @@ class _AchievementCardState extends State<AchievementCard>
                     height: 1.3,
                   ),
                 ),
+                if (widget.isUnlocked)
+                  SizedBox(height: widget.isDesktop ? 10 : 6),
+                if (widget.isUnlocked)
+                  Container(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: widget.isDesktop ? 12 : 8,
+                      vertical: widget.isDesktop ? 4 : 2,
+                    ),
+                    decoration: BoxDecoration(
+                      color: Colors.amber.withOpacity(0.2),
+
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(color: Colors.amber, width: 1),
+                    ),
+                    child: Text(
+                      'ACHIEVED',
+                      style: TextStyle(
+                        color: Colors.amber,
+                        fontSize: widget.isDesktop ? 12 : 9,
+                        fontWeight: FontWeight.bold,
+                        letterSpacing: 0.5,
+                      ),
+                    ),
+                  ),
+
                 if (!widget.isUnlocked)
                   SizedBox(height: widget.isDesktop ? 10 : 6),
                 if (!widget.isUnlocked)
@@ -343,40 +368,65 @@ class _AchievementCardState extends State<AchievementCard>
                 ),
                 SizedBox(height: widget.isDesktop ? 8 : 4),
 
-                Container(
-                  height: widget.isDesktop ? 8 : 6,
-                  width: double.infinity,
-                  decoration: BoxDecoration(
-                    color: Colors.white12,
-                    borderRadius: BorderRadius.circular(4),
-                  ),
-                  child: Stack(
-                    children: [
-                      AnimatedContainer(
-                        duration: const Duration(milliseconds: 500),
-                        width:
-                            (MediaQuery.of(context).size.width * 0.2) *
-                            widget.progress,
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            colors:
-                                widget.isUnlocked
-                                    ? [
-                                      Colors.amber.shade400,
-                                      Colors.orange.shade400,
-                                    ]
-                                    : [
-                                      Colors.blue.shade400,
-                                      Colors.blue.shade600,
-                                    ],
-                          ),
-                          borderRadius: BorderRadius.circular(4),
-                        ),
+                // Container(
+                //   height: widget.isDesktop ? 8 : 6,
+                //   width: double.infinity,
+                //   decoration: BoxDecoration(
+                //     color: Colors.white12,
+                //     borderRadius: BorderRadius.circular(4),
+                //   ),
+                //   child: Stack(
+                //     children: [
+                //       AnimatedContainer(
+                //         duration: const Duration(milliseconds: 500),
+                //         width:
+                //             (MediaQuery.of(context).size.width * 0.2) *
+                //             widget.progress,
+                //         decoration: BoxDecoration(
+                //           gradient: LinearGradient(
+                //             colors:
+                //                 widget.isUnlocked
+                //                     ? [
+                //                       Colors.amber.shade400,
+                //                       Colors.orange.shade400,
+                //                     ]
+                //                     : [
+                //                       Colors.blue.shade400,
+                //                       Colors.blue.shade600,
+                //                     ],
+                //           ),
+                //           borderRadius: BorderRadius.circular(4),
+                //         ),
+                //       ),
+                //     ],
+                //   ),
+                // ),
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(4),
+                  child: ShaderMask(
+                    shaderCallback: (Rect bounds) {
+                      return LinearGradient(
+                        colors:
+                            widget.isUnlocked
+                                ? [
+                                  Colors.amber.shade400,
+                                  Colors.orange.shade400,
+                                ]
+                                : [Colors.blue.shade400, Colors.blue.shade600],
+                      ).createShader(bounds);
+                    },
+                    child: LinearProgressIndicator(
+                      value: widget.progress,
+                      minHeight: widget.isDesktop ? 8 : 6,
+                      backgroundColor: Colors.white12,
+                      valueColor: const AlwaysStoppedAnimation<Color>(
+                        Colors.white,
                       ),
-                    ],
+                    ),
                   ),
                 ),
-                SizedBox(height: widget.isDesktop ? 8 : 4),
+
+                SizedBox(height: widget.isDesktop ? 12 : 4),
 
                 Container(
                   padding: EdgeInsets.symmetric(
@@ -395,7 +445,7 @@ class _AchievementCardState extends State<AchievementCard>
                     ),
                   ),
                   child: Text(
-                    widget.isUnlocked ? 'UNLOCKED' : 'IN PROGRESS',
+                    widget.isUnlocked ? 'COMPLETE' : 'IN PROGRESS',
                     style: TextStyle(
                       color:
                           widget.isUnlocked
@@ -429,5 +479,76 @@ class _AchievementCardState extends State<AchievementCard>
         ],
       ),
     );
+  }
+}
+
+class AchievedBadge extends StatefulWidget {
+  final bool isDesktop;
+  final Duration zoomOutDuration;
+
+  const AchievedBadge({
+    super.key,
+    this.isDesktop = false,
+    this.zoomOutDuration = const Duration(milliseconds: 500),
+  });
+
+  @override
+  State<AchievedBadge> createState() => _AchievedBadgeState();
+}
+
+class _AchievedBadgeState extends State<AchievedBadge>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<double> _scaleAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _controller = AnimationController(
+      vsync: this,
+      duration: widget.zoomOutDuration,
+    );
+
+    _scaleAnimation = Tween<double>(
+      begin: 1.0,
+      end: 0.0,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeIn));
+
+    // Start animation automatically
+    _controller.forward();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return ScaleTransition(
+      scale: _scaleAnimation,
+      child: Container(
+        padding: EdgeInsets.symmetric(
+          horizontal: widget.isDesktop ? 12 : 8,
+          vertical: widget.isDesktop ? 4 : 2,
+        ),
+        decoration: BoxDecoration(
+          color: Colors.amber.withOpacity(0.2),
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: Colors.amber, width: 1),
+        ),
+        child: Text(
+          'ACHIEVED',
+          style: TextStyle(
+            color: Colors.amber,
+            fontSize: widget.isDesktop ? 12 : 9,
+            fontWeight: FontWeight.bold,
+            letterSpacing: 0.5,
+          ),
+        ),
+      ),
+    );
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
   }
 }

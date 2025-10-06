@@ -174,7 +174,7 @@ class _MainMenuScreenState extends State<MainMenuScreen>
                       }
 
                       final userName =
-                          authProvider.currentUser?['userName'] ?? "Player";
+                          authProvider.currentUser?['userName'] ?? "";
                       return Text(
                         "Welcome back $userName..",
                         style: const TextStyle(
@@ -200,8 +200,7 @@ class _MainMenuScreenState extends State<MainMenuScreen>
                         );
                       }
 
-                      final eamil =
-                          authProvider.currentUser?['email'] ?? "Player";
+                      final eamil = authProvider.currentUser?['email'] ?? "";
                       return Text(
                         "$eamil",
                         style: const TextStyle(
@@ -296,24 +295,15 @@ class _MainMenuScreenState extends State<MainMenuScreen>
                   ),
 
                   const SizedBox(height: 25),
+
                   HolographicButton(
                     label: "LOGOUT",
                     colors: const [Colors.deepOrange, Colors.red],
-                    onTap: () async {
-                      debugPrint("Log Out");
-                      final authProvider = Provider.of<AuthProvider>(
-                        context,
-                        listen: false,
+                    onTap: () {
+                      showDialog(
+                        context: context,
+                        builder: (context) => logoutDailog(),
                       );
-                      await authProvider.logout();
-
-                      Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const LoginScreen(),
-                        ),
-                      );
-                      debugPrint("Log Out Done");
                     },
                   ),
 
@@ -333,6 +323,130 @@ class _MainMenuScreenState extends State<MainMenuScreen>
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget logoutDailog() {
+    return Dialog(
+      backgroundColor: Colors.transparent,
+      child: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [
+              Colors.black.withOpacity(0.45),
+              Colors.indigo.shade900,
+              Colors.purple.shade900,
+            ],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(color: Colors.white.withOpacity(0.2), width: 2),
+        ),
+        padding: EdgeInsets.only(top: 30, left: 30, right: 30),
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                'Logout',
+                style: TextStyle(
+                  fontSize: 28,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                  decoration: TextDecoration.underline,
+                  shadows: [
+                    Shadow(
+                      color: Colors.black.withOpacity(0.8),
+                      blurRadius: 10,
+                      offset: const Offset(2, 2),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 30),
+              const Text(
+                'Are you sure you want to logout?\n\n',
+                style: TextStyle(
+                  color: Colors.white70,
+                  fontSize: 14,
+                  height: 1.5,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  AnimatedButton(
+                    onTap: () async {
+                      debugPrint("Log Out Cancle");
+                      Navigator.pop(context);
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        vertical: 12,
+                        horizontal: 30,
+                      ),
+                      decoration: BoxDecoration(
+                        gradient: const LinearGradient(
+                          colors: [Colors.redAccent, Colors.red],
+                        ),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: const Text(
+                        'No',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                        ),
+                      ),
+                    ),
+                  ),
+                  AnimatedButton(
+                    onTap: () async {
+                      debugPrint("Log Out");
+                      final authProvider = Provider.of<AuthProvider>(
+                        context,
+                        listen: false,
+                      );
+                      await authProvider.logout();
+
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const LoginScreen(),
+                        ),
+                      );
+                      debugPrint("Log Out Done");
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        vertical: 12,
+                        horizontal: 30,
+                      ),
+                      decoration: BoxDecoration(
+                        gradient: const LinearGradient(
+                          colors: [Colors.green, Colors.lightGreenAccent],
+                        ),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: const Text(
+                        'Yes',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
