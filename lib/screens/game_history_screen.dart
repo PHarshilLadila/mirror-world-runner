@@ -103,6 +103,14 @@ class _GameHistoryScreenState extends State<GameHistoryScreen>
   Future<void> _loadGameHistory() async {
     try {
       final history = await authService.getUserGameHistory(false);
+
+      // Debug print total fetched games
+      debugPrint("Total games fetched: ${history.length}");
+
+      // Also print unique games count after removing duplicates
+      final uniqueGames = getUniqueGames(history);
+      debugPrint("Total unique games to display: ${uniqueGames.length}");
+
       if (mounted) {
         setState(() {
           gameHistory = history;
@@ -149,7 +157,6 @@ class _GameHistoryScreenState extends State<GameHistoryScreen>
               ),
             ),
           ),
-
           RepaintBoundary(
             child: ValueListenableBuilder<int>(
               valueListenable: particleNotifier,
@@ -161,7 +168,6 @@ class _GameHistoryScreenState extends State<GameHistoryScreen>
               },
             ),
           ),
-
           SafeArea(
             child: Padding(
               padding: const EdgeInsets.all(16.0),
@@ -260,7 +266,6 @@ class _GameHistoryScreenState extends State<GameHistoryScreen>
                               ],
                             ),
                             const SizedBox(height: 10),
-
                             ...sortedGames.asMap().entries.map((entry) {
                               final index = entry.key;
                               final game = entry.value;
