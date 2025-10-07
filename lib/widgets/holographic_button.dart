@@ -14,9 +14,9 @@ class HolographicButton extends StatelessWidget {
     required this.label,
     required this.colors,
     required this.onTap,
-    this.fontSize = 16,
+    this.fontSize = 14,
     this.width = 280,
-    this.verticalPadding = 20,
+    this.verticalPadding = 16,
   });
 
   @override

@@ -3,6 +3,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:mirror_world_runner/screens/game_history_screen.dart';
 import 'package:mirror_world_runner/screens/leader_board_screen.dart';
 import 'package:mirror_world_runner/service/auth_service.dart';
 import 'package:mirror_world_runner/widgets/custom_loader.dart';
@@ -292,12 +293,7 @@ class _GameOverScreenState extends State<GameOverScreen>
     }
   }
 
-  Widget _buildStatItem(
-    IconData icon,
-    String title,
-    String value,
-    Color color,
-  ) {
+  Widget statItem(IconData icon, String title, String value, Color color) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -575,7 +571,7 @@ class _GameOverScreenState extends State<GameOverScreen>
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
                                       children: [
-                                        _buildStatItem(
+                                        statItem(
                                           Icons.emoji_events,
                                           'SCORE',
                                           gameState.score.toString(),
@@ -584,7 +580,7 @@ class _GameOverScreenState extends State<GameOverScreen>
                                         const SizedBox(height: 8),
                                         Divider(color: Colors.white38),
                                         const SizedBox(height: 8),
-                                        _buildStatItem(
+                                        statItem(
                                           Icons.star,
                                           'HIGH SCORE',
                                           '${_userData?['highestScore'] ?? 0}',
@@ -593,7 +589,7 @@ class _GameOverScreenState extends State<GameOverScreen>
                                         const SizedBox(height: 8),
                                         Divider(color: Colors.white38),
                                         const SizedBox(height: 8),
-                                        _buildStatItem(
+                                        statItem(
                                           Icons.timer,
                                           'TIME TAKEN',
                                           takenTimeFormate(timeTaken),
@@ -602,7 +598,7 @@ class _GameOverScreenState extends State<GameOverScreen>
                                         const SizedBox(height: 8),
                                         Divider(color: Colors.white38),
                                         const SizedBox(height: 8),
-                                        _buildStatItem(
+                                        statItem(
                                           Icons.speed,
                                           'DIFFICULTY',
                                           _getDifficultyText(
@@ -771,6 +767,30 @@ class _GameOverScreenState extends State<GameOverScreen>
                                                   ),
                                                 ),
                                               ),
+                                          HolographicButton(
+                                            width:
+                                                kIsWeb ? null : double.infinity,
+                                            verticalPadding: 6,
+                                            label: "View All",
+                                            fontSize: 12,
+                                            colors: const [
+                                              Colors.white24,
+                                              Colors.white24,
+                                            ],
+                                            onTap: () {
+                                              debugPrint(
+                                                "[GAME OVER] VIEW ALL GAMES HISTORY",
+                                              );
+                                              Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                  builder:
+                                                      (context) =>
+                                                          const GameHistoryScreen(),
+                                                ),
+                                              );
+                                            },
+                                          ),
                                         ],
                                       ),
                                     ),

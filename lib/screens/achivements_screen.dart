@@ -662,25 +662,25 @@ class _AchivementsScreenState extends State<AchivementsScreen>
                                         ? MainAxisAlignment.spaceAround
                                         : MainAxisAlignment.spaceBetween,
                                 children: [
-                                  buildStatItem(
+                                  statItem(
                                     totalCount.toString(),
                                     "Total",
                                     statValueFontSize,
                                     statLabelFontSize,
                                   ),
-                                  buildStatItem(
+                                  statItem(
                                     unlockedCount.toString(),
                                     "Unlocked",
                                     statValueFontSize,
                                     statLabelFontSize,
                                   ),
-                                  buildStatItem(
+                                  statItem(
                                     (totalCount - unlockedCount).toString(),
                                     "Locked",
                                     statValueFontSize,
                                     statLabelFontSize,
                                   ),
-                                  buildStatItem(
+                                  statItem(
                                     "${(progressPercentage * 100).toStringAsFixed(0)}%",
                                     "Progress",
                                     statValueFontSize,
@@ -803,7 +803,7 @@ class _AchivementsScreenState extends State<AchivementsScreen>
     }
   }
 
-  Widget buildStatItem(
+  Widget statItem(
     String value,
     String label,
     double valueSize,

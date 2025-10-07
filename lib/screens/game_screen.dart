@@ -321,8 +321,8 @@ class _GameScreenState extends State<GameScreen> {
                   GameWidget(
                     game: game ?? MirrorWorldGame(gameState: gameState),
                   ),
-                  buildHUD(context, gameState),
-                  buildControlButtons(),
+                  hUD(context, gameState),
+                  controlButtons(),
                 ],
               ),
             ),
@@ -332,7 +332,7 @@ class _GameScreenState extends State<GameScreen> {
     );
   }
 
-  Widget buildHUD(BuildContext context, GameState gameState) {
+  Widget hUD(BuildContext context, GameState gameState) {
     return Positioned(
       top: 40,
       left: 20,
@@ -391,7 +391,7 @@ class _GameScreenState extends State<GameScreen> {
     );
   }
 
-  Widget buildControlButtons() {
+  Widget controlButtons() {
     return Consumer<GameState>(
       builder: (context, gameState, child) {
         if (gameState.isGameOver || gameState.isPaused) {

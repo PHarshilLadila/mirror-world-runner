@@ -220,6 +220,7 @@ class _SettingScreenState extends State<SettingScreen>
                   child: Center(
                     child: Container(
                       width: kIsWeb ? 500 : double.infinity,
+                      margin: EdgeInsets.all(12),
                       decoration: BoxDecoration(
                         gradient: LinearGradient(
                           colors: [
