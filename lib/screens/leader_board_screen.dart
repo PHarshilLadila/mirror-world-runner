@@ -188,7 +188,7 @@ class _LeaderboardScreenState extends State<LeaderboardScreen>
                                 final playerUid = player['userId']?.toString();
                                 final isCurrentPlayer = (playerUid == userUID);
 
-                                return buildLeaderboardItem(
+                                return leaderboardItem(
                                   index: index,
                                   player: player,
                                   rank: index + 1,
@@ -206,7 +206,7 @@ class _LeaderboardScreenState extends State<LeaderboardScreen>
     );
   }
 
-  Widget buildLeaderboardItem({
+  Widget leaderboardItem({
     required int index,
     required Map<String, dynamic> player,
     required int rank,

@@ -7,7 +7,7 @@ class LeaderboardCard extends StatefulWidget {
   final int rank;
   final Map<String, dynamic> player;
   final Color rankColor;
-  final IconData rankIcon;
+  final IconData? rankIcon;
   final bool isCurrentPlayer;
 
   const LeaderboardCard({
@@ -16,7 +16,7 @@ class LeaderboardCard extends StatefulWidget {
     required this.rank,
     required this.player,
     required this.rankColor,
-    required this.rankIcon,
+    this.rankIcon,
     required this.isCurrentPlayer,
   });
 

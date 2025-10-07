@@ -219,7 +219,6 @@ class AuthService {
       updateData.addAll(achievementUpdates);
       await firestore.collection("users").doc(user.uid).update(updateData);
 
-      // Save game session with timestamp
       await firestore.collection("gameSessions").add({
         "userId": user.uid,
         "userName": userData["userName"],
@@ -238,7 +237,6 @@ class AuthService {
 
       log("Game data saved successfully for user: ${user.uid}");
 
-      // Update Addicted Runner achievements after saving game data
       await updateAddictedRunnerAchievements();
     } catch (e) {
       log("[AuthService] saveGameData error: ${extractMessage(e)}");
@@ -249,7 +247,6 @@ class AuthService {
     try {
       final now = DateTime.now();
 
-      // Calculate exact timeframes from current time
       final oneHourAgo = now.subtract(const Duration(hours: 1));
       final oneDayAgo = now.subtract(const Duration(days: 1));
       final oneWeekAgo = now.subtract(const Duration(days: 7));
@@ -264,7 +261,6 @@ class AuthService {
       log('3 weeks ago: $threeWeeksAgo');
       log('1 month ago: $oneMonthAgo');
 
-      // Query all sessions within the last month
       final sessionsQuery =
           await firestore
               .collection("gameSessions")
@@ -279,8 +275,7 @@ class AuthService {
       int gamesInLastDay = 0;
       int gamesInLastWeek = 0;
       int gamesInLast3Weeks = 0;
-      int gamesInLastMonth =
-          sessionsQuery.docs.length; // All queried games are within last month
+      int gamesInLastMonth = sessionsQuery.docs.length;
 
       for (var doc in sessionsQuery.docs) {
         final data = doc.data();
@@ -332,7 +327,6 @@ class AuthService {
 
       Map<String, dynamic> achievementUpdates = {};
 
-      // 20 Games in 1 hour
       achievementUpdates['achievementsProgress.20 Games.current'] =
           gameStats['hour'] ?? 0;
       achievementUpdates['achievementsProgress.20 Games.isUnlocked'] =
@@ -340,7 +334,6 @@ class AuthService {
       achievementUpdates['achievementsProgress.20 Games.updatedAt'] =
           FieldValue.serverTimestamp();
 
-      // 100 Games in 1 day
       achievementUpdates['achievementsProgress.100 Games.current'] =
           gameStats['day'] ?? 0;
       achievementUpdates['achievementsProgress.100 Games.isUnlocked'] =
@@ -348,7 +341,6 @@ class AuthService {
       achievementUpdates['achievementsProgress.100 Games.updatedAt'] =
           FieldValue.serverTimestamp();
 
-      // 1000 Games in 1 week
       achievementUpdates['achievementsProgress.1000 Games.current'] =
           gameStats['week'] ?? 0;
       achievementUpdates['achievementsProgress.1000 Games.isUnlocked'] =
@@ -356,7 +348,6 @@ class AuthService {
       achievementUpdates['achievementsProgress.1000 Games.updatedAt'] =
           FieldValue.serverTimestamp();
 
-      // 25000 Games in 3 weeks
       achievementUpdates['achievementsProgress.25000 Games.current'] =
           gameStats['threeWeeks'] ?? 0;
       achievementUpdates['achievementsProgress.25000 Games.isUnlocked'] =
@@ -364,7 +355,6 @@ class AuthService {
       achievementUpdates['achievementsProgress.25000 Games.updatedAt'] =
           FieldValue.serverTimestamp();
 
-      // 60000 Games in 1 month
       achievementUpdates['achievementsProgress.60000 Games.current'] =
           gameStats['month'] ?? 0;
       achievementUpdates['achievementsProgress.60000 Games.isUnlocked'] =
@@ -385,26 +375,42 @@ class AuthService {
     }
   }
 
-  Future<List<Map<String, dynamic>>> getUserGameHistory() async {
+  Future<List<Map<String, dynamic>>> getUserGameHistory(bool isLimited) async {
     try {
       final user = auth.currentUser;
-      if (user == null) return [];
+      if (user == null) return <Map<String, dynamic>>[];
 
-      final querySnapshot =
-          await firestore
-              .collection("gameSessions")
-              .where("userId", isEqualTo: user.uid)
-              .orderBy("playedAt", descending: true)
-              .limit(20)
-              .get();
+      Query query = firestore
+          .collection("gameSessions")
+          .where("userId", isEqualTo: user.uid)
+          .orderBy("playedAt", descending: true);
+
+      if (isLimited) {
+        query = query.limit(20);
+      }
+
+      final querySnapshot = await query.get();
 
       return querySnapshot.docs.map((doc) {
         final data = doc.data();
-        return {'id': doc.id, ...data, 'playedAt': data['playedAt']?.toDate()};
+        if (data == null) return <String, dynamic>{};
+
+        final Map<String, dynamic> mapData = Map<String, dynamic>.from(
+          data as Map<String, dynamic>,
+        );
+
+        return {
+          'id': doc.id,
+          ...mapData,
+          'playedAt':
+              mapData['playedAt'] != null
+                  ? (mapData['playedAt'] as Timestamp).toDate()
+                  : null,
+        };
       }).toList();
     } catch (e) {
       log("[AuthService] getUserGameHistory error: ${extractMessage(e)}");
-      return [];
+      return <Map<String, dynamic>>[];
     }
   }
 

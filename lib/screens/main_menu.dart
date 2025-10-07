@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:mirror_world_runner/auth/login_screen.dart';
 import 'package:mirror_world_runner/providers/auth_provider.dart';
 import 'package:mirror_world_runner/screens/achivements_screen.dart';
+import 'package:mirror_world_runner/screens/game_history_screen.dart';
 import 'package:mirror_world_runner/screens/leader_board_screen.dart';
 import 'package:mirror_world_runner/screens/setting_screen.dart';
 import 'package:mirror_world_runner/widgets/animated_button.dart';
@@ -262,10 +263,39 @@ class _MainMenuScreenState extends State<MainMenuScreen>
                   ),
 
                   const SizedBox(height: 25),
+                  HolographicButton(
+                    label: "HISTORY",
+                    colors: const [Colors.purpleAccent, Colors.deepPurple],
+                    onTap: () {
+                      debugPrint("HISTORY");
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => GameHistoryScreen(),
+                        ),
+                      );
+                    },
+                  ),
+
+                  const SizedBox(height: 25),
+                  HolographicButton(
+                    label: "ACHIVEMENTS",
+                    colors: const [Colors.purple, Colors.pinkAccent],
+                    onTap: () {
+                      debugPrint("ACHIVEMENTS");
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const AchivementsScreen(),
+                        ),
+                      );
+                    },
+                  ),
+                  const SizedBox(height: 25),
 
                   HolographicButton(
                     label: "SETTINGS",
-                    colors: const [Colors.purple, Colors.pinkAccent],
+                    colors: const [Colors.orange, Colors.deepOrangeAccent],
                     onTap: () {
                       debugPrint("SETTINGS");
                       Navigator.push(
@@ -280,25 +310,10 @@ class _MainMenuScreenState extends State<MainMenuScreen>
                   ),
 
                   const SizedBox(height: 25),
-                  HolographicButton(
-                    label: "ACHIVEMENTS",
-                    colors: const [Colors.purpleAccent, Colors.deepPurple],
-                    onTap: () {
-                      debugPrint("ACHIVEMENTS");
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const AchivementsScreen(),
-                        ),
-                      );
-                    },
-                  ),
-
-                  const SizedBox(height: 25),
 
                   HolographicButton(
                     label: "LOGOUT",
-                    colors: const [Colors.deepOrange, Colors.red],
+                    colors: const [Color(0xFFFF4D4D), Color(0xFFEC1404)],
                     onTap: () {
                       showDialog(
                         context: context,

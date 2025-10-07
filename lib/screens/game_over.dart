@@ -130,7 +130,7 @@ class _GameOverScreenState extends State<GameOverScreen>
   }
 
   Future<void> _loadGameHistory() async {
-    final history = await authService.getUserGameHistory();
+    final history = await authService.getUserGameHistory(true);
     if (mounted) {
       setState(() {
         gameHistory = history;
