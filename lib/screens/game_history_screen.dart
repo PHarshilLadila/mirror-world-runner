@@ -104,10 +104,8 @@ class _GameHistoryScreenState extends State<GameHistoryScreen>
     try {
       final history = await authService.getUserGameHistory(false);
 
-      // Debug print total fetched games
       debugPrint("Total games fetched: ${history.length}");
 
-      // Also print unique games count after removing duplicates
       final uniqueGames = getUniqueGames(history);
       debugPrint("Total unique games to display: ${uniqueGames.length}");
 
@@ -169,19 +167,19 @@ class _GameHistoryScreenState extends State<GameHistoryScreen>
             ),
           ),
           SafeArea(
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child:
-                  isLoading
-                      ? Center(
-                        child: Container(
-                          color: Colors.black.withOpacity(0.5),
-                          child: const Center(
-                            child: GameLoadingWidget(width: 100, height: 100),
-                          ),
+            child:
+                isLoading
+                    ? Center(
+                      child: Container(
+                        color: Colors.black.withOpacity(0.5),
+                        child: const Center(
+                          child: GameLoadingWidget(width: 100, height: 100),
                         ),
-                      )
-                      : SingleChildScrollView(
+                      ),
+                    )
+                    : SingleChildScrollView(
+                      child: Padding(
+                        padding: const EdgeInsets.all(16.0),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -283,7 +281,7 @@ class _GameHistoryScreenState extends State<GameHistoryScreen>
                                     "No game history found.",
                                     style: TextStyle(
                                       color: Colors.white70,
-                                      fontSize: 18,
+                                      fontSize: 14,
                                     ),
                                   ),
                                 ),
@@ -397,7 +395,7 @@ class _GameHistoryScreenState extends State<GameHistoryScreen>
                           ],
                         ),
                       ),
-            ),
+                    ),
           ),
         ],
       ),
