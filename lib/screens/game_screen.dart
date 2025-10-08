@@ -6,6 +6,7 @@ import 'dart:math' as math;
 import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:mirror_world_runner/widgets/custom_loader.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -82,27 +83,33 @@ class _GameScreenState extends State<GameScreen> {
         consecutivePowerUps++;
         lastCollectionWasPowerUp = true;
 
-        debugPrint('Star collected! Total stars: $starPowerUpsCollected');
-        debugPrint('Star activations: $starActivations');
-        debugPrint('Consecutive power-ups: $consecutivePowerUps');
+        debugPrint(
+          '[Game Screen] Star collected! Total stars: $starPowerUpsCollected',
+        );
+        debugPrint('[Game Screen] Star activations: $starActivations');
+        debugPrint('[Game Screen] Consecutive power-ups: $consecutivePowerUps');
       } else if (type == 'heart') {
         heartPowerUpsCollected++;
         consecutivePowerUps++;
         lastCollectionWasPowerUp = true;
 
-        debugPrint('Heart collected! Total hearts: $heartPowerUpsCollected');
-        debugPrint('Consecutive power-ups: $consecutivePowerUps');
+        debugPrint(
+          '[Game Screen] Heart collected! Total hearts: $heartPowerUpsCollected',
+        );
+        debugPrint('[Game Screen] Consecutive power-ups: $consecutivePowerUps');
       }
 
       if (consecutivePowerUps > maxConsecutivePowerUps) {
         maxConsecutivePowerUps = consecutivePowerUps;
-        debugPrint('New max consecutive: $maxConsecutivePowerUps');
+        debugPrint(
+          '[Game Screen] New max consecutive: $maxConsecutivePowerUps',
+        );
       }
 
       final gameState = Provider.of<GameState>(context, listen: false);
       if (gameState.lives >= 5) {
         reachedMaxLives = true;
-        debugPrint('Max lives reached!');
+        debugPrint('[Game Screen] Max lives reached!');
       }
 
       consecutiveTimer?.cancel();
@@ -110,7 +117,7 @@ class _GameScreenState extends State<GameScreen> {
         setState(() {
           consecutivePowerUps = 0;
           lastCollectionWasPowerUp = false;
-          debugPrint('Consecutive counter reset');
+          debugPrint('[Game Screen] Consecutive counter reset');
         });
       });
     });
@@ -143,15 +150,17 @@ class _GameScreenState extends State<GameScreen> {
     try {
       final authService = AuthService();
 
-      debugPrint('=== SAVING GAME DATA ===');
-      debugPrint('Score: ${gameState.score}');
-      debugPrint('Time: $currentGameTime seconds');
-      debugPrint('Lives left: ${gameState.lives}');
-      debugPrint('Star power-ups: $starPowerUpsCollected');
-      debugPrint('Heart power-ups: $heartPowerUpsCollected');
-      debugPrint('Star activations: $starActivations');
-      debugPrint('Reached max lives: $reachedMaxLives');
-      debugPrint('Max consecutive power-ups: $maxConsecutivePowerUps');
+      debugPrint('[Game Screen] === SAVING GAME DATA ===');
+      debugPrint('[Game Screen] Score: ${gameState.score}');
+      debugPrint('[Game Screen] Time: $currentGameTime seconds');
+      debugPrint('[Game Screen] Lives left: ${gameState.lives}');
+      debugPrint('[Game Screen] Star power-ups: $starPowerUpsCollected');
+      debugPrint('[Game Screen] Heart power-ups: $heartPowerUpsCollected');
+      debugPrint('[Game Screen] Star activations: $starActivations');
+      debugPrint('[Game Screen] Reached max lives: $reachedMaxLives');
+      debugPrint(
+        '[Game Screen] Max consecutive power-ups: $maxConsecutivePowerUps',
+      );
 
       await authService.saveGameData(
         score: gameState.score,
@@ -169,9 +178,9 @@ class _GameScreenState extends State<GameScreen> {
 
       await authService.updateAddictedRunnerAchievements();
 
-      debugPrint('=== GAME DATA SAVED SUCCESSFULLY ===');
+      debugPrint('[Game Screen] === GAME DATA SAVED SUCCESSFULLY ===');
     } catch (e) {
-      debugPrint('Error saving game data: $e');
+      debugPrint('[Game Screen] Error saving game data: $e');
     }
   }
 
@@ -288,8 +297,15 @@ class _GameScreenState extends State<GameScreen> {
     return Consumer<GameState>(
       builder: (context, gameState, child) {
         if (game == null) {
-          return const Scaffold(
-            body: Center(child: CircularProgressIndicator()),
+          return Scaffold(
+            body: Center(
+              child: Container(
+                color: Colors.black.withOpacity(0.5),
+                child: const Center(
+                  child: GameLoadingWidget(width: 100, height: 100),
+                ),
+              ),
+            ),
           );
         }
 
@@ -321,7 +337,7 @@ class _GameScreenState extends State<GameScreen> {
                   GameWidget(
                     game: game ?? MirrorWorldGame(gameState: gameState),
                   ),
-                  hUD(context, gameState),
+                  hud(context, gameState),
                   controlButtons(),
                 ],
               ),
@@ -332,7 +348,7 @@ class _GameScreenState extends State<GameScreen> {
     );
   }
 
-  Widget hUD(BuildContext context, GameState gameState) {
+  Widget hud(BuildContext context, GameState gameState) {
     return Positioned(
       top: 40,
       left: 20,

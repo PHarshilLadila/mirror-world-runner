@@ -181,13 +181,6 @@ class _GameHistoryScreenState extends State<GameHistoryScreen>
                           ),
                         ),
                       )
-                      : sortedGames.isEmpty
-                      ? const Center(
-                        child: Text(
-                          "No game history found.",
-                          style: TextStyle(color: Colors.white70, fontSize: 18),
-                        ),
-                      )
                       : SingleChildScrollView(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -210,149 +203,197 @@ class _GameHistoryScreenState extends State<GameHistoryScreen>
                                     ),
                                   ),
                                 ),
-                                DropdownButton<GameHistorySort>(
-                                  dropdownColor: Colors.black87,
-                                  value: currentSort,
-                                  icon: const Icon(
-                                    Icons.filter_list,
-                                    color: Colors.white,
-                                  ),
-                                  items: const [
-                                    DropdownMenuItem(
-                                      value: GameHistorySort.highestScore,
-                                      child: Text(
-                                        'Highest Score',
-                                        style: TextStyle(color: Colors.white),
-                                        maxLines: 1,
-                                        overflow: TextOverflow.ellipsis,
+                                sortedGames.isEmpty
+                                    ? SizedBox.shrink()
+                                    : DropdownButton<GameHistorySort>(
+                                      dropdownColor: Colors.black87,
+                                      value: currentSort,
+                                      icon: const Icon(
+                                        Icons.filter_list,
+                                        color: Colors.white,
                                       ),
-                                    ),
-                                    DropdownMenuItem(
-                                      value: GameHistorySort.lowestScore,
-                                      child: Text(
-                                        'Lowest Score',
-                                        style: TextStyle(color: Colors.white),
-                                        maxLines: 1,
-                                        overflow: TextOverflow.ellipsis,
-                                      ),
-                                    ),
-                                    DropdownMenuItem(
-                                      value: GameHistorySort.highestTime,
-                                      child: Text(
-                                        'Highest Time',
-                                        style: TextStyle(color: Colors.white),
-                                        maxLines: 1,
-                                        overflow: TextOverflow.ellipsis,
-                                      ),
-                                    ),
-                                    DropdownMenuItem(
-                                      value: GameHistorySort.lowestTime,
-                                      child: Text(
-                                        'Lowest Time',
-                                        style: TextStyle(color: Colors.white),
-                                        maxLines: 1,
-                                        overflow: TextOverflow.ellipsis,
-                                      ),
-                                    ),
-                                  ],
-                                  onChanged: (value) {
-                                    if (value != null) {
-                                      setState(() {
-                                        currentSort = value;
-                                      });
-                                    }
-                                  },
-                                ),
-                              ],
-                            ),
-                            const SizedBox(height: 10),
-                            ...sortedGames.asMap().entries.map((entry) {
-                              final index = entry.key;
-                              final game = entry.value;
-
-                              hoveredMap[index] = hoveredMap[index] ?? false;
-
-                              return MouseRegion(
-                                onEnter:
-                                    (_) => setState(
-                                      () => hoveredMap[index] = true,
-                                    ),
-                                onExit:
-                                    (_) => setState(
-                                      () => hoveredMap[index] = false,
-                                    ),
-                                child: AnimatedContainer(
-                                  duration: const Duration(milliseconds: 300),
-                                  curve: Curves.easeOutBack,
-                                  alignment: Alignment.center,
-                                  transform:
-                                      Matrix4.identity()
-                                        ..translate(
-                                          0.0,
-                                          hoveredMap[index]! ? -10 : 0.0,
-                                        )
-                                        ..scale(
-                                          hoveredMap[index]! ? 1.001 : 1.0,
-                                        ),
-                                  child: Container(
-                                    margin: EdgeInsets.only(
-                                      top: hoveredMap[index]! ? 22 : 5,
-                                    ),
-                                    padding: const EdgeInsets.symmetric(
-                                      vertical: 12,
-                                      horizontal: 14,
-                                    ),
-                                    decoration: BoxDecoration(
-                                      color: Colors.white.withOpacity(0.1),
-                                      borderRadius: BorderRadius.circular(12),
-                                    ),
-                                    child: Row(
-                                      children: [
-                                        Padding(
-                                          padding: const EdgeInsets.only(
-                                            right: 12,
-                                          ),
-                                          child: CircleAvatar(
-                                            backgroundColor: Colors.white30,
-                                            child: Center(
-                                              child: Text(
-                                                '${index + 1}',
-                                                style: const TextStyle(
-                                                  color: Colors.white70,
-                                                  fontWeight: FontWeight.bold,
-                                                  fontSize: 11,
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                        Expanded(
+                                      items: const [
+                                        DropdownMenuItem(
+                                          value: GameHistorySort.highestScore,
                                           child: Text(
-                                            'Score: ${game['score']}',
-                                            style: const TextStyle(
-                                              color: Colors.white70,
-                                              fontSize: 15,
+                                            'Highest Score',
+                                            style: TextStyle(
+                                              color: Colors.white,
                                             ),
+                                            maxLines: 1,
                                             overflow: TextOverflow.ellipsis,
                                           ),
                                         ),
-                                        Expanded(
+                                        DropdownMenuItem(
+                                          value: GameHistorySort.lowestScore,
                                           child: Text(
-                                            'Time: ${takenTimeFormate(game['timeTaken'] ?? 0)}',
-                                            style: const TextStyle(
-                                              color: Colors.white70,
-                                              fontSize: 15,
+                                            'Lowest Score',
+                                            style: TextStyle(
+                                              color: Colors.white,
                                             ),
+                                            maxLines: 1,
                                             overflow: TextOverflow.ellipsis,
-                                            textAlign: TextAlign.end,
+                                          ),
+                                        ),
+                                        DropdownMenuItem(
+                                          value: GameHistorySort.highestTime,
+                                          child: Text(
+                                            'Highest Time',
+                                            style: TextStyle(
+                                              color: Colors.white,
+                                            ),
+                                            maxLines: 1,
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        ),
+                                        DropdownMenuItem(
+                                          value: GameHistorySort.lowestTime,
+                                          child: Text(
+                                            'Lowest Time',
+                                            style: TextStyle(
+                                              color: Colors.white,
+                                            ),
+                                            maxLines: 1,
+                                            overflow: TextOverflow.ellipsis,
                                           ),
                                         ),
                                       ],
+                                      onChanged: (value) {
+                                        if (value != null) {
+                                          setState(() {
+                                            currentSort = value;
+                                          });
+                                        }
+                                      },
+                                    ),
+                              ],
+                            ),
+
+                            const SizedBox(height: 10),
+
+                            if (sortedGames.isEmpty)
+                              Center(
+                                child: Padding(
+                                  padding: EdgeInsets.only(
+                                    top:
+                                        MediaQuery.of(context).size.height *
+                                        0.4,
+                                  ),
+                                  child: const Text(
+                                    "No game history found.",
+                                    style: TextStyle(
+                                      color: Colors.white70,
+                                      fontSize: 18,
                                     ),
                                   ),
                                 ),
-                              );
-                            }),
+                              )
+                            else
+                              Column(
+                                children:
+                                    sortedGames.asMap().entries.map((entry) {
+                                      final index = entry.key;
+                                      final game = entry.value;
+
+                                      hoveredMap[index] =
+                                          hoveredMap[index] ?? false;
+
+                                      return MouseRegion(
+                                        onEnter:
+                                            (_) => setState(
+                                              () => hoveredMap[index] = true,
+                                            ),
+                                        onExit:
+                                            (_) => setState(
+                                              () => hoveredMap[index] = false,
+                                            ),
+                                        child: AnimatedContainer(
+                                          duration: const Duration(
+                                            milliseconds: 300,
+                                          ),
+                                          curve: Curves.easeOutBack,
+                                          alignment: Alignment.center,
+                                          transform:
+                                              Matrix4.identity()
+                                                ..translate(
+                                                  0.0,
+                                                  hoveredMap[index]!
+                                                      ? -10
+                                                      : 0.0,
+                                                )
+                                                ..scale(
+                                                  hoveredMap[index]!
+                                                      ? 1.001
+                                                      : 1.0,
+                                                ),
+                                          child: Container(
+                                            margin: EdgeInsets.only(
+                                              top: hoveredMap[index]! ? 22 : 5,
+                                            ),
+                                            padding: const EdgeInsets.symmetric(
+                                              vertical: 12,
+                                              horizontal: 14,
+                                            ),
+                                            decoration: BoxDecoration(
+                                              color: Colors.white.withOpacity(
+                                                0.1,
+                                              ),
+                                              borderRadius:
+                                                  BorderRadius.circular(12),
+                                            ),
+                                            child: Row(
+                                              children: [
+                                                Padding(
+                                                  padding:
+                                                      const EdgeInsets.only(
+                                                        right: 12,
+                                                      ),
+                                                  child: CircleAvatar(
+                                                    backgroundColor:
+                                                        Colors.white30,
+                                                    child: Center(
+                                                      child: Text(
+                                                        '${index + 1}',
+                                                        style: const TextStyle(
+                                                          color: Colors.white70,
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                          fontSize: 11,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                                Expanded(
+                                                  child: Text(
+                                                    'Score: ${game['score']}',
+                                                    style: const TextStyle(
+                                                      color: Colors.white70,
+                                                      fontSize: 15,
+                                                    ),
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
+                                                  ),
+                                                ),
+                                                Expanded(
+                                                  child: Text(
+                                                    'Time: ${takenTimeFormate(game['timeTaken'] ?? 0)}',
+                                                    style: const TextStyle(
+                                                      color: Colors.white70,
+                                                      fontSize: 15,
+                                                    ),
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
+                                                    textAlign: TextAlign.end,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                      );
+                                    }).toList(),
+                              ),
                           ],
                         ),
                       ),
