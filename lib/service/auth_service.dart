@@ -218,7 +218,6 @@ class AuthService {
             FieldValue.serverTimestamp();
       }
 
-      // Update game count achievements based on TOTAL games played
       achievementUpdates['achievementsProgress.20 Games.current'] =
           newTotalGames;
       achievementUpdates['achievementsProgress.20 Games.isUnlocked'] =
@@ -280,9 +279,7 @@ class AuthService {
     }
   }
 
-  // Remove the old updateAddictedRunnerAchievements method since we now update in saveGameData
   Future<void> updateAddictedRunnerAchievements() async {
-    // This method is now deprecated as we update achievements directly in saveGameData
     log(
       "updateAddictedRunnerAchievements is no longer needed - achievements updated in saveGameData",
     );
