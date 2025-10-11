@@ -188,7 +188,7 @@ class _LeaderboardScreenState extends State<LeaderboardScreen>
                                 final playerUid = player['userId']?.toString();
                                 final isCurrentPlayer = (playerUid == userUID);
 
-                                return leaderboardItem(
+                                return LeaderboardItem(
                                   index: index,
                                   player: player,
                                   rank: index + 1,
@@ -205,13 +205,24 @@ class _LeaderboardScreenState extends State<LeaderboardScreen>
       ),
     );
   }
+}
 
-  Widget leaderboardItem({
-    required int index,
-    required Map<String, dynamic> player,
-    required int rank,
-    required bool isCurrentPlayer,
-  }) {
+class LeaderboardItem extends StatelessWidget {
+  final int index;
+  final Map<String, dynamic> player;
+  final int rank;
+  final bool isCurrentPlayer;
+
+  const LeaderboardItem({
+    super.key,
+    required this.index,
+    required this.player,
+    required this.rank,
+    required this.isCurrentPlayer,
+  });
+
+  @override
+  Widget build(BuildContext context) {
     Color rankColor;
     IconData rankIcon;
 

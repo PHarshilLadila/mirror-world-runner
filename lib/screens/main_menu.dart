@@ -243,7 +243,7 @@ class _MainMenuScreenState extends State<MainMenuScreen>
                       debugPrint("HOW TO PLAY");
                       showDialog(
                         context: context,
-                        builder: (context) => buildHowToPlayDialog(),
+                        builder: (context) => GameInstrcutionDialog(),
                       );
                     },
                   ),
@@ -317,7 +317,7 @@ class _MainMenuScreenState extends State<MainMenuScreen>
                     onTap: () {
                       showDialog(
                         context: context,
-                        builder: (context) => logoutDailog(),
+                        builder: (context) => LogoutDailog(),
                       );
                     },
                   ),
@@ -341,8 +341,13 @@ class _MainMenuScreenState extends State<MainMenuScreen>
       ),
     );
   }
+}
 
-  Widget logoutDailog() {
+class LogoutDailog extends StatelessWidget {
+  const LogoutDailog({super.key});
+
+  @override
+  Widget build(BuildContext context) {
     return Dialog(
       backgroundColor: Colors.transparent,
       child: Container(
@@ -360,7 +365,7 @@ class _MainMenuScreenState extends State<MainMenuScreen>
           borderRadius: BorderRadius.circular(20),
           border: Border.all(color: Colors.white.withOpacity(0.2), width: 2),
         ),
-        padding: EdgeInsets.only(top: 30, left: 30, right: 30),
+        padding: const EdgeInsets.only(top: 30, left: 30, right: 30),
         child: SingleChildScrollView(
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -411,8 +416,8 @@ class _MainMenuScreenState extends State<MainMenuScreen>
                           ),
                           borderRadius: BorderRadius.circular(12),
                         ),
-                        child: Center(
-                          child: const Text(
+                        child: const Center(
+                          child: Text(
                             'No',
                             style: TextStyle(
                               color: Colors.white,
@@ -424,7 +429,7 @@ class _MainMenuScreenState extends State<MainMenuScreen>
                       ),
                     ),
                   ),
-                  SizedBox(width: 12),
+                  const SizedBox(width: 12),
                   Expanded(
                     child: AnimatedButton(
                       onTap: () async {
@@ -454,8 +459,8 @@ class _MainMenuScreenState extends State<MainMenuScreen>
                           ),
                           borderRadius: BorderRadius.circular(12),
                         ),
-                        child: Center(
-                          child: const Text(
+                        child: const Center(
+                          child: Text(
                             'Yes',
                             style: TextStyle(
                               color: Colors.white,
@@ -475,8 +480,13 @@ class _MainMenuScreenState extends State<MainMenuScreen>
       ),
     );
   }
+}
 
-  Widget buildHowToPlayDialog() {
+class GameInstrcutionDialog extends StatelessWidget {
+  const GameInstrcutionDialog({super.key});
+
+  @override
+  Widget build(BuildContext context) {
     return Dialog(
       backgroundColor: Colors.transparent,
       child: Container(
@@ -493,7 +503,7 @@ class _MainMenuScreenState extends State<MainMenuScreen>
           borderRadius: BorderRadius.circular(20),
           border: Border.all(color: Colors.white.withOpacity(0.2), width: 2),
         ),
-        padding: EdgeInsets.only(top: 30, left: 30, right: 30),
+        padding: const EdgeInsets.only(top: 30, left: 30, right: 30),
         child: SingleChildScrollView(
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -543,12 +553,14 @@ class _MainMenuScreenState extends State<MainMenuScreen>
                     ),
                     borderRadius: BorderRadius.circular(12),
                   ),
-                  child: const Text(
-                    'GOT IT!',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16,
+                  child: const Center(
+                    child: Text(
+                      'GOT IT!',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                      ),
                     ),
                   ),
                 ),

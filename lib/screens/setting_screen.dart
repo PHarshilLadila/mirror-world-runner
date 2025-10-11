@@ -323,7 +323,7 @@ class _SettingScreenState extends State<SettingScreen>
 
                             const SizedBox(height: 20),
 
-                            difficultySection(),
+                            DifficultySection(),
 
                             widget.isSettingScreen
                                 ? const SizedBox(height: 20)
@@ -429,8 +429,46 @@ class _SettingScreenState extends State<SettingScreen>
       ),
     );
   }
+}
 
-  Widget difficultySection() {
+class DifficultySection extends StatefulWidget {
+  const DifficultySection({super.key});
+
+  @override
+  State<DifficultySection> createState() => _DifficultySectionState();
+}
+
+class _DifficultySectionState extends State<DifficultySection> {
+  String difficulty = "easy";
+
+  Color getDifficultyColor(String difficulty) {
+    switch (difficulty) {
+      case "easy":
+        return Colors.green;
+      case "medium":
+        return Colors.orange;
+      case "hard":
+        return Colors.red;
+      default:
+        return Colors.white;
+    }
+  }
+
+  String getDifficultyText(String difficulty) {
+    switch (difficulty) {
+      case "easy":
+        return "Easy";
+      case "medium":
+        return "Medium";
+      case "hard":
+        return "Hard";
+      default:
+        return "Unknown";
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [

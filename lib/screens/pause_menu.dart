@@ -73,8 +73,7 @@ class _PauseMenuState extends State<PauseMenu>
             ),
             child: Stack(
               children: [
-                background(),
-
+                Background(),
                 ...particles.map(
                   (particle) => Positioned(
                     left: particle.x,
@@ -113,10 +112,10 @@ class _PauseMenuState extends State<PauseMenu>
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      animatedTitle(),
+                      AnimatedTitle(animationController: animationController),
                       const SizedBox(height: 40),
 
-                      gradientButton(
+                      GradientButton(
                         label: 'Resume Game',
                         gradient: const LinearGradient(
                           colors: [Color(0xFF00B4DB), Color(0xFF0083B0)],
@@ -134,7 +133,7 @@ class _PauseMenuState extends State<PauseMenu>
                       ),
                       const SizedBox(height: 20),
 
-                      gradientButton(
+                      GradientButton(
                         label: 'Main Menu',
                         gradient: const LinearGradient(
                           colors: [Color(0xFFFF416C), Color(0xFFFF4B2B)],
@@ -156,10 +155,10 @@ class _PauseMenuState extends State<PauseMenu>
                   ),
                 ),
 
-                cornerDecoration(Alignment.topLeft),
-                cornerDecoration(Alignment.topRight),
-                cornerDecoration(Alignment.bottomLeft),
-                cornerDecoration(Alignment.bottomRight),
+                CornerDecoration(alignment: Alignment.topLeft),
+                CornerDecoration(alignment: Alignment.topRight),
+                CornerDecoration(alignment: Alignment.bottomLeft),
+                CornerDecoration(alignment: Alignment.bottomRight),
               ],
             ),
           ),
@@ -167,8 +166,13 @@ class _PauseMenuState extends State<PauseMenu>
       ),
     );
   }
+}
 
-  Widget background() {
+class Background extends StatelessWidget {
+  const Background({super.key});
+
+  @override
+  Widget build(BuildContext context) {
     return Container(
       width: 380,
       height: 350,
@@ -182,8 +186,15 @@ class _PauseMenuState extends State<PauseMenu>
       child: CustomPaint(painter: BackgroundPainter()),
     );
   }
+}
 
-  Widget animatedTitle() {
+class AnimatedTitle extends StatelessWidget {
+  final AnimationController animationController;
+
+  const AnimatedTitle({super.key, required this.animationController});
+
+  @override
+  Widget build(BuildContext context) {
     return ShaderMask(
       shaderCallback: (bounds) {
         return const LinearGradient(
@@ -197,7 +208,7 @@ class _PauseMenuState extends State<PauseMenu>
         builder: (context, child) {
           return Transform.translate(
             offset: Offset(0, 10 - (animationController.value * 10)),
-            child: Text(
+            child: const Text(
               'GAME PAUSED',
               style: TextStyle(
                 fontSize: 24,
@@ -205,14 +216,14 @@ class _PauseMenuState extends State<PauseMenu>
                 letterSpacing: 2,
                 shadows: [
                   Shadow(
-                    color: Colors.blueAccent.withOpacity(0.8),
+                    color: Colors.blueAccent,
                     blurRadius: 20,
-                    offset: const Offset(0, 0),
+                    offset: Offset(0, 0),
                   ),
                   Shadow(
-                    color: Colors.black.withOpacity(0.5),
+                    color: Colors.black54,
                     blurRadius: 5,
-                    offset: const Offset(2, 2),
+                    offset: Offset(2, 2),
                   ),
                 ],
               ),
@@ -222,13 +233,38 @@ class _PauseMenuState extends State<PauseMenu>
       ),
     );
   }
+}
 
-  Widget gradientButton({
-    required String label,
-    required Gradient gradient,
-    required IconData icon,
-    required VoidCallback onTap,
-  }) {
+class CornerDecoration extends StatelessWidget {
+  final Alignment alignment;
+
+  const CornerDecoration({super.key, required this.alignment});
+
+  @override
+  Widget build(BuildContext context) {
+    return Align(
+      alignment: alignment,
+      child: CustomPaint(painter: CornerPainter(alignment: alignment)),
+    );
+  }
+}
+
+class GradientButton extends StatelessWidget {
+  final String label;
+  final Gradient gradient;
+  final IconData icon;
+  final VoidCallback onTap;
+
+  const GradientButton({
+    super.key,
+    required this.label,
+    required this.gradient,
+    required this.icon,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
     return MouseRegion(
       cursor: SystemMouseCursors.click,
       child: GestureDetector(
@@ -267,13 +303,6 @@ class _PauseMenuState extends State<PauseMenu>
           ),
         ),
       ),
-    );
-  }
-
-  Widget cornerDecoration(Alignment alignment) {
-    return Align(
-      alignment: alignment,
-      child: CustomPaint(painter: CornerPainter(alignment: alignment)),
     );
   }
 }
