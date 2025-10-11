@@ -1,3 +1,4 @@
+import 'package:clarity_flutter/clarity_flutter.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -10,6 +11,10 @@ import 'package:provider/provider.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  final config = ClarityConfig(
+    projectId: "todn8zvdkq",
+    logLevel: LogLevel.Error,
+  );
 
   if (kIsWeb) {
     await Firebase.initializeApp(
@@ -42,7 +47,7 @@ Future<void> main() async {
         ChangeNotifierProvider.value(value: authProvider),
         ChangeNotifierProvider(create: (_) => AchievementsProvider()),
       ],
-      child: const EntryPoint(),
+      child: ClarityWidget(app: const EntryPoint(), clarityConfig: config),
     ),
   );
 }

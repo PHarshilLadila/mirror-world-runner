@@ -1,5 +1,6 @@
 // ignore_for_file: deprecated_member_use, library_private_types_in_public_api, use_build_context_synchronously
 
+import 'package:clarity_flutter/clarity_flutter.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:mirror_world_runner/auth/login_screen.dart';
@@ -100,240 +101,242 @@ class _MainMenuScreenState extends State<MainMenuScreen>
 
           Center(
             child: SingleChildScrollView(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  const SizedBox(height: 60),
-                  Align(
-                    alignment: Alignment.center,
-                    child: Text(
-                      'MIRROR WORLD',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontSize: 38,
-                        fontWeight: FontWeight.w900,
+              child: ClarityUnmask(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    const SizedBox(height: 60),
+                    Align(
+                      alignment: Alignment.center,
+                      child: Text(
+                        'MIRROR WORLD',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: 38,
+                          fontWeight: FontWeight.w900,
 
-                        foreground:
-                            Paint()
-                              ..shader = const LinearGradient(
-                                colors: [
-                                  Colors.cyan,
-                                  Colors.blueAccent,
-                                  Colors.purpleAccent,
-                                ],
-                              ).createShader(
-                                const Rect.fromLTWH(0, 0, 400, 100),
-                              ),
+                          foreground:
+                              Paint()
+                                ..shader = const LinearGradient(
+                                  colors: [
+                                    Colors.cyan,
+                                    Colors.blueAccent,
+                                    Colors.purpleAccent,
+                                  ],
+                                ).createShader(
+                                  const Rect.fromLTWH(0, 0, 400, 100),
+                                ),
+                          shadows: [
+                            Shadow(
+                              color: Colors.black.withOpacity(0.8),
+                              blurRadius: 20,
+                              offset: const Offset(4, 4),
+                            ),
+                            Shadow(
+                              color: Colors.white.withOpacity(0.2),
+                              blurRadius: 5,
+                              offset: const Offset(-2, -2),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+
+                    const SizedBox(height: 10),
+                    Text(
+                      'RUNNER',
+                      style: TextStyle(
+                        fontSize: 28,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.orangeAccent,
+                        letterSpacing: 3,
                         shadows: [
                           Shadow(
                             color: Colors.black.withOpacity(0.8),
-                            blurRadius: 20,
-                            offset: const Offset(4, 4),
-                          ),
-                          Shadow(
-                            color: Colors.white.withOpacity(0.2),
-                            blurRadius: 5,
-                            offset: const Offset(-2, -2),
+                            blurRadius: 15,
+                            offset: const Offset(3, 3),
                           ),
                         ],
                       ),
                     ),
-                  ),
 
-                  const SizedBox(height: 10),
-                  Text(
-                    'RUNNER',
-                    style: TextStyle(
-                      fontSize: 28,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.orangeAccent,
-                      letterSpacing: 3,
-                      shadows: [
-                        Shadow(
-                          color: Colors.black.withOpacity(0.8),
-                          blurRadius: 15,
-                          offset: const Offset(3, 3),
-                        ),
-                      ],
-                    ),
-                  ),
+                    const SizedBox(height: 20),
 
-                  const SizedBox(height: 20),
+                    Consumer<AuthProvider>(
+                      builder: (context, authProvider, _) {
+                        if (authProvider.isLoading) {
+                          return const Text(
+                            "Loading...",
+                            style: TextStyle(
+                              color: Colors.white70,
+                              fontSize: 14,
+                              fontWeight: FontWeight.w300,
+                            ),
+                          );
+                        }
 
-                  Consumer<AuthProvider>(
-                    builder: (context, authProvider, _) {
-                      if (authProvider.isLoading) {
-                        return const Text(
-                          "Loading...",
-                          style: TextStyle(
+                        final userName =
+                            authProvider.currentUser?['userName'] ?? "";
+                        return Text(
+                          "Welcome back $userName..",
+                          style: const TextStyle(
                             color: Colors.white70,
                             fontSize: 14,
                             fontWeight: FontWeight.w300,
                           ),
+                          textAlign: TextAlign.center,
                         );
-                      }
+                      },
+                    ),
+                    SizedBox(height: 8),
+                    Consumer<AuthProvider>(
+                      builder: (context, authProvider, _) {
+                        if (authProvider.isLoading) {
+                          return const Text(
+                            "",
+                            style: TextStyle(
+                              color: Colors.white70,
+                              fontSize: 14,
+                              fontWeight: FontWeight.w300,
+                            ),
+                          );
+                        }
 
-                      final userName =
-                          authProvider.currentUser?['userName'] ?? "";
-                      return Text(
-                        "Welcome back $userName..",
-                        style: const TextStyle(
-                          color: Colors.white70,
-                          fontSize: 14,
-                          fontWeight: FontWeight.w300,
-                        ),
-                        textAlign: TextAlign.center,
-                      );
-                    },
-                  ),
-                  SizedBox(height: 8),
-                  Consumer<AuthProvider>(
-                    builder: (context, authProvider, _) {
-                      if (authProvider.isLoading) {
-                        return const Text(
-                          "",
-                          style: TextStyle(
+                        final eamil = authProvider.currentUser?['email'] ?? "";
+                        return Text(
+                          "$eamil",
+                          style: const TextStyle(
                             color: Colors.white70,
                             fontSize: 14,
                             fontWeight: FontWeight.w300,
                           ),
+                          textAlign: TextAlign.center,
                         );
-                      }
-
-                      final eamil = authProvider.currentUser?['email'] ?? "";
-                      return Text(
-                        "$eamil",
-                        style: const TextStyle(
-                          color: Colors.white70,
-                          fontSize: 14,
-                          fontWeight: FontWeight.w300,
-                        ),
-                        textAlign: TextAlign.center,
-                      );
-                    },
-                  ),
-
-                  const SizedBox(height: 70),
-
-                  HolographicButton(
-                    label: "START GAME",
-                    colors: const [Colors.blue, Colors.cyanAccent],
-                    onTap: () {
-                      debugPrint("START GAME");
-                      Provider.of<GameState>(
-                        context,
-                        listen: false,
-                      ).resetGame();
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const GameScreen(),
-                        ),
-                      );
-                    },
-                  ),
-
-                  const SizedBox(height: 25),
-
-                  HolographicButton(
-                    label: "HOW TO PLAY",
-                    colors: const [Colors.green, Colors.lightGreenAccent],
-                    onTap: () {
-                      debugPrint("HOW TO PLAY");
-                      showDialog(
-                        context: context,
-                        builder: (context) => GameInstrcutionDialog(),
-                      );
-                    },
-                  ),
-                  const SizedBox(height: 25),
-                  HolographicButton(
-                    label: "LEADER BOARD",
-                    colors: const [Colors.amber, Colors.yellowAccent],
-                    onTap: () {
-                      debugPrint("LEADER BOARD");
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const LeaderboardScreen(),
-                        ),
-                      );
-                    },
-                  ),
-
-                  const SizedBox(height: 25),
-                  HolographicButton(
-                    label: "HISTORY",
-                    colors: const [Colors.purpleAccent, Colors.deepPurple],
-                    onTap: () {
-                      debugPrint("HISTORY");
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => GameHistoryScreen(),
-                        ),
-                      );
-                    },
-                  ),
-
-                  const SizedBox(height: 25),
-                  HolographicButton(
-                    label: "ACHIVEMENTS",
-                    colors: const [Colors.purple, Colors.pinkAccent],
-                    onTap: () {
-                      debugPrint("ACHIVEMENTS");
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const AchivementsScreen(),
-                        ),
-                      );
-                    },
-                  ),
-                  const SizedBox(height: 25),
-
-                  HolographicButton(
-                    label: "SETTINGS",
-                    colors: const [Colors.orange, Colors.deepOrangeAccent],
-                    onTap: () {
-                      debugPrint("SETTINGS");
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder:
-                              (context) =>
-                                  const SettingScreen(isSettingScreen: true),
-                        ),
-                      );
-                    },
-                  ),
-
-                  const SizedBox(height: 25),
-
-                  HolographicButton(
-                    label: "LOGOUT",
-                    colors: const [Color(0xFFFF4D4D), Color(0xFFEC1404)],
-                    onTap: () {
-                      showDialog(
-                        context: context,
-                        builder: (context) => LogoutDailog(),
-                      );
-                    },
-                  ),
-
-                  const SizedBox(height: 40),
-
-                  Text(
-                    '© 2025 Mirror World Runner',
-                    style: TextStyle(
-                      color: Colors.white.withOpacity(0.6),
-                      fontSize: 12,
-                      letterSpacing: 1,
+                      },
                     ),
-                  ),
-                  const SizedBox(height: 80),
-                ],
+
+                    const SizedBox(height: 70),
+
+                    HolographicButton(
+                      label: "START GAME",
+                      colors: const [Colors.blue, Colors.cyanAccent],
+                      onTap: () {
+                        debugPrint("START GAME");
+                        Provider.of<GameState>(
+                          context,
+                          listen: false,
+                        ).resetGame();
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const GameScreen(),
+                          ),
+                        );
+                      },
+                    ),
+
+                    const SizedBox(height: 25),
+
+                    HolographicButton(
+                      label: "HOW TO PLAY",
+                      colors: const [Colors.green, Colors.lightGreenAccent],
+                      onTap: () {
+                        debugPrint("HOW TO PLAY");
+                        showDialog(
+                          context: context,
+                          builder: (context) => GameInstrcutionDialog(),
+                        );
+                      },
+                    ),
+                    const SizedBox(height: 25),
+                    HolographicButton(
+                      label: "LEADER BOARD",
+                      colors: const [Colors.amber, Colors.yellowAccent],
+                      onTap: () {
+                        debugPrint("LEADER BOARD");
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const LeaderboardScreen(),
+                          ),
+                        );
+                      },
+                    ),
+
+                    const SizedBox(height: 25),
+                    HolographicButton(
+                      label: "HISTORY",
+                      colors: const [Colors.purpleAccent, Colors.deepPurple],
+                      onTap: () {
+                        debugPrint("HISTORY");
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => GameHistoryScreen(),
+                          ),
+                        );
+                      },
+                    ),
+
+                    const SizedBox(height: 25),
+                    HolographicButton(
+                      label: "ACHIVEMENTS",
+                      colors: const [Colors.purple, Colors.pinkAccent],
+                      onTap: () {
+                        debugPrint("ACHIVEMENTS");
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const AchivementsScreen(),
+                          ),
+                        );
+                      },
+                    ),
+                    const SizedBox(height: 25),
+
+                    HolographicButton(
+                      label: "SETTINGS",
+                      colors: const [Colors.orange, Colors.deepOrangeAccent],
+                      onTap: () {
+                        debugPrint("SETTINGS");
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder:
+                                (context) =>
+                                    const SettingScreen(isSettingScreen: true),
+                          ),
+                        );
+                      },
+                    ),
+
+                    const SizedBox(height: 25),
+
+                    HolographicButton(
+                      label: "LOGOUT",
+                      colors: const [Color(0xFFFF4D4D), Color(0xFFEC1404)],
+                      onTap: () {
+                        showDialog(
+                          context: context,
+                          builder: (context) => LogoutDailog(),
+                        );
+                      },
+                    ),
+
+                    const SizedBox(height: 40),
+
+                    Text(
+                      '© 2025 Mirror World Runner',
+                      style: TextStyle(
+                        color: Colors.white.withOpacity(0.6),
+                        fontSize: 12,
+                        letterSpacing: 1,
+                      ),
+                    ),
+                    const SizedBox(height: 80),
+                  ],
+                ),
               ),
             ),
           ),

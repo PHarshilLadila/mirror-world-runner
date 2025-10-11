@@ -27,7 +27,6 @@ class GameOverScreen extends StatefulWidget {
 class _GameOverScreenState extends State<GameOverScreen>
     with TickerProviderStateMixin {
   int timeTaken = 0;
-
   late AnimationController animationController;
   late Animation<double> scaleAnimation;
   late Animation<double> fadeAnimation;
@@ -255,6 +254,84 @@ class _GameOverScreenState extends State<GameOverScreen>
     }
   }
 
+  Widget statItem(IconData icon, String title, String value, Color color) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Icon(icon, color: color, size: 24),
+        const SizedBox(width: 12),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              title,
+              style: TextStyle(
+                fontSize: 14,
+                color: Colors.white.withOpacity(0.8),
+                fontWeight: FontWeight.w600,
+                letterSpacing: 1,
+              ),
+            ),
+            Text(
+              value,
+              style: TextStyle(
+                fontSize: 20,
+                color: color,
+                fontWeight: FontWeight.bold,
+                shadows: [
+                  Shadow(color: color.withOpacity(0.5), blurRadius: 10),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget buildAnimatedButton({
+    required String label,
+    required List<Color> colors,
+    required VoidCallback onPressed,
+    required IconData icon,
+  }) {
+    return MouseRegion(
+      cursor: SystemMouseCursors.click,
+      child: GestureDetector(
+        onTap: onPressed,
+        child: Container(
+          width: double.infinity,
+          height: 45,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(12),
+            gradient: LinearGradient(colors: colors),
+            boxShadow: [
+              BoxShadow(
+                color: colors.first.withOpacity(0.4),
+                blurRadius: 15,
+                spreadRadius: 2,
+                offset: const Offset(0, 5),
+              ),
+            ],
+            border: Border.all(color: Colors.white.withOpacity(0.2), width: 1),
+          ),
+          child: Center(
+            child: Text(
+              label,
+              style: const TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+                letterSpacing: 1.2,
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final gameState = Provider.of<GameState>(context);
@@ -456,41 +533,40 @@ class _GameOverScreenState extends State<GameOverScreen>
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
                                       children: [
-                                        StatItem(
-                                          icon: Icons.emoji_events,
-                                          title: 'SCORE',
-                                          value: gameState.score.toString(),
-                                          color: Colors.yellowAccent,
+                                        statItem(
+                                          Icons.emoji_events,
+                                          'SCORE',
+                                          gameState.score.toString(),
+                                          Colors.yellowAccent,
                                         ),
                                         const SizedBox(height: 8),
                                         Divider(color: Colors.white38),
                                         const SizedBox(height: 8),
-                                        StatItem(
-                                          icon: Icons.star,
-                                          title: 'HIGH SCORE',
-                                          value:
-                                              '${_userData?['highestScore'] ?? 0}',
-                                          color: Colors.orangeAccent,
+                                        statItem(
+                                          Icons.star,
+                                          'HIGH SCORE',
+                                          '${_userData?['highestScore'] ?? 0}',
+                                          Colors.orangeAccent,
                                         ),
                                         const SizedBox(height: 8),
                                         Divider(color: Colors.white38),
                                         const SizedBox(height: 8),
-                                        StatItem(
-                                          icon: Icons.timer,
-                                          title: 'TIME TAKEN',
-                                          value: takenTimeFormate(timeTaken),
-                                          color: Colors.greenAccent,
+                                        statItem(
+                                          Icons.timer,
+                                          'TIME TAKEN',
+                                          takenTimeFormate(timeTaken),
+                                          Colors.greenAccent,
                                         ),
                                         const SizedBox(height: 8),
                                         Divider(color: Colors.white38),
                                         const SizedBox(height: 8),
-                                        StatItem(
-                                          icon: Icons.speed,
-                                          title: 'DIFFICULTY',
-                                          value: _getDifficultyText(
+                                        statItem(
+                                          Icons.speed,
+                                          'DIFFICULTY',
+                                          _getDifficultyText(
                                             gameState.difficultyLevel,
                                           ),
-                                          color: _getDifficultyColor(
+                                          _getDifficultyColor(
                                             gameState.difficultyLevel,
                                           ),
                                         ),
@@ -789,58 +865,6 @@ class _GameOverScreenState extends State<GameOverScreen>
           ),
         ],
       ),
-    );
-  }
-}
-
-class StatItem extends StatelessWidget {
-  final IconData icon;
-  final String title;
-  final String value;
-  final Color color;
-
-  const StatItem({
-    super.key,
-    required this.icon,
-    required this.title,
-    required this.value,
-    required this.color,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.start,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Icon(icon, color: color, size: 24),
-        const SizedBox(width: 12),
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              title,
-              style: TextStyle(
-                fontSize: 14,
-                color: Colors.white.withOpacity(0.8),
-                fontWeight: FontWeight.w600,
-                letterSpacing: 1,
-              ),
-            ),
-            Text(
-              value,
-              style: TextStyle(
-                fontSize: 20,
-                color: color,
-                fontWeight: FontWeight.bold,
-                shadows: [
-                  Shadow(color: color.withOpacity(0.5), blurRadius: 10),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ],
     );
   }
 }
