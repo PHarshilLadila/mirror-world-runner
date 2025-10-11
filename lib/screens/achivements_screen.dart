@@ -662,29 +662,31 @@ class _AchivementsScreenState extends State<AchivementsScreen>
                                         ? MainAxisAlignment.spaceAround
                                         : MainAxisAlignment.spaceBetween,
                                 children: [
-                                  statItem(
-                                    totalCount.toString(),
-                                    "Total",
-                                    statValueFontSize,
-                                    statLabelFontSize,
+                                  StatItem(
+                                    value: totalCount.toString(),
+                                    label: "Total",
+                                    valueSize: statValueFontSize,
+                                    labelSize: statLabelFontSize,
                                   ),
-                                  statItem(
-                                    unlockedCount.toString(),
-                                    "Unlocked",
-                                    statValueFontSize,
-                                    statLabelFontSize,
+                                  StatItem(
+                                    value: unlockedCount.toString(),
+                                    label: "Unlocked",
+                                    valueSize: statValueFontSize,
+                                    labelSize: statLabelFontSize,
                                   ),
-                                  statItem(
-                                    (totalCount - unlockedCount).toString(),
-                                    "Locked",
-                                    statValueFontSize,
-                                    statLabelFontSize,
+                                  StatItem(
+                                    value:
+                                        (totalCount - unlockedCount).toString(),
+                                    label: "Locked",
+                                    valueSize: statValueFontSize,
+                                    labelSize: statLabelFontSize,
                                   ),
-                                  statItem(
-                                    "${(progressPercentage * 100).toStringAsFixed(0)}%",
-                                    "Progress",
-                                    statValueFontSize,
-                                    statLabelFontSize,
+                                  StatItem(
+                                    value:
+                                        "${(progressPercentage * 100).toStringAsFixed(0)}%",
+                                    label: "Progress",
+                                    valueSize: statValueFontSize,
+                                    labelSize: statLabelFontSize,
                                   ),
                                 ],
                               ),
@@ -802,13 +804,24 @@ class _AchivementsScreenState extends State<AchivementsScreen>
         return 0;
     }
   }
+}
 
-  Widget statItem(
-    String value,
-    String label,
-    double valueSize,
-    double labelSize,
-  ) {
+class StatItem extends StatelessWidget {
+  final String value;
+  final String label;
+  final double valueSize;
+  final double labelSize;
+
+  const StatItem({
+    super.key,
+    required this.value,
+    required this.label,
+    required this.valueSize,
+    required this.labelSize,
+  });
+
+  @override
+  Widget build(BuildContext context) {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [

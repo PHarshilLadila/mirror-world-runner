@@ -337,7 +337,11 @@ class _GameScreenState extends State<GameScreen> {
                   GameWidget(
                     game: game ?? MirrorWorldGame(gameState: gameState),
                   ),
-                  hud(context, gameState),
+                  Hud(
+                    gameState: gameState,
+                    showSettings: showSettings,
+                    currentGameTime: (currentGameTime.toString()),
+                  ),
                   controlButtons(),
                 ],
               ),
@@ -345,65 +349,6 @@ class _GameScreenState extends State<GameScreen> {
           ),
         );
       },
-    );
-  }
-
-  Widget hud(BuildContext context, GameState gameState) {
-    return Positioned(
-      top: 40,
-      left: 20,
-      right: 20,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'Score: ${gameState.score}',
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 14,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              SizedBox(height: 8),
-              Text(
-                'Time: ${takenTimeFormate(currentGameTime)}',
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 14,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ],
-          ),
-          Row(
-            children: List.generate(
-              5,
-              (index) => Icon(
-                Icons.favorite,
-                color: index < gameState.lives ? Colors.red : Colors.grey,
-                size: 26,
-              ),
-            ),
-          ),
-          if (!gameState.isGameOver)
-            Row(
-              children: [
-                IconButton(
-                  icon: const Icon(
-                    Icons.settings,
-                    color: Colors.white,
-                    size: 30,
-                  ),
-                  onPressed: showSettings,
-                ),
-              ],
-            ),
-        ],
-      ),
     );
   }
 
@@ -500,4 +445,77 @@ String takenTimeFormate(int totalSeconds) {
   final minutes = totalSeconds ~/ 60;
   final seconds = totalSeconds % 60;
   return '${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}';
+}
+
+class Hud extends StatelessWidget {
+  final GameState gameState;
+  final VoidCallback showSettings;
+  final String currentGameTime;
+
+  const Hud({
+    super.key,
+    required this.gameState,
+    required this.showSettings,
+    required this.currentGameTime,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Positioned(
+      top: 40,
+      left: 20,
+      right: 20,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Score: ${gameState.score}',
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 14,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                'Time: ${takenTimeFormate(int.parse(currentGameTime))}',
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 14,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
+          Row(
+            children: List.generate(
+              5,
+              (index) => Icon(
+                Icons.favorite,
+                color: index < gameState.lives ? Colors.red : Colors.grey,
+                size: 26,
+              ),
+            ),
+          ),
+          if (!gameState.isGameOver)
+            Row(
+              children: [
+                IconButton(
+                  icon: const Icon(
+                    Icons.settings,
+                    color: Colors.white,
+                    size: 30,
+                  ),
+                  onPressed: showSettings,
+                ),
+              ],
+            ),
+        ],
+      ),
+    );
+  }
 }
