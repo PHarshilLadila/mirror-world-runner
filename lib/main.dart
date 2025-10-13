@@ -1,5 +1,6 @@
 import 'package:clarity_flutter/clarity_flutter.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flame_audio/flame_audio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -15,6 +16,10 @@ Future<void> main() async {
     projectId: "todn8zvdkq",
     logLevel: LogLevel.Error,
   );
+  await FlameAudio.audioCache.loadAll(['bomb.mp3', 'game_background.mp3']);
+  if (!FlameAudio.bgm.isPlaying) {
+    FlameAudio.bgm.play('game_background.mp3', volume: 0.5);
+  }
 
   if (kIsWeb) {
     await Firebase.initializeApp(

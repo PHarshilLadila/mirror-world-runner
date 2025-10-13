@@ -34,6 +34,10 @@ class MirrorWorldGame extends FlameGame
   double targetDy = 0;
   double moveSpeed = 400.0;
 
+  bool isPowerUpSoundLoaded = false;
+  bool isSlowerSoundLoaded = false;
+  bool isHeartSoundLoaded = false;
+
   MirrorWorldGame({
     required this.gameState,
     double initialSpeed = 400.0,
@@ -46,7 +50,16 @@ class MirrorWorldGame extends FlameGame
   Future<void> onLoad() async {
     await super.onLoad();
 
-    await FlameAudio.audioCache.loadAll(['bomb.mp3']);
+    await FlameAudio.audioCache.loadAll([
+      'bomb.mp3',
+      'power_up.mp3',
+      'slower.mp3',
+      'heart.mp3',
+    ]);
+
+    isPowerUpSoundLoaded = true;
+    isSlowerSoundLoaded = true;
+    isHeartSoundLoaded = true;
 
     gameWorld = GameWorld();
     add(gameWorld);
@@ -80,10 +93,13 @@ class MirrorWorldGame extends FlameGame
           if (gameState.lives < 5) {
             gameState.increaseLife();
           }
+          playHeartSound();
           onPowerUpCollected?.call('heart');
         } else if (type == PowerUpType.timeSlowdown) {
+          playSlowerSound();
           gameManager.activateTimeSlowdown();
         } else {
+          playPowerUpSound();
           normalPlayer.activatePowerUp();
           mirroredPlayer.activatePowerUp();
           onPowerUpCollected?.call('star');
@@ -91,6 +107,39 @@ class MirrorWorldGame extends FlameGame
       },
     );
     add(gameManager);
+  }
+
+  void playPowerUpSound() {
+    if (isPowerUpSoundLoaded) {
+      try {
+        FlameAudio.play('power_up.mp3', volume: 0.7);
+        debugPrint('Power-up sound played');
+      } catch (e) {
+        debugPrint('Error playing power-up sound: $e');
+      }
+    }
+  }
+
+  void playSlowerSound() {
+    if (isSlowerSoundLoaded) {
+      try {
+        FlameAudio.play('slower.mp3', volume: 0.7);
+        debugPrint('Slower sound played');
+      } catch (e) {
+        debugPrint('Error playing slower sound: $e');
+      }
+    }
+  }
+
+  void playHeartSound() {
+    if (isHeartSoundLoaded) {
+      try {
+        FlameAudio.play('heart.mp3', volume: 0.7);
+        debugPrint('Heart sound played');
+      } catch (e) {
+        debugPrint('Error playing heart sound: $e');
+      }
+    }
   }
 
   void setMovement(double dx, double dy, [double? speed]) {
