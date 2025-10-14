@@ -221,130 +221,129 @@ class _MainMenuScreenState extends State<MainMenuScreen>
 
                     Motion(
                       filterQuality: FilterQuality.high,
+                      child: Column(
+                        children: [
+                          HolographicButton(
+                            label: "START GAME",
+                            colors: const [Colors.blue, Colors.cyanAccent],
+                            onTap: () {
+                              debugPrint("START GAME");
+                              Provider.of<GameState>(
+                                context,
+                                listen: false,
+                              ).resetGame();
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => const GameScreen(),
+                                ),
+                              );
+                            },
+                          ),
 
-                      child: HolographicButton(
-                        label: "START GAME",
-                        colors: const [Colors.blue, Colors.cyanAccent],
-                        onTap: () {
-                          debugPrint("START GAME");
-                          Provider.of<GameState>(
-                            context,
-                            listen: false,
-                          ).resetGame();
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => const GameScreen(),
-                            ),
-                          );
-                        },
-                      ),
-                    ),
+                          const SizedBox(height: 25),
 
-                    const SizedBox(height: 25),
+                          HolographicButton(
+                            label: "HOW TO PLAY",
+                            colors: const [
+                              Colors.green,
+                              Colors.lightGreenAccent,
+                            ],
+                            onTap: () {
+                              debugPrint("HOW TO PLAY");
+                              showDialog(
+                                context: context,
+                                builder: (context) => GameInstrcutionDialog(),
+                              );
+                            },
+                          ),
+                          const SizedBox(height: 25),
+                          HolographicButton(
+                            label: "LEADER BOARD",
+                            colors: const [Colors.amber, Colors.yellowAccent],
+                            onTap: () {
+                              debugPrint("LEADER BOARD");
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder:
+                                      (context) => const LeaderboardScreen(),
+                                ),
+                              );
+                            },
+                          ),
 
-                    Motion(
-                      filterQuality: FilterQuality.high,
-                      child: HolographicButton(
-                        label: "HOW TO PLAY",
-                        colors: const [Colors.green, Colors.lightGreenAccent],
-                        onTap: () {
-                          debugPrint("HOW TO PLAY");
-                          showDialog(
-                            context: context,
-                            builder: (context) => GameInstrcutionDialog(),
-                          );
-                        },
-                      ),
-                    ),
-                    const SizedBox(height: 25),
-                    Motion(
-                      filterQuality: FilterQuality.high,
-                      child: HolographicButton(
-                        label: "LEADER BOARD",
-                        colors: const [Colors.amber, Colors.yellowAccent],
-                        onTap: () {
-                          debugPrint("LEADER BOARD");
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => const LeaderboardScreen(),
-                            ),
-                          );
-                        },
-                      ),
-                    ),
+                          const SizedBox(height: 25),
+                          HolographicButton(
+                            label: "HISTORY",
+                            colors: const [
+                              Colors.purpleAccent,
+                              Colors.deepPurple,
+                            ],
+                            onTap: () {
+                              debugPrint("HISTORY");
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => GameHistoryScreen(),
+                                ),
+                              );
+                            },
+                          ),
 
-                    const SizedBox(height: 25),
-                    Motion(
-                      filterQuality: FilterQuality.high,
-                      child: HolographicButton(
-                        label: "HISTORY",
-                        colors: const [Colors.purpleAccent, Colors.deepPurple],
-                        onTap: () {
-                          debugPrint("HISTORY");
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => GameHistoryScreen(),
-                            ),
-                          );
-                        },
-                      ),
-                    ),
+                          const SizedBox(height: 25),
+                          HolographicButton(
+                            label: "ACHIVEMENTS",
+                            colors: const [Colors.purple, Colors.pinkAccent],
+                            onTap: () {
+                              debugPrint("ACHIVEMENTS");
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder:
+                                      (context) => const AchivementsScreen(),
+                                ),
+                              );
+                            },
+                          ),
+                          const SizedBox(height: 25),
 
-                    const SizedBox(height: 25),
-                    Motion(
-                      filterQuality: FilterQuality.high,
-                      child: HolographicButton(
-                        label: "ACHIVEMENTS",
-                        colors: const [Colors.purple, Colors.pinkAccent],
-                        onTap: () {
-                          debugPrint("ACHIVEMENTS");
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => const AchivementsScreen(),
-                            ),
-                          );
-                        },
-                      ),
-                    ),
-                    const SizedBox(height: 25),
+                          HolographicButton(
+                            label: "SETTINGS",
+                            colors: const [
+                              Colors.orange,
+                              Colors.deepOrangeAccent,
+                            ],
+                            onTap: () {
+                              debugPrint("SETTINGS");
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder:
+                                      (context) => const SettingScreen(
+                                        isSettingScreen: true,
+                                      ),
+                                ),
+                              );
+                            },
+                          ),
 
-                    Motion(
-                      filterQuality: FilterQuality.high,
-                      child: HolographicButton(
-                        label: "SETTINGS",
-                        colors: const [Colors.orange, Colors.deepOrangeAccent],
-                        onTap: () {
-                          debugPrint("SETTINGS");
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder:
-                                  (context) => const SettingScreen(
-                                    isSettingScreen: true,
-                                  ),
-                            ),
-                          );
-                        },
-                      ),
-                    ),
+                          const SizedBox(height: 25),
 
-                    const SizedBox(height: 25),
-
-                    Motion(
-                      filterQuality: FilterQuality.high,
-                      child: HolographicButton(
-                        label: "LOGOUT",
-                        colors: const [Color(0xFFFF4D4D), Color(0xFFEC1404)],
-                        onTap: () {
-                          showDialog(
-                            context: context,
-                            builder: (context) => LogoutDailog(),
-                          );
-                        },
+                          HolographicButton(
+                            label: "LOGOUT",
+                            colors: const [
+                              Color(0xFFFF4D4D),
+                              Color(0xFFEC1404),
+                            ],
+                            onTap: () {
+                              showDialog(
+                                context: context,
+                                builder: (context) => LogoutDailog(),
+                              );
+                            },
+                          ),
+                        ],
                       ),
                     ),
 
