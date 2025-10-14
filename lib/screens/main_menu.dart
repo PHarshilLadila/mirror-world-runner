@@ -493,6 +493,7 @@ class GameInstrcutionDialog extends StatelessWidget {
     return Dialog(
       backgroundColor: Colors.transparent,
       child: Container(
+        width: kIsWeb ? 400 : double.infinity,
         decoration: BoxDecoration(
           gradient: LinearGradient(
             colors: [

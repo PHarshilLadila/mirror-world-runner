@@ -1,5 +1,6 @@
 // ignore_for_file: deprecated_member_use
 
+import 'package:flame_audio/flame_audio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
@@ -48,9 +49,15 @@ class _GameOverScreenState extends State<GameOverScreen>
   @override
   void initState() {
     super.initState();
+    loadGameOverSound();
     _initializeData();
     _setupAnimations();
     _setupParticles();
+  }
+
+  void loadGameOverSound() async {
+    await FlameAudio.audioCache.loadAll(['game_over.mp3']);
+    FlameAudio.play('game_over.mp3', volume: 0.7);
   }
 
   void _initializeData() async {
@@ -216,6 +223,7 @@ class _GameOverScreenState extends State<GameOverScreen>
     ticker.dispose();
     animationController.dispose();
     super.dispose();
+    loadGameOverSound();
   }
 
   String takenTimeFormate(int seconds) {
