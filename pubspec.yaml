@@ -47,6 +47,7 @@ dependencies:
   cloud_firestore: ^6.0.2
   flutter_dotenv: ^6.0.0
   clarity_flutter: ^1.4.2
+  motion: ^2.0.1
 
 dev_dependencies:
   flutter_test:

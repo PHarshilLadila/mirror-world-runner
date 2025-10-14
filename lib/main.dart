@@ -8,6 +8,7 @@ import 'package:mirror_world_runner/entry_point.dart';
 import 'package:mirror_world_runner/providers/achievements_provider.dart';
 import 'package:mirror_world_runner/providers/auth_provider.dart';
 import 'package:mirror_world_runner/providers/game_state.dart';
+import 'package:motion/motion.dart';
 import 'package:provider/provider.dart';
 
 Future<void> main() async {
@@ -16,6 +17,9 @@ Future<void> main() async {
     projectId: "todn8zvdkq",
     logLevel: LogLevel.Error,
   );
+  await Motion.instance.initialize();
+  Motion.instance.setUpdateInterval(60.fps);
+
   await FlameAudio.audioCache.loadAll(['bomb.mp3', 'game_background.mp3']);
   if (!FlameAudio.bgm.isPlaying) {
     FlameAudio.bgm.play('game_background.mp3', volume: 0.5);
