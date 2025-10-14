@@ -1,4 +1,3 @@
-
 import 'dart:developer';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -155,7 +154,7 @@ class AuthService {
 
       Map<String, dynamic> updateData = {
         "lastPlayed": FieldValue.serverTimestamp(),
-        "totalGamesPlayed": newTotalGames, 
+        "totalGamesPlayed": newTotalGames,
         "totalPlayTime": FieldValue.increment(timeTaken),
         "highestScore":
             score > currentHighestScore ? score : currentHighestScore,
@@ -414,5 +413,61 @@ class AuthService {
     if (e is FirebaseAuthException) return e.message ?? "An error occurred";
     if (e is String) return e;
     return e.toString();
+  }
+
+  Future<void> saveRewardPoints(int points) async {
+    try {
+      final user = auth.currentUser;
+      if (user == null) return;
+
+      await firestore.collection("users").doc(user.uid).set({
+        'rewardPoints': FieldValue.increment(points),
+        'totalRewardPointsEarned': FieldValue.increment(points),
+        'lastRewardEarned': FieldValue.serverTimestamp(),
+      }, SetOptions(merge: true));
+
+      log("Reward points saved: $points points for user: ${user.uid}");
+    } catch (e) {
+      log("[AuthService] saveRewardPoints error: ${extractMessage(e)}");
+      rethrow;
+    }
+  }
+
+  Future<int> getRewardPoints() async {
+    try {
+      final user = auth.currentUser;
+      if (user == null) return 0;
+
+      final doc = await firestore.collection("users").doc(user.uid).get();
+      if (!doc.exists) return 0;
+
+      return (doc.data()?['rewardPoints'] ?? 0) as int;
+    } catch (e) {
+      log("[AuthService] getRewardPoints error: ${extractMessage(e)}");
+      return 0;
+    }
+  }
+
+  Future<Map<String, dynamic>> getRewardStats() async {
+    try {
+      final user = auth.currentUser;
+      if (user == null) return {};
+
+      final doc = await firestore.collection("users").doc(user.uid).get();
+      if (!doc.exists) return {};
+
+      final data = doc.data()!;
+      return {
+        'currentPoints': data['rewardPoints'] ?? 0,
+        'totalEarned': data['totalRewardPointsEarned'] ?? 0,
+        'lastReward':
+            data['lastRewardEarned'] != null
+                ? (data['lastRewardEarned'] as Timestamp).toDate()
+                : null,
+      };
+    } catch (e) {
+      log("[AuthService] getRewardStats error: ${extractMessage(e)}");
+      return {};
+    }
   }
 }
