@@ -1376,7 +1376,7 @@ class _GameOverScreenState extends State<GameOverScreen>
                   threshold: 50,
                   image: Image.asset(
                     "assets/images/scratch_card.png",
-                    fit: BoxFit.cover,
+                    fit: BoxFit.fill,
                   ),
                   // color: Colors.grey[800]!,
                   onChange: (value) => print("Scratch progress: $value%"),

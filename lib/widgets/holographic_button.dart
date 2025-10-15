@@ -8,6 +8,7 @@ class HolographicButton extends StatelessWidget {
   final double? width;
   final double? fontSize;
   final double verticalPadding;
+  final bool? showShadow;
 
   const HolographicButton({
     super.key,
@@ -17,6 +18,7 @@ class HolographicButton extends StatelessWidget {
     this.fontSize = 14,
     this.width = 280,
     this.verticalPadding = 16,
+    this.showShadow = true,
   });
 
   @override
@@ -45,13 +47,16 @@ class HolographicButton extends StatelessWidget {
               fontWeight: FontWeight.bold,
               color: Colors.white,
               letterSpacing: 1.5,
-              shadows: [
-                Shadow(
-                  color: Colors.black45,
-                  blurRadius: 10,
-                  offset: Offset(2, 2),
-                ),
-              ],
+              shadows:
+                  showShadow == true
+                      ? [
+                        Shadow(
+                          color: Colors.black45,
+                          blurRadius: 10,
+                          offset: Offset(2, 2),
+                        ),
+                      ]
+                      : [],
             ),
             overflow: TextOverflow.ellipsis,
             maxLines: 1,

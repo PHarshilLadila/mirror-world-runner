@@ -226,6 +226,7 @@ class _MainMenuScreenState extends State<MainMenuScreen>
                           HolographicButton(
                             label: "START GAME",
                             colors: const [Colors.blue, Colors.cyanAccent],
+                            showShadow: false,
                             onTap: () {
                               debugPrint("START GAME");
                               Provider.of<GameState>(
@@ -249,6 +250,7 @@ class _MainMenuScreenState extends State<MainMenuScreen>
                               Colors.green,
                               Colors.lightGreenAccent,
                             ],
+                            showShadow: false,
                             onTap: () {
                               debugPrint("HOW TO PLAY");
                               showDialog(
@@ -261,6 +263,7 @@ class _MainMenuScreenState extends State<MainMenuScreen>
                           HolographicButton(
                             label: "LEADER BOARD",
                             colors: const [Colors.amber, Colors.yellowAccent],
+                            showShadow: false,
                             onTap: () {
                               debugPrint("LEADER BOARD");
                               Navigator.push(
@@ -280,6 +283,7 @@ class _MainMenuScreenState extends State<MainMenuScreen>
                               Colors.purpleAccent,
                               Colors.deepPurple,
                             ],
+                            showShadow: false,
                             onTap: () {
                               debugPrint("HISTORY");
                               Navigator.push(
@@ -295,6 +299,7 @@ class _MainMenuScreenState extends State<MainMenuScreen>
                           HolographicButton(
                             label: "ACHIVEMENTS",
                             colors: const [Colors.purple, Colors.pinkAccent],
+                            showShadow: false,
                             onTap: () {
                               debugPrint("ACHIVEMENTS");
                               Navigator.push(
@@ -314,6 +319,7 @@ class _MainMenuScreenState extends State<MainMenuScreen>
                               Colors.orange,
                               Colors.deepOrangeAccent,
                             ],
+                            showShadow: false,
                             onTap: () {
                               debugPrint("SETTINGS");
                               Navigator.push(
@@ -336,6 +342,7 @@ class _MainMenuScreenState extends State<MainMenuScreen>
                               Color(0xFFFF4D4D),
                               Color(0xFFEC1404),
                             ],
+                            showShadow: false,
                             onTap: () {
                               showDialog(
                                 context: context,
