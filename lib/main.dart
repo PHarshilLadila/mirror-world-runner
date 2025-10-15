@@ -4,6 +4,7 @@ import 'package:flame_audio/flame_audio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:mirror_world_runner/entry_point.dart';
 import 'package:mirror_world_runner/providers/achievements_provider.dart';
 import 'package:mirror_world_runner/providers/auth_provider.dart';
@@ -13,6 +14,9 @@ import 'package:provider/provider.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  if (!kIsWeb) {
+    await MobileAds.instance.initialize();
+  }
   final config = ClarityConfig(
     projectId: "todn8zvdkq",
     logLevel: LogLevel.Error,

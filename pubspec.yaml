@@ -49,6 +49,7 @@ dependencies:
   clarity_flutter: ^1.4.2
   motion: ^2.0.1
   scratcher: ^2.5.0
+  google_mobile_ads: ^6.0.0
 
 dev_dependencies:
   flutter_test:
