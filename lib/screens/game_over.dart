@@ -2247,7 +2247,7 @@ class _GameOverScreenState extends State<GameOverScreen>
   final String _adUnitId =
       kDebugMode
           ? 'ca-app-pub-3940256099942544/5224354917' // Test ID
-          : 'ca-app-pub-3779258307133143/8933683902'; // Production ID
+          : 'ca-app-pub-3940256099942544/5224354917'; // Production ID - ca-app-pub-3779258307133143/8933683902
 
   @override
   void initState() {
@@ -3685,4 +3685,6 @@ Mirror World Runner           ca-app-pub-3779258307133143~6639187899
 -------
 ad unit ID:
 rewards_point                       ca-app-pub-3779258307133143/8933683902
+android:value="ca-app-pub-3779258307133143~6639187899"/>
+
  */
