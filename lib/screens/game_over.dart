@@ -2202,6 +2202,9 @@ import 'package:mirror_world_runner/screens/game_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:scratcher/scratcher.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
+import 'dart:ui' as ui;
+import 'dart:html' as html;
+import 'package:flutter/material.dart';
 
 class GameOverScreen extends StatefulWidget {
   const GameOverScreen({super.key});
@@ -3027,7 +3030,7 @@ class _GameOverScreenState extends State<GameOverScreen>
                                                     ).createShader(bounds),
                                             child: Text(
                                               _isNewHighScore
-                                                  ? 'NEW RECORD! 🎉'
+                                                  ? 'NEW RECORD!'
                                                   : 'GAME OVER',
                                               style: TextStyle(
                                                 fontSize:
@@ -3201,14 +3204,14 @@ class _GameOverScreenState extends State<GameOverScreen>
                                                       icon: Icons.leaderboard,
                                                       color: Colors.blueAccent,
                                                       children: [
-                                                        _buildStatRow(
-                                                          'Highest Score',
-                                                          '${_personalBests['highestScore'] ?? 0}',
-                                                          Colors.yellow,
-                                                        ),
-                                                        const SizedBox(
-                                                          height: 8,
-                                                        ),
+                                                        // _buildStatRow(
+                                                        //   'Highest Score',
+                                                        //   '${_personalBests['highestScore'] ?? 0}',
+                                                        //   Colors.yellow,
+                                                        // ),
+                                                        // const SizedBox(
+                                                        //   height: 8,
+                                                        // ),
                                                         _buildStatRow(
                                                           'Total Games',
                                                           '${_personalBests['totalGamesPlayed'] ?? totalGamesCount}',
@@ -3675,6 +3678,29 @@ class _GameOverScreenState extends State<GameOverScreen>
           ),
         ),
       ],
+    );
+  }
+
+  Widget adsenseAdsView() {
+    // This view is web-only
+    if (!kIsWeb) return const SizedBox.shrink();
+
+    // Register the iframe (web only)
+    // ignore: undefined_prefixed_name
+    ui.platformViewRegistry.registerViewFactory(
+      'adViewType',
+      (int viewID) =>
+          html.IFrameElement()
+            ..width = '320'
+            ..height = '100'
+            ..src = 'adview.html'
+            ..style.border = 'none',
+    );
+
+    return SizedBox(
+      height: 100.0,
+      width: 320.0,
+      child: HtmlElementView(viewType: 'adViewType'),
     );
   }
 }

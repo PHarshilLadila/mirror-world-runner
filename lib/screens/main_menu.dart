@@ -220,7 +220,9 @@ class _MainMenuScreenState extends State<MainMenuScreen>
                     const SizedBox(height: 70),
 
                     Motion(
-                      filterQuality: FilterQuality.high,
+                      filterQuality: FilterQuality.none,
+                      glare: GlareConfiguration(color: Colors.black),
+                      borderRadius: BorderRadius.circular(12),
                       child: Column(
                         children: [
                           HolographicButton(
@@ -355,7 +357,18 @@ class _MainMenuScreenState extends State<MainMenuScreen>
                     ),
 
                     const SizedBox(height: 40),
-
+                    Center(
+                      child: Text(
+                        'Info: Play on web for the best gaming experience.',
+                        style: TextStyle(
+                          color: Colors.white.withOpacity(0.6),
+                          fontSize: 10,
+                          letterSpacing: 1,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
                     Text(
                       '© 2025 Mirror World Runner',
                       style: TextStyle(
