@@ -38,7 +38,7 @@ class _SettingScreenState extends State<SettingScreen>
   double soundVolume = 7.0;
   String difficulty = "medium";
   bool enableSound = true;
-  bool enableNotifications = true; // KEEP THIS FOR BACKWARD COMPATIBILITY
+  bool enableNotifications = true;
   late Ticker ticker;
   final numberOfParticle = kIsWeb ? 80 : 60;
   Duration lastElapsed = Duration.zero;
