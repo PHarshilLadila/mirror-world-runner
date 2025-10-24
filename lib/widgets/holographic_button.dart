@@ -9,6 +9,7 @@ class HolographicButton extends StatelessWidget {
   final double? fontSize;
   final double verticalPadding;
   final bool? showShadow;
+  final int maxLines;
 
   const HolographicButton({
     super.key,
@@ -19,6 +20,7 @@ class HolographicButton extends StatelessWidget {
     this.width = 280,
     this.verticalPadding = 16,
     this.showShadow = true,
+    this.maxLines = 1,
   });
 
   @override
@@ -59,7 +61,7 @@ class HolographicButton extends StatelessWidget {
                       : [],
             ),
             overflow: TextOverflow.ellipsis,
-            maxLines: 1,
+            maxLines: maxLines,
           ),
         ),
       ),
