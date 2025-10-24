@@ -3060,7 +3060,7 @@ class _GameOverScreenState extends State<GameOverScreen>
                                                     ),
                                                   ),
                                                   Text(
-                                                    '${_userData!['userName']}',
+                                                    'you(${_userData!['userName']})',
                                                     style: const TextStyle(
                                                       color: Colors.white,
                                                       fontSize: 18,
