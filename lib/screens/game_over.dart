@@ -2202,9 +2202,6 @@ import 'package:mirror_world_runner/screens/game_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:scratcher/scratcher.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
-import 'dart:ui' as ui;
-import 'dart:html' as html;
-import 'package:flutter/material.dart';
 
 class GameOverScreen extends StatefulWidget {
   const GameOverScreen({super.key});
@@ -2401,20 +2398,16 @@ class _GameOverScreenState extends State<GameOverScreen>
       onUserEarnedReward: (AdWithoutView ad, RewardItem reward) {
         debugPrint('User earned reward: ${reward.amount} ${reward.type}');
 
-        // Double the reward points
         if (mounted) {
           setState(() {
             _rewardPoints *= 2;
             _rewardDoubled = true;
             _showDoubleRewardOption = false;
           });
-
-          // Save doubled points to Firebase
           _saveDoubledReward();
-
           CustomToast.show(
             context,
-            message: "Congratulations! You earned ${_rewardPoints} points!",
+            message: "Congratulations! You earned $_rewardPoints points!",
             type: GameToastType.success,
           );
         }
@@ -3678,29 +3671,6 @@ class _GameOverScreenState extends State<GameOverScreen>
           ),
         ),
       ],
-    );
-  }
-
-  Widget adsenseAdsView() {
-    // This view is web-only
-    if (!kIsWeb) return const SizedBox.shrink();
-
-    // Register the iframe (web only)
-    // ignore: undefined_prefixed_name
-    ui.platformViewRegistry.registerViewFactory(
-      'adViewType',
-      (int viewID) =>
-          html.IFrameElement()
-            ..width = '320'
-            ..height = '100'
-            ..src = 'adview.html'
-            ..style.border = 'none',
-    );
-
-    return SizedBox(
-      height: 100.0,
-      width: 320.0,
-      child: HtmlElementView(viewType: 'adViewType'),
     );
   }
 }
