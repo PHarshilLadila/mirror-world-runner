@@ -87,6 +87,7 @@ class _SettingScreenState extends State<SettingScreen>
     });
   }
 
+  // save settings
   Future<void> saveSettingsInToSharedpreference() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setDouble('movementSpeed', movementSpeed);
@@ -96,6 +97,7 @@ class _SettingScreenState extends State<SettingScreen>
     await prefs.setBool('enableNotifications', enableNotifications);
   }
 
+  // apply settings
   void applySettings() {
     saveSettingsInToSharedpreference();
 
@@ -111,6 +113,7 @@ class _SettingScreenState extends State<SettingScreen>
     Navigator.pop(context);
   }
 
+  // difficulty helpers
   int getDifficultyLevelFromString(String diff) {
     switch (diff) {
       case "easy":
@@ -124,6 +127,7 @@ class _SettingScreenState extends State<SettingScreen>
     }
   }
 
+  // string and color getters for difficulty
   String getDifficultyText(String diff) {
     switch (diff) {
       case "easy":
