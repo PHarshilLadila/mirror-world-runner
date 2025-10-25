@@ -42,6 +42,18 @@ class AuthProvider extends ChangeNotifier {
     }
   }
 
+  Future<void> signInAnonymously() async {
+    _setLoading(true);
+    try {
+      await _authService.signInAnonymously();
+      await fetchCurrentUser();
+    } catch (e) {
+      rethrow;
+    } finally {
+      _setLoading(false);
+    }
+  }
+
   Future<void> logout() async {
     _setLoading(true);
     SharedPreferences preferences = await SharedPreferences.getInstance();

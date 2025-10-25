@@ -277,6 +277,46 @@ class _LoginScreenState extends State<LoginScreen>
                                   );
                                 },
                               ),
+
+                              const SizedBox(height: 10),
+
+                              HolographicButton(
+                                label: "CONTINUE AS GUEST",
+                                colors: const [Colors.grey, Colors.blueGrey],
+                                verticalPadding: 12,
+                                fontSize: 10,
+                                width: double.infinity,
+                                onTap: () async {
+                                  try {
+                                    await authProvider.signInAnonymously();
+
+                                    Navigator.pushReplacement(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder:
+                                            (context) => ChangeNotifierProvider(
+                                              create:
+                                                  (context) => AuthProvider(),
+                                              child: const MainMenuScreen(),
+                                            ),
+                                      ),
+                                    );
+
+                                    CustomToast.show(
+                                      context,
+                                      message:
+                                          "Welcome Guest! Enjoy the game..!",
+                                      type: GameToastType.success,
+                                    );
+                                  } catch (e) {
+                                    CustomToast.show(
+                                      context,
+                                      message: "Guest login failed: $e",
+                                      type: GameToastType.error,
+                                    );
+                                  }
+                                },
+                              ),
                             ],
                           ),
                         ),

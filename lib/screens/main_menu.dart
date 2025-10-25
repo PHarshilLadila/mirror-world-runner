@@ -107,7 +107,7 @@ class _MainMenuScreenState extends State<MainMenuScreen>
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    const SizedBox(height: 60),
+                    const SizedBox(height: 80),
                     Align(
                       alignment: Alignment.center,
                       child: Text(
@@ -186,6 +186,8 @@ class _MainMenuScreenState extends State<MainMenuScreen>
                             fontSize: 14,
                             fontWeight: FontWeight.w300,
                           ),
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
                           textAlign: TextAlign.center,
                         );
                       },
@@ -204,20 +206,23 @@ class _MainMenuScreenState extends State<MainMenuScreen>
                           );
                         }
 
-                        final eamil = authProvider.currentUser?['email'] ?? "";
-                        return Text(
-                          "$eamil",
-                          style: const TextStyle(
-                            color: Colors.white70,
-                            fontSize: 14,
-                            fontWeight: FontWeight.w300,
-                          ),
-                          textAlign: TextAlign.center,
+                        final email = authProvider.currentUser?['email'] ?? "";
+                        return Column(
+                          children: [
+                            Text(
+                              "$email",
+                              style: const TextStyle(
+                                color: Colors.white70,
+                                fontSize: 14,
+                                fontWeight: FontWeight.w300,
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                            SizedBox(height: email == "" ? 30 : 70),
+                          ],
                         );
                       },
                     ),
-
-                    const SizedBox(height: 70),
 
                     Motion(
                       filterQuality: FilterQuality.none,
@@ -264,7 +269,7 @@ class _MainMenuScreenState extends State<MainMenuScreen>
                           const SizedBox(height: 25),
                           HolographicButton(
                             label: "LEADER BOARD",
-                            colors: const [Colors.amber, Colors.yellowAccent],
+                            colors: const [Colors.amber, Colors.amberAccent],
                             showShadow: false,
                             onTap: () {
                               debugPrint("LEADER BOARD");

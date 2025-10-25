@@ -8,6 +8,7 @@ class AuthService {
   final FirebaseAuth auth = FirebaseAuth.instance;
   final FirebaseFirestore firestore = FirebaseFirestore.instance;
   final String userIdForPreference = "USERID";
+  final String isAnonymousUserKey = "IS_ANONYMOUS_USER";
 
   Future<void> register(String email, String userName, String password) async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
@@ -43,6 +44,7 @@ class AuthService {
         "totalGamesPlayed": 0,
         "totalPlayTime": 0,
         "maxSurvivalTime": 0,
+        "isAnonymous": false,
         "createdAt": FieldValue.serverTimestamp(),
         "lastPlayed": FieldValue.serverTimestamp(),
         "achievementsProgress": {
@@ -60,6 +62,7 @@ class AuthService {
       });
 
       preferences.setString(userIdForPreference, user.uid);
+      preferences.setBool(isAnonymousUserKey, false);
     } catch (e) {
       log("[AuthService] Register error: ${extractMessage(e)}");
       rethrow;
@@ -80,6 +83,7 @@ class AuthService {
           );
           email = userInput;
           preferences.setString(userIdForPreference, auth.currentUser!.uid);
+          preferences.setBool(isAnonymousUserKey, false);
           return;
         } catch (e) {
           log("[AuthService] Email login failed: ${extractMessage(e)}");
@@ -100,8 +104,53 @@ class AuthService {
 
       await auth.signInWithEmailAndPassword(email: email, password: password);
       preferences.setString(userIdForPreference, auth.currentUser!.uid);
+      preferences.setBool(isAnonymousUserKey, false);
     } catch (e) {
       log("[AuthService] Login error: ${extractMessage(e)}");
+      rethrow;
+    }
+  }
+
+  Future<void> signInAnonymously() async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    try {
+      final userCredential = await auth.signInAnonymously();
+      final user = userCredential.user!;
+
+      final userDoc = await firestore.collection("users").doc(user.uid).get();
+
+      if (!userDoc.exists) {
+        await firestore.collection("users").doc(user.uid).set({
+          "userName": "Guest_${user.uid.substring(0, 8)}",
+          "email": null,
+          "highestScore": 0,
+          "totalGamesPlayed": 0,
+          "totalPlayTime": 0,
+          "maxSurvivalTime": 0,
+          "isAnonymous": true,
+          "createdAt": FieldValue.serverTimestamp(),
+          "lastPlayed": FieldValue.serverTimestamp(),
+          "achievementsProgress": {
+            "Power Collector": {"current": 0, "isUnlocked": false},
+            "Invincible": {"current": 0, "isUnlocked": false},
+            "Heart Collector": {"current": 0, "isUnlocked": false},
+            "Maximum Life": {"current": 0, "isUnlocked": false},
+            "Combo Master": {"current": 0, "isUnlocked": false},
+            "20 Games": {"current": 0, "isUnlocked": false},
+            "100 Games": {"current": 0, "isUnlocked": false},
+            "1000 Games": {"current": 0, "isUnlocked": false},
+            "25000 Games": {"current": 0, "isUnlocked": false},
+            "60000 Games": {"current": 0, "isUnlocked": false},
+          },
+        });
+      }
+
+      preferences.setString(userIdForPreference, user.uid);
+      preferences.setBool(isAnonymousUserKey, true);
+
+      log("[AuthService] Anonymous sign-in successful: ${user.uid}");
+    } catch (e) {
+      log("[AuthService] Anonymous sign-in error: ${extractMessage(e)}");
       rethrow;
     }
   }
@@ -110,6 +159,7 @@ class AuthService {
     SharedPreferences preferences = await SharedPreferences.getInstance();
     await auth.signOut();
     await preferences.remove(userIdForPreference);
+    await preferences.remove(isAnonymousUserKey);
   }
 
   Future<Map<String, dynamic>?> getCurrentUserData() async {
