@@ -130,7 +130,6 @@ class _LeaderboardCardState extends State<LeaderboardCard>
   bool isHovered = false;
   late AnimationController _animationController;
   late Animation<double> _scaleAnimation;
-  late Animation<double> _elevationAnimation;
 
   @override
   void initState() {
@@ -142,10 +141,6 @@ class _LeaderboardCardState extends State<LeaderboardCard>
 
     _scaleAnimation = Tween<double>(begin: 1.0, end: 1.02).animate(
       CurvedAnimation(parent: _animationController, curve: Curves.easeOutBack),
-    );
-
-    _elevationAnimation = Tween<double>(begin: 0.0, end: 8.0).animate(
-      CurvedAnimation(parent: _animationController, curve: Curves.easeOutCubic),
     );
   }
 
@@ -327,10 +322,6 @@ class _LeaderboardCardState extends State<LeaderboardCard>
                             overflow: TextOverflow.ellipsis,
                           ),
                         ),
-                        // if (widget.isCurrentPlayer) ...[
-                        //   const SizedBox(width: 6),
-                        //   Icon(Icons.person, color: Colors.amber, size: 16),
-                        // ],
                         if (widget.isLocalData) ...[
                           const SizedBox(width: 6),
                           Icon(

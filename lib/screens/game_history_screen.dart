@@ -398,7 +398,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
-import 'package:mirror_world_runner/screens/game_screen.dart';
 import 'package:mirror_world_runner/service/auth_service.dart';
 import 'package:mirror_world_runner/widgets/custom_loader.dart';
 import 'package:mirror_world_runner/widgets/particle_painter.dart';

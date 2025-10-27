@@ -594,9 +594,9 @@ class AuthService {
         DateTime.now().toIso8601String(),
       );
 
-      print("[AuthService] User data saved locally");
+      debugPrint("[AuthService] User data saved locally");
     } catch (e) {
-      print("[AuthService] Error saving user data locally: $e");
+      debugPrint("[AuthService] Error saving user data locally: $e");
     }
   }
 
@@ -1131,7 +1131,6 @@ class AuthService {
 
       final email = credentials['email'];
       final password = credentials['password'];
-      final userName = credentials['userName'];
 
       // Check if user already exists in Firebase Auth by trying to sign in
       try {
@@ -1680,10 +1679,10 @@ class AuthService {
         updatedData['lastUpdated'] = DateTime.now().toIso8601String();
         await _saveUserDataLocally(updatedData);
 
-        print('New max survival time recorded: $currentGameTime seconds');
+        debugPrint('New max survival time recorded: $currentGameTime seconds');
       }
     } catch (e) {
-      print('Error updating max survival time: $e');
+      debugPrint('Error updating max survival time: $e');
       rethrow;
     }
   }
