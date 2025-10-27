@@ -222,12 +222,62 @@ class _LoginScreenState extends State<LoginScreen>
                                 verticalPadding: 12,
                                 fontSize: 12,
                                 width: double.infinity,
+                                // onTap: () async {
+                                //   try {
+                                //     await authProvider.login(
+                                //       userInputController.text.trim(),
+                                //       passwordController.text.trim(),
+                                //     );
+
+                                //     Navigator.pushReplacement(
+                                //       context,
+                                //       MaterialPageRoute(
+                                //         builder:
+                                //             (context) => ChangeNotifierProvider(
+                                //               create:
+                                //                   (context) => AuthProvider(),
+                                //               child: const MainMenuScreen(),
+                                //             ),
+                                //       ),
+                                //     );
+
+                                //     CustomToast.show(
+                                //       context,
+                                //       message:
+                                //           "Login success, enjoy the game..!",
+                                //       type: GameToastType.success,
+                                //     );
+                                //   } catch (e) {
+                                //     CustomToast.show(
+                                //       context,
+                                //       message: "$e",
+                                //       type: GameToastType.error,
+                                //     );
+                                //   }
+                                // },
+                                // In your login button onTap method, replace the existing code with this:
                                 onTap: () async {
                                   try {
                                     await authProvider.login(
                                       userInputController.text.trim(),
                                       passwordController.text.trim(),
                                     );
+
+                                    // Auto-sync after login if there's pending data
+                                    final syncStatus =
+                                        await authProvider.getSyncStatus();
+                                    if (syncStatus['hasPendingSync'] ||
+                                        syncStatus['hasPendingAuthSync']) {
+                                      // Show sync in progress message
+                                      CustomToast.show(
+                                        context,
+                                        message: "Syncing your data...",
+                                        type: GameToastType.success,
+                                      );
+
+                                      // Perform sync
+                                      await authProvider.manualSync();
+                                    }
 
                                     Navigator.pushReplacement(
                                       context,

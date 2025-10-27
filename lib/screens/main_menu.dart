@@ -10,6 +10,7 @@ import 'package:mirror_world_runner/screens/game_history_screen.dart';
 import 'package:mirror_world_runner/screens/leader_board_screen.dart';
 import 'package:mirror_world_runner/screens/setting_screen.dart';
 import 'package:mirror_world_runner/widgets/animated_button.dart';
+import 'package:mirror_world_runner/widgets/custom_toast.dart';
 import 'package:mirror_world_runner/widgets/holographic_button.dart';
 import 'package:mirror_world_runner/widgets/particle_painter.dart';
 import 'package:mirror_world_runner/widgets/particles.dart';
@@ -227,7 +228,7 @@ class _MainMenuScreenState extends State<MainMenuScreen>
                     Motion(
                       filterQuality: FilterQuality.none,
                       glare: GlareConfiguration(color: Colors.black),
-                      borderRadius: BorderRadius.circular(12),
+                      borderRadius: BorderRadius.circular(8),
                       child: Column(
                         children: [
                           HolographicButton(
@@ -249,7 +250,7 @@ class _MainMenuScreenState extends State<MainMenuScreen>
                             },
                           ),
 
-                          const SizedBox(height: 25),
+                          const SizedBox(height: 12),
 
                           HolographicButton(
                             label: "HOW TO PLAY",
@@ -266,7 +267,7 @@ class _MainMenuScreenState extends State<MainMenuScreen>
                               );
                             },
                           ),
-                          const SizedBox(height: 25),
+                          const SizedBox(height: 12),
                           HolographicButton(
                             label: "LEADER BOARD",
                             colors: const [Colors.amber, Colors.amberAccent],
@@ -283,7 +284,7 @@ class _MainMenuScreenState extends State<MainMenuScreen>
                             },
                           ),
 
-                          const SizedBox(height: 25),
+                          const SizedBox(height: 12),
                           HolographicButton(
                             label: "HISTORY",
                             colors: const [
@@ -302,7 +303,7 @@ class _MainMenuScreenState extends State<MainMenuScreen>
                             },
                           ),
 
-                          const SizedBox(height: 25),
+                          const SizedBox(height: 12),
                           HolographicButton(
                             label: "ACHIVEMENTS",
                             colors: const [Colors.purple, Colors.pinkAccent],
@@ -318,7 +319,7 @@ class _MainMenuScreenState extends State<MainMenuScreen>
                               );
                             },
                           ),
-                          const SizedBox(height: 25),
+                          const SizedBox(height: 12),
 
                           HolographicButton(
                             label: "SETTINGS",
@@ -340,12 +341,43 @@ class _MainMenuScreenState extends State<MainMenuScreen>
                               );
                             },
                           ),
+                          const SizedBox(height: 12),
 
-                          const SizedBox(height: 25),
+                          // Add this button to your MainMenuScreen in the column of buttons
+                          HolographicButton(
+                            label: "SYNC DATA",
+                            colors: const [
+                              Colors.deepOrangeAccent,
+                              Colors.deepOrange,
+                            ],
+                            onTap: () async {
+                              final authProvider = Provider.of<AuthProvider>(
+                                context,
+                                listen: false,
+                              );
+                              try {
+                                await authProvider.manualSync();
+                                CustomToast.show(
+                                  context,
+                                  message: "Data synchronized successfully!",
+                                  type: GameToastType.success,
+                                );
+                              } catch (e) {
+                                CustomToast.show(
+                                  context,
+                                  message: "Sync failed: $e",
+                                  type: GameToastType.error,
+                                );
+                              }
+                            },
+                          ),
+
+                          const SizedBox(height: 12),
 
                           HolographicButton(
                             label: "LOGOUT",
                             colors: const [
+                              Colors.red,
                               Color(0xFFFF4D4D),
                               Color(0xFFEC1404),
                             ],
