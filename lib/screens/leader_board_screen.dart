@@ -515,7 +515,6 @@ class _LeaderboardScreenState extends State<LeaderboardScreen>
                           ),
                         ),
                         const SizedBox(width: 8),
-                        // Refresh button
                         IconButton(
                           onPressed: _isLoading ? null : _refreshLeaderboard,
                           icon: Icon(
@@ -662,15 +661,13 @@ class LeaderboardItem extends StatelessWidget {
         rankIcon = Icons.person;
     }
 
-    // Add local data indicator
     if (isLocalData) {
       rankColor = Colors.blue;
     }
 
-    // Override rank color for current user - make it golden
     if (isCurrentPlayer) {
       rankColor = Colors.amber;
-      rankIcon = Icons.star; // Use star icon for current user
+      rankIcon = Icons.star;
     }
 
     return LeaderboardCard(
